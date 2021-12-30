@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts-config PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 1.3//EN"
+        "http://struts.apache.org/dtds/struts-config_1_3.dtd">
+
+<struts-config>
+
+    <form-beans>
+
+        <form-bean name="LoginForm" type="com.motadata.action.login.LoginModel" />
+
+    </form-beans>
+
+    <action-mappings>
+
+        <action input="/index.jsp" name="LoginModel" path="/Login" scope="session" type="com.motadata.action.login.LoginAction">
+
+            <forward name="success" path="/success.jsp"></forward>
+
+            <forward name="failure" path="/failure.jsp"></forward>
+
+        </action>
+
+    </action-mappings>
+
+    <!--<action-mappings>-->
+
+        <!--<action path="/index.jsp" type="com.motadata.action.login.LoginAction">-->
+
+            <!--<forward name="success" path="/welcome"></forward>-->
+
+        <!--</action>-->
+
+        <!--&lt;!&ndash;<action path="/index" forward="/index.jsp"></action>&ndash;&gt;-->
+
+        <!--<action path="/welcome" type="com.motadata.action.login.LoginAction">-->
+
+            <!--<forward name="success" patsuccess.jsp.jsp"></forward>-->
+
+        <!--</action>-->
+
+    <!--</action-mappings>-->
+
+</struts-config>
