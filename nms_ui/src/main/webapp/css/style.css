@@ -1,0 +1,122 @@
+h1 {
+    color: #68c6ff;
+}
+
+.access {
+    color: #008000;
+}
+
+.denied {
+    color: #ff0000;
+}
+
+.middle {
+    align-content: center;
+    text-align: center;
+}
+
+h4 {
+    align-content: center;
+    text-align: center;
+}
+
+.first {
+    text-align: center;
+}
+
+.in, .out, .up, .file, .lg__cover, .lg__monitor, .disc__new {
+    border: solid 1.5px black;
+    border-radius: 3px;
+    text-decoration: none;
+    display: inline;
+    padding: 5px;
+}
+
+nav a
+{
+    color: black;
+}
+
+nav a:hover {
+    background-color: #2a92ff;
+    color: white;
+}
+
+.out, .up, .file, .linux_user, .linux_pass {
+    margin-left: 3px;
+}
+
+.list, .lg__monitor, .cancel {
+    margin-left: 7px
+}
+
+.demo, .wwFormTable {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event {
+    display: none;
+}
+
+#myTable {
+    display: none;
+}
+
+.sample {
+    display: flex;
+    margin-left: 38%;
+}
+
+.ip {
+    margin-left: 146px;
+}
+
+.address {
+    margin-left: 5px;
+}
+
+#loader {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    width: 120px;
+    height: 120px;
+    margin: -76px 0 0 -76px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+.disc__heading {
+    text-align: center;
+}
+
+.disc__data {
+    text-align: center;
+}
