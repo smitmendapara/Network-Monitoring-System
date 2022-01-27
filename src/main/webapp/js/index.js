@@ -2,7 +2,7 @@
 
 function refreshPage() {
 
-    window.location.reload();
+    location.reload(true);
 }
 
 function openForm(idName) {
@@ -266,15 +266,17 @@ function showDashboard(id, ip) {
         success : function (data) {
 
             console.log("worked properly!");
+
+            window.location.href = "linux_dashboard.jsp";
         },
-        error : function () {
+        error : function (data) {
 
             console.log("not worked properly!");
+
+            window.location.href = "dashboard.jsp"
         }
     });
 }
-
-
 
 
 

@@ -25,7 +25,7 @@
 
     <%-- css file --%>
 
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 
     <%-- icon library --%>
 
@@ -48,20 +48,6 @@
     <script src="js/index.js"></script>
 
     <br/>
-
-<%--<%--%>
-    <%--ResultSet resultSet = UserDAO.getMonitorTB();--%>
-
-    <%--String deviceType = null;--%>
-
-    <%--while (resultSet.next())--%>
-    <%--{--%>
-        <%--deviceType = resultSet.getString(4);--%>
-    <%--}--%>
-
-    <%--if (deviceType.equals("Ping"))--%>
-    <%--{--%>
-<%--%>--%>
 
     <body>
 
@@ -99,17 +85,25 @@
                             String IP = resultSet.getString(3);
 
                 %>
-                            <tr>
+                <tr>
 
-                                <td><b>IP/Host</b>: <%=IP %></td>
+                    <td><b>IP/Host</b>: <%=IP %></td>
 
-                                <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
+                    <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
 
-                                <td><b>DeviceType</b>: <%=resultSet.getString(6)%></td>
+                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%></td>
 
-                                <td><b>Status</b>: <%=resultSet.getString(8)%></td>
+                </tr>
 
-                            </tr>
+                <tr>
+
+                    <td><b>Id</b>: <%=resultSet.getString(1)%></td>
+
+                    <td><b>Status</b>: <%=resultSet.getString(8)%></td>
+
+                    <td><b>DeviceType</b>: <%=resultSet.getString(6)%></td>
+
+                </tr>
                 <%
                         }
 
@@ -187,16 +181,16 @@
                                 type: "area",
                                 dataPoints: [ //array
 
-                                    { x: new Date(2012, 00, 1), y: 2600 },
-                                    { x: new Date(2012, 01, 1), y: 3800 },
-                                    { x: new Date(2012, 02, 1), y: 4300 },
-                                    { x: new Date(2012, 03, 1), y: 2900 },
-                                    { x: new Date(2012, 04, 1), y: 4100 },
-                                    { x: new Date(2012, 05, 1), y: 4500 },
-                                    { x: new Date(2012, 06, 1), y: 8600 },
-                                    { x: new Date(2012, 07, 1), y: 6400 },
-                                    { x: new Date(2012, 08, 1), y: 5300 },
-                                    { x: new Date(2012, 09, 1), y: 6000 }
+                                    { x: new Date(2012, 0, 1), y: 2600 },
+                                    { x: new Date(2012, 1, 1), y: 3800 },
+                                    { x: new Date(2012, 2, 1), y: 4300 },
+                                    { x: new Date(2012, 3, 1), y: 2900 },
+                                    { x: new Date(2012, 4, 1), y: 4100 },
+                                    { x: new Date(2012, 5, 1), y: 4500 },
+                                    { x: new Date(2012, 6, 1), y: 8600 },
+                                    { x: new Date(2012, 7, 1), y: 6400 },
+                                    { x: new Date(2012, 8, 1), y: 5300 },
+                                    { x: new Date(2012, 9, 1), y: 6000 }
                                 ]
                             }
                         ]
@@ -462,35 +456,5 @@
 
     </body>
 
-<%--<%--%>
-    <%--}--%>
-    <%--else--%>
-    <%--{--%>
 
-<%--%>--%>
 
-    <%--<body>--%>
-
-        <%--<div class="demo" style="float:left;margin-top: 10px">--%>
-
-            <%--<nav>--%>
-
-                <%--<a href="discover" class="lg__cover"><i class="bi bi-disc"></i>&nbsp;Discovery</a>--%>
-
-                <%--<a href="monitor" class="lg__monitor"><i class="bi bi-tv"></i>&nbsp;Monitor</a>--%>
-
-                <%--<a href="dashboard" class="lg__dashboard"><i class="bi bi-grid"></i>&nbsp;Dashboard</a>--%>
-
-            <%--</nav>--%>
-
-        <%--</div>--%>
-
-        <%--<br><br>--%>
-
-        <%--<hr/>--%>
-
-    <%--</body>--%>
-
-//<%
-//    }
-//%>
