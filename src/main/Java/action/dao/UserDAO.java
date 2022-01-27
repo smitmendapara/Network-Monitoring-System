@@ -55,9 +55,9 @@ public class UserDAO
 
     static String insert_query = "INSERT INTO TB_USER(USER, PASSWORD) VALUES(?, ?)";
 
-    static String result_query = "INSERT INTO TB_RESULT(ID, IP, PROFILE, DEVICETYPE) VALUES(?, ?, ?, ?)";
+    static String result_query = "INSERT INTO TB_RESULT(ID, IP, PROFILE, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-    static String discover_query = "INSERT INTO TB_DISCOVER(NAME, IP, USERNAME, PASSWORD, DEVICE, RESPONSE, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    static String discover_query = "INSERT INTO TB_DISCOVER(NAME, IP, USERNAME, PASSWORD, DEVICE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 
     static String query = "SELECT ID, IP, PROFILE, DEVICETYPE FROM TB_RESULT";
 
@@ -65,13 +65,15 @@ public class UserDAO
 
     static String delete_query = "DELETE FROM TB_DISCOVER WHERE ID = ?";
 
-    static String monitor_query = "INSERT INTO TB_MONITOR(ID, IP, PROFILE, DEVICETYPE) VALUES(?, ?, ?, ?)";
+    static String monitor_query = "INSERT INTO TB_MONITOR(ID, IP, PROFILE, DEVICETYPE, STATUS) VALUES(?, ?, ?, ?, ?)";
 
     static String idQuery = "SELECT * FROM TB_DISCOVER WHERE ID = ?";
 
     static String m_select = "SELECT ID, IP, DEVICETYPE FROM TB_MONITOR";
 
-    static String d_update = "UPDATE TB_DISCOVER SET RESPONSE = ? WHERE IP = ?";
+    static String d_update = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+
+    static String r_update = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
 
     private static Connection getConnection()
     {
@@ -275,7 +277,7 @@ public class UserDAO
         return status;
     }
 
-    public static boolean enterDiscoveryData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response)
+    public static boolean enterDiscoveryData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean status = true;
 
@@ -301,7 +303,9 @@ public class UserDAO
 
                 discover_statement.setString(6, response);
 
-                discover_statement.setString(7, "true");
+                discover_statement.setString(7, ipStatus);
+
+                discover_statement.setString(8, timestamp);
 
             }
             if (deviceType.equals("1"))
@@ -318,7 +322,9 @@ public class UserDAO
 
                 discover_statement.setString(6, response);
 
-                discover_statement.setString(7, "true");
+                discover_statement.setString(7, ipStatus);
+
+                discover_statement.setString(8, timestamp);
             }
 
             if (discover_statement.execute())
@@ -341,7 +347,7 @@ public class UserDAO
         return status;
     }
 
-    public static boolean enterReDiscoveryData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response)
+    public static boolean enterReDiscoveryData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean status = true;
 
@@ -353,18 +359,7 @@ public class UserDAO
 
             PreparedStatement preparedStatement = connection.prepareStatement(d_update);
 
-            if (deviceType.equals("Ping"))
-            {
-                preparedStatement.setString(1, response);
-
-                preparedStatement.setString(2, ip);
-            }
-            else if (deviceType.equals("Linux"))
-            {
-                preparedStatement.setString(1, response);
-
-                preparedStatement.setString(2, ip);
-            }
+            updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
             if (preparedStatement.execute())
             {
@@ -382,7 +377,7 @@ public class UserDAO
         return status;
     }
 
-    public static boolean enterResultTableData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
+    public static boolean enterResultTableData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 
@@ -390,11 +385,11 @@ public class UserDAO
         {
             Connection connection = getConnection();
 
-            PreparedStatement statement = connection.prepareStatement(Id_query);
+            PreparedStatement preparedStatement = connection.prepareStatement(Id_query);
 
-            statement.setString(1, ip);
+            preparedStatement.setString(1, ip);
 
-            ResultSet resultSet = statement.executeQuery();
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             PreparedStatement result_statement = connection.prepareStatement(result_query);
 
@@ -409,6 +404,12 @@ public class UserDAO
                     result_statement.setString(3, CommonConstantUI.NULL);
 
                     result_statement.setString(4, "Ping");
+
+                    result_statement.setString(5, response);
+
+                    result_statement.setString(6, ipStatus);
+
+                    result_statement.setString(7, timestamp);
                 }
                 else
                 {
@@ -419,6 +420,12 @@ public class UserDAO
                     result_statement.setString(3, discoveryUsername);
 
                     result_statement.setString(4, "Linux");
+
+                    result_statement.setString(5, response);
+
+                    result_statement.setString(6, ipStatus);
+
+                    result_statement.setString(7, timestamp);
                 }
             }
 
@@ -436,6 +443,52 @@ public class UserDAO
         }
 
         return result;
+    }
+
+    public static boolean enterReResultTableData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+    {
+        boolean result = true;
+
+        try
+        {
+            Connection connection = getConnection();
+
+            PreparedStatement result_statement = connection.prepareStatement(r_update);
+
+            updateData(result_statement, response, ipStatus, timestamp, ip);
+
+            if (result_statement.execute())
+            {
+                return true;
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.error("not inserted data into result table!", exception);
+
+            result = false;
+        }
+
+        return result;
+    }
+
+    private static void updateData(PreparedStatement result_statement, String response, String ipStatus, String timestamp, String ip)
+    {
+        try
+        {
+            result_statement.setString(1, response);
+
+            result_statement.setString(2, ipStatus);
+
+            result_statement.setString(3, timestamp);
+
+            result_statement.setString(4, ip);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("data not updated!");
+        }
     }
 
     public static boolean enterMonitorTableData(int id)
@@ -463,6 +516,8 @@ public class UserDAO
                 preparedStatement.setString(3, resultSet.getString(4));
 
                 preparedStatement.setString(4, resultSet.getString(6));
+
+                preparedStatement.setString(5, resultSet.getString(8));
             }
 
             _logger.info("append into monitor table!");
@@ -563,6 +618,37 @@ public class UserDAO
         }
 
         return resultSet;
+    }
+
+    public static String getLinuxDashboardData()
+    {
+        PreparedStatement preparedStatement;
+
+        ResultSet resultSet = null;
+
+        String responseRow = null;
+
+        try
+        {
+            Connection connection = getConnection();
+
+            preparedStatement = connection.prepareStatement(re_query);
+
+            preparedStatement.setString(1, ip);
+
+            resultSet = preparedStatement.executeQuery();
+
+            responseRow = resultSet.getString(7);
+
+        }
+        catch (Exception exception)
+        {
+            _logger.error("not find re discover table data!!", exception);
+
+            resultSet = null;
+        }
+
+        return responseRow;
     }
 }
 
