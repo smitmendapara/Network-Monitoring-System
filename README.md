@@ -36,6 +36,15 @@
 
 -> IOUtils provide utility methods for reading, writing and copying files. The methods work with InputStream, OutputStream, Reader and Writer. 
 
+------------------------------------ Server -------------------------
+
+-> 45.116.206.194
+
+-> 122.170.103.210
+
+-> ssh root@172.16.8.182
+
+-> ssh osboxes@172.16.11.100
 
 ----------------------------------- error -----------------------------------
 
@@ -57,10 +66,16 @@
 
 -> create table TB_DISCOVER(Id int, Name varchar(20), IP varchar(20), Username varchar(20), Password varchar(20), Device varchar(10), Response varchar(300), Status varchar(10));
 
--> create table TB_MONITOR(Id int NOT NULL UNIQUE, IP varchar(20), Profile varchar(20), DeviceType varchar(20))
+-> create table TB_MONITOR(Id int, Name varchar(20), IP varchar(20), Profile varchar(20), DeviceType varchar(10), Response varchar(300), Status varchar(10), CurrentTime varchar(40));
+
+-> create table TB_RESULT(Id int, IP varchar(20), Profile varchar(20), DeviceType varchar(20), Response varchar(300))
 
 -> insert into TB_DISCOVER(Name, IP, Username, Password, Device) values('Test', '127.0.0.1', 'null', 'null', 'Ping'); // for auto increment
 
 -> ALTER TABLE TB_DISCOVER MODIFY COLUMN Id INT auto_increment
 
 -> ALTER TABLE TB_MONITOR ADD Status VARCHAR(10);
+
+-> ALTER TABLE TB_MONITOR ADD CurrentTime DATETIME DEFAULT CURRENT_TIMESTAMP;
+
+-> ALTER TABLE TB_RESULT DROP COLUMN CurrentTime
