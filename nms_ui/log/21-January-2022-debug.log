@@ -1,0 +1,29 @@
+checking connection with 172.16.8.182 and port 22
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is closed for communication!
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is closed for communication!
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+successfully data inserted into tb_discovery & tb_result table!
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22

@@ -1,0 +1,299 @@
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command free
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        8174812     5856024      135996       44212     2182792     1905864
+Swap:       7999484      113964     7885520
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command df -h
+172.16.8.182 - executing command top -H
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command iostat
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	01/29/2022 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           1.67    0.00    1.80    1.04    0.00   95.49
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          8          0
+sda               4.34         5.40       422.35    7504594  586566881
+dm-0              2.13         4.05        13.65    5630209   18962896
+dm-1              0.33         0.13         1.19     175984    1655552
+dm-2              5.40         1.22       407.50    1689396  565948380
+
+
+
+172.16.8.182 - channel is closed for communication!
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22
+checking connection with 172.16.8.182 and port 22
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command free
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        8174812     5866208      125604       43704     2183000     1896112
+Swap:       7999484      114748     7884736
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command df -h
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Filesystem                Size  Used Avail Use% Mounted on
+udev                      3.9G     0  3.9G   0% /dev
+tmpfs                     799M   82M  718M  11% /run
+/dev/mapper/vg0-root       14G  4.6G  8.7G  35% /
+tmpfs                     3.9G     0  3.9G   0% /dev/shm
+tmpfs                     5.0M     0  5.0M   0% /run/lock
+tmpfs                     3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/sda1                 361M   59M  280M  18% /boot
+/dev/mapper/vg0-motadata   39G   12G   25G  33% /motadata
+tmpfs                     799M     0  799M   0% /run/user/0
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command top -H
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command iostat
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	01/29/2022 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           1.67    0.00    1.80    1.04    0.00   95.49
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          8          0
+sda               4.34         5.40       422.36    7506482  586896305
+dm-0              2.13         4.05        13.65    5630209   18971892
+dm-1              0.33         0.13         1.19     175988    1656344
+dm-2              5.40         1.22       407.51    1691280  566268016
+
+
+
+172.16.8.182 - channel is closed for communication!
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command free
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        8174812     5864708      129540       43704     2180564     1897580
+Swap:       7999484      114744     7884740
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command df -h
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Filesystem                Size  Used Avail Use% Mounted on
+udev                      3.9G     0  3.9G   0% /dev
+tmpfs                     799M   82M  717M  11% /run
+/dev/mapper/vg0-root       14G  4.6G  8.7G  35% /
+tmpfs                     3.9G     0  3.9G   0% /dev/shm
+tmpfs                     5.0M     0  5.0M   0% /run/lock
+tmpfs                     3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/sda1                 361M   59M  280M  18% /boot
+/dev/mapper/vg0-motadata   39G   12G   25G  33% /motadata
+tmpfs                     799M     0  799M   0% /run/user/0
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command top -H
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - channel is disconnected!
+172.16.8.182 - executing command iostat
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	01/29/2022 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           1.67    0.00    1.80    1.04    0.00   95.49
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          8          0
+sda               4.34         5.40       422.34    7506482  586950209
+dm-0              2.13         4.05        13.65    5630209   18973868
+dm-1              0.33         0.13         1.19     175988    1656344
+dm-2              5.40         1.22       407.50    1691280  566319944
+
+
+
+172.16.8.182 - channel is closed for communication!
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command free
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        8174812     5872428      139788       42576     2162596     1890976
+Swap:       7999484      116808     7882676
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command df -h
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Filesystem                Size  Used Avail Use% Mounted on
+udev                      3.9G     0  3.9G   0% /dev
+tmpfs                     799M   82M  717M  11% /run
+/dev/mapper/vg0-root       14G  4.6G  8.7G  35% /
+tmpfs                     3.9G     0  3.9G   0% /dev/shm
+tmpfs                     5.0M     0  5.0M   0% /run/lock
+tmpfs                     3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/sda1                 361M   59M  280M  18% /boot
+/dev/mapper/vg0-motadata   39G   12G   25G  33% /motadata
+tmpfs                     799M     0  799M   0% /run/user/0
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command iostat
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	01/29/2022 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           1.67    0.00    1.80    1.04    0.00   95.49
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          8          0
+sda               4.34         5.40       422.36    7506486  587155461
+dm-0              2.13         4.05        13.65    5630209   18979728
+dm-1              0.33         0.13         1.19     175992    1658412
+dm-2              5.40         1.22       407.52    1691280  566517268
+
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - channel is disconnected!
+successfully data inserted into tb_discovery & tb_result table!
+checking connection with 172.16.8.182 and port 22
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - executing command uname -a
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command free
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        8174812     5904996      187496       43592     2082320     1856408
+Swap:       7999484      121024     7878460
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command df -h
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Filesystem                Size  Used Avail Use% Mounted on
+udev                      3.9G     0  3.9G   0% /dev
+tmpfs                     799M   82M  718M  11% /run
+/dev/mapper/vg0-root       14G  4.6G  8.7G  35% /
+tmpfs                     3.9G     0  3.9G   0% /dev/shm
+tmpfs                     5.0M     0  5.0M   0% /run/lock
+tmpfs                     3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/sda1                 361M   59M  280M  18% /boot
+/dev/mapper/vg0-motadata   39G   12G   25G  33% /motadata
+tmpfs                     799M     0  799M   0% /run/user/0
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - executing command iostat
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	01/29/2022 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           1.67    0.00    1.80    1.04    0.00   95.49
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          8          0
+sda               4.34         5.40       422.37    7524534  588750877
+dm-0              2.13         4.05        13.65    5643373   19033640
+dm-1              0.33         0.13         1.20     176108    1669220
+dm-2              5.40         1.22       407.52    1696048  568047964
+
+
+
+172.16.8.182 - channel is closed for communication!
+successfully data inserted into tb_discovery & tb_result table!
