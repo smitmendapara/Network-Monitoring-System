@@ -34,7 +34,11 @@
 
 -> jar file -> h2, google-http-client
 
--> IOUtils provide utility methods for reading, writing and copying files. The methods work with InputStream, OutputStream, Reader and Writer. 
+-> IOUtils provide utility methods for reading, writing and copying files. The methods work with InputStream, OutputStream, Reader and Writer.
+
+-> Date and Calender class used for time in time series bar char
+
+-> TimeStamp class is used for getting current time at a discovery and monitoring.   
 
 ------------------------------------ Server -------------------------
 
@@ -69,6 +73,8 @@
 -> create table TB_MONITOR(Id int, Name varchar(20), IP varchar(20), Profile varchar(20), DeviceType varchar(10), Response varchar(300), Status varchar(10), CurrentTime varchar(40));
 
 -> create table TB_RESULT(Id int, IP varchar(20), Profile varchar(20), DeviceType varchar(20), Response varchar(300))
+
+-> CREATE TABLE TB_DATADUMP(Id int, IP varchar(20), Packet varchar(10), Memory double, Device varchar(20), CurrentTime varchar(40))
 
 -> insert into TB_DISCOVER(Name, IP, Username, Password, Device) values('Test', '127.0.0.1', 'null', 'null', 'Ping'); // for auto increment
 
