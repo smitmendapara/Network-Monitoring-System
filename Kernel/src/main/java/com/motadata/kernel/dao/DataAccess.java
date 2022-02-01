@@ -24,6 +24,8 @@ public class DataAccess
 
     static String re_query = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
 
+    static String dump_insert = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?)";
+
     static String m_update = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
 
     static String d_update = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
@@ -380,7 +382,7 @@ public class DataAccess
 
             result_statement.setString(2, ipStatus);
 
-            result_statement.setString(3, timestamp);
+            result_statement.setString(3, timestamp.substring(0, 16));
 
             result_statement.setString(4, ip);
         }
@@ -477,5 +479,46 @@ public class DataAccess
         }
 
         return result;
+    }
+
+    public static boolean enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time)
+    {
+        boolean status = true;
+
+        Connection connection = null;
+
+        PreparedStatement preparedStatement = null;
+
+        try
+        {
+            connection = _dao.getConnection();
+
+            preparedStatement = connection.prepareStatement(dump_insert);
+
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.setString(2, ip);
+
+            preparedStatement.setString(3, packet);
+
+            preparedStatement.setDouble(4, memory);
+
+            preparedStatement.setString(5, deviceType);
+
+            preparedStatement.setString(6, time.substring(0, 16));
+
+            if (preparedStatement.execute())
+            {
+                return true;
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.error("not inserted data into tb_dataDump!", exception);
+
+            status = false;
+        }
+
+        return status;
     }
 }

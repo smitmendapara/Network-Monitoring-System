@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 
 import java.sql.Timestamp;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class ServiceProvider
@@ -46,6 +47,10 @@ public class ServiceProvider
     private static String ioStat_Output = null;
 
     private static String specificData = null;
+
+    private static String packet = null;
+
+    private static Double memory;
 
     public static int getId() {
         return id;
@@ -141,8 +146,18 @@ public class ServiceProvider
                             {
                                 if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                                 {
-                                    _logger.debug("------- successfully data re-inserted into tb_discovery & tb_result table! --------");
+                                    packet = getReceivedPacket(response);
 
+                                    memory = 0.0;
+
+                                    if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                    {
+                                        _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
+                                    }
+                                    else
+                                    {
+                                        _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
+                                    }
                                 }
                                 else
                                 {
@@ -225,7 +240,18 @@ public class ServiceProvider
                             {
                                 if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                                 {
-                                    _logger.debug("successfully re-inserted into tb_discovery & tb_result table!");
+                                    packet = "0";
+
+                                    memory = getFreeMemoryPercent(specificData);
+
+                                    if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                    {
+                                        _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
+                                    }
+                                    else
+                                    {
+                                        _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
+                                    }
                                 }
 
                                 else
@@ -362,6 +388,30 @@ public class ServiceProvider
         }
 
         return ipStatus;
+    }
+
+    public static Double getFreeMemoryPercent(String linuxResponse)
+    {
+        double free = 0;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            double totalMemory = Double.parseDouble(responseData[3].trim());
+
+            double freeMemory = Double.parseDouble(responseData[5].trim());
+
+            free = (freeMemory / totalMemory) * 100;
+
+            free = Double.parseDouble(new DecimalFormat("##.##").format(free));
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting free memory percent!");
+        }
+
+        return free;
     }
 
     public static String getRTTTime(String subString)
