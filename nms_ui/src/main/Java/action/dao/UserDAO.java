@@ -5,6 +5,9 @@ import action.util.CommonConstantUI;
 import action.util.Logger;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
 
 /**
  * Created by smit on 31/12/21.
@@ -69,7 +72,11 @@ public class UserDAO
 
     static String idQuery = "SELECT * FROM TB_DISCOVER WHERE ID = ?";
 
+    static String findData = "SELECT * FROM TB_MONITOR WHERE ID = ?";
+
     static String m_select = "SELECT * FROM TB_MONITOR";
+
+    static String dump_select = "SELECT * FROM TB_DATADUMP WHERE ID = ? AND CURRENTTIME = ?";
 
     static String m_update = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
 
@@ -307,7 +314,7 @@ public class UserDAO
 
                 discover_statement.setString(7, ipStatus);
 
-                discover_statement.setString(8, timestamp);
+                discover_statement.setString(8, timestamp.substring(0, 16));
 
             }
             if (deviceType.equals("1"))
@@ -326,7 +333,7 @@ public class UserDAO
 
                 discover_statement.setString(7, ipStatus);
 
-                discover_statement.setString(8, timestamp);
+                discover_statement.setString(8, timestamp.substring(0, 16));
             }
 
             if (discover_statement.execute())
@@ -442,7 +449,7 @@ public class UserDAO
 
                     result_statement.setString(6, ipStatus);
 
-                    result_statement.setString(7, timestamp);
+                    result_statement.setString(7, timestamp.substring(0, 16));
                 }
                 else
                 {
@@ -458,7 +465,7 @@ public class UserDAO
 
                     result_statement.setString(6, ipStatus);
 
-                    result_statement.setString(7, timestamp);
+                    result_statement.setString(7, timestamp.substring(0, 16));
                 }
             }
 
@@ -514,7 +521,7 @@ public class UserDAO
 
             result_statement.setString(2, ipStatus);
 
-            result_statement.setString(3, timestamp);
+            result_statement.setString(3, timestamp.substring(0, 16));
 
             result_statement.setString(4, ip);
         }
@@ -531,6 +538,17 @@ public class UserDAO
         try
         {
             Connection connection = getConnection();
+
+            PreparedStatement preparedStatement2 = connection.prepareStatement(findData);
+
+            preparedStatement2.setInt(1, id);
+
+            ResultSet resultSet1 = preparedStatement2.executeQuery();
+
+            if (resultSet1.next())
+            {
+                return false;
+            }
 
             PreparedStatement preparedStatement = connection.prepareStatement(monitor_query);
 
@@ -560,7 +578,7 @@ public class UserDAO
 
                 preparedStatement.setString(8, resultSet.getString(8));
 
-                preparedStatement.setString(9, timestamp.toString());
+                preparedStatement.setString(9, timestamp.toString().substring(0, 16));
             }
 
             _logger.info("append into monitor table!");
@@ -580,6 +598,7 @@ public class UserDAO
 
         return result;
     }
+
     public static boolean deleteDiscoverTableData(int idAttribute)
     {
         boolean status = true;
@@ -695,6 +714,76 @@ public class UserDAO
         }
 
         return responseRow;
+    }
+
+    public static String getUpdatedPacket(int id, String ip, String time)
+    {
+        String packet = null;
+
+        PreparedStatement preparedStatement = null;
+
+        Connection connection = null;
+
+        try
+        {
+            connection = getConnection();
+
+            preparedStatement = connection.prepareStatement(dump_select);
+
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.setString(2, time);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                packet = resultSet.getString(3);
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting updated packet!");
+        }
+
+        return packet;
+    }
+
+    public static Double getUpdatedMemory(int id, String ip, String time)
+    {
+        Double memoryPercent = null;
+
+        PreparedStatement preparedStatement = null;
+
+        Connection connection = null;
+
+        ResultSet resultSet;
+
+        try
+        {
+            connection = getConnection();
+
+            preparedStatement = connection.prepareStatement(dump_select);
+
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.setString(2, time);
+
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                memoryPercent = resultSet.getDouble(4);
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting updated memory!");
+        }
+
+        return memoryPercent;
     }
 }
 

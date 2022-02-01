@@ -8,7 +8,10 @@ import action.util.SSHConnectionUtil;
 import java.io.File;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -16,7 +19,7 @@ import java.util.Date;
  */
 public class Test
 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 
 
 //        String string = "[Linux, ubuntu, x86_64, 8174812, 5872428, 139788, 4.4.0-131-generic, GNU/Linux, 7999484, 116808, 7882676, 33, 1.67, 1.80]";
@@ -35,16 +38,37 @@ public class Test
 
 //        System.out.println(new Date().getMinutes());
 
+        String str = "2022-02-01 15:08:47.313";
 
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Date d = new Date();
 
-        String time = timestamp.toString().substring(0, 19);
+        String substring = str.substring(0, 16);
+        System.out.println(substring);
 
-        int val = Integer.parseInt(time.substring(14, 16)) + 5;
 
-        System.out.println(time);
+//
+//        java.util.Date date
+//
+//        System.out.println(date);
 
-        System.out.println(time.replace(time.substring(14, 16), String.valueOf(val)));
+        System.out.println(d);
+
+
+
+
+
+        System.out.println();
+
+
+//        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//
+//        String time = timestamp.toString().substring(0, 19);
+//
+//        int val = Integer.parseInt(time.substring(14, 16)) + 5;
+//
+//        System.out.println(time);
+//
+//        System.out.println(time.replace(time.substring(14, 16), String.valueOf(val)));
 
 //        String str = "--- 172.161.11.112 ping statistics ---4 packets transmitted, 0 received, 100% packet loss, time 3061ms";
 //        String str1= "--- 127.0.0.1 ping statistics ---4 packets transmitted, 4 received, 0% packet loss, time 3051msrtt min/avg/max/mdev = 0.020/0.053/0.067/0.021 ms";

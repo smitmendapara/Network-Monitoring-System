@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
@@ -379,6 +380,250 @@ public class ServiceProvider
         return ipStatus;
     }
 
+    public static Double getFreeMemoryPercent(String linuxResponse)
+    {
+        double free = 0;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            double totalMemory = Double.parseDouble(responseData[3].trim());
+
+            double freeMemory = Double.parseDouble(responseData[5].trim());
+
+            free = (freeMemory / totalMemory) * 100;
+
+            free = Double.parseDouble(new DecimalFormat("##.##").format(free));
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting free memory percent!");
+        }
+
+        return free;
+    }
+
+    public static Double getUsedMemoryPercent(String linuxResponse)
+    {
+        double used = 0;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            double totalMemory = Double.parseDouble(responseData[3].trim());
+
+            double usedMemory = Double.parseDouble(responseData[4].trim());
+
+            used = (usedMemory / totalMemory) * 100;
+
+            used = Double.parseDouble(new DecimalFormat("##.##").format(used));
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting used memory percent!");
+        }
+
+        return used;
+    }
+
+    public static Double getFreeSwapPercent(String linuxResponse)
+    {
+        double free = 0;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            double totalSwap = Double.parseDouble(responseData[8].trim());
+
+            double freeSwap = Double.parseDouble(responseData[10].trim());
+
+            free = (freeSwap / totalSwap) * 100;
+
+            free = Double.parseDouble(new DecimalFormat("##.##").format(free));
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting used swap percent!");
+        }
+
+        return free;
+    }
+
+    public static Double getUsedSwapPercent(String linuxResponse)
+    {
+        double used = 0;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            double totalSwap = Double.parseDouble(responseData[8].trim());
+
+            double usedSwap = Double.parseDouble(responseData[9].trim());
+
+            used = (usedSwap / totalSwap) * 100;
+
+            used = Double.parseDouble(new DecimalFormat("##.##").format(used));
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting used swap percent!");
+        }
+
+        return used;
+    }
+
+    public static String getOSVersion(String linuxResponse)
+    {
+        String OSVersion = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            OSVersion = responseData[6].trim();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting os version!");
+        }
+
+        return OSVersion;
+    }
+
+    public static String getCPUType(String linuxResponse)
+    {
+        String CPUType = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            CPUType = responseData[2].trim();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting cpu type!");
+        }
+
+        return CPUType;
+    }
+
+    public static String getSystemName(String linuxResponse)
+    {
+        String systemName = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            systemName = responseData[1].trim();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting system name!");
+        }
+
+        return systemName;
+    }
+
+    public static String getOSName(String linuxResponse)
+    {
+        String OS_Name = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            OS_Name = responseData[7].trim();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting os name!");
+        }
+
+        return OS_Name;
+    }
+
+    public static StringBuffer getDeviceType(String linuxResponse)
+    {
+        StringBuffer Device_Type = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            Device_Type = new StringBuffer(responseData[0].trim());
+
+            Device_Type = Device_Type.deleteCharAt(0);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting device type!");
+        }
+
+        return Device_Type;
+    }
+
+    public static StringBuffer getSystemCPUPercent(String linuxResponse)
+    {
+        StringBuffer CPU_System = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            CPU_System = new StringBuffer(responseData[13].trim());
+
+            CPU_System = CPU_System.deleteCharAt(CPU_System.length() - 1);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting system cpu!");
+        }
+
+        return CPU_System;
+    }
+
+    public static String getUserCPUPercent(String linuxResponse)
+    {
+        String CPU_USer = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            CPU_USer = responseData[12].trim();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting user cpu!");
+        }
+
+        return CPU_USer;
+    }
+
+    public static String getDiskPercent(String linuxResponse)
+    {
+        String disk = null;
+
+        try
+        {
+            String[] responseData = linuxResponse.split(",");
+
+            disk = responseData[11].trim();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("error on getting disk!");
+        }
+
+        return disk;
+    }
+
     public static String getRTTTime(String subString)
     {
         String rttTime = "0";
@@ -473,8 +718,6 @@ public class ServiceProvider
 
         return packet;
     }
-
-
 
     private static void setRediscoverProperties(ResultSet resultSet)
     {

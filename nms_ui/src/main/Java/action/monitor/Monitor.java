@@ -11,6 +11,8 @@ public class Monitor extends ActionSupport
 {
     int id;
 
+    public static boolean flag;
+
     UserDAO _dao = new UserDAO();
 
     public int getId() {
@@ -45,6 +47,8 @@ public class Monitor extends ActionSupport
         }
         else
         {
+            this.flag = false;
+
             return "error";
         }
     }
