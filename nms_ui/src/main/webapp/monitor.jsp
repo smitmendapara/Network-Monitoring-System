@@ -1,6 +1,7 @@
 <%@ page import="java.sql.ResultSet" %>
 
 <%@ page import="action.dao.UserDAO" %>
+<%@ page import="action.monitor.Monitor" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -25,6 +26,7 @@
     <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 
     <script src="js/index.js"></script>
+
 
     <br/>
 
@@ -89,9 +91,9 @@
 
                                 <td><%=id %></td>
 
-                                <%--<td><%=ip %>&nbsp;&nbsp;&nbsp;&nbsp;<a href="dashboard" onclick="showDashboard('<%=id %>', '<%=ip %>')" target="_blank"><i class="bi bi-box-arrow-up-right monitor__icon"></i></a></td>--%>
+                                <%--<td><%=ip %>&nbsp;&nbsp;&nbsp;&nbsp;<a href="dashboard" onclick="showDashboard('<%=id %>', '<%=ip %>', '<%=deviceType%>')" target="_blank"><i class="bi bi-box-arrow-up-right monitor__icon"></i></a></td>--%>
 
-                                <td><%=ip %>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="showDashboard('<%=id %>', '<%=ip %>', '<%=deviceType%>')" target="_blank"><i class="bi bi-box-arrow-up-right monitor__icon"></i></button></td>
+                                <td><%=ip %>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" target="_blank" onclick="showDashboard('<%=id %>', '<%=ip %>', '<%=deviceType%>')"><i class="bi bi-box-arrow-up-right monitor__icon"></i></button></td>
 
                                 <td><%=resultSet.getString(3) %></td>
 
@@ -113,4 +115,7 @@
             </table>
 
         </div>
+
+
+
 

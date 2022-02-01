@@ -7,8 +7,16 @@
 <%@ page import="static action.helper.ServiceProvider.getPacketLoss" %>
 
 <%@ page import="static action.helper.ServiceProvider.getReceivedPacket" %>
+
 <%@ page import="static action.helper.ServiceProvider.*" %>
+
 <%@ page import="java.util.Calendar" %>
+
+<%@ page import="java.text.SimpleDateFormat" %>
+
+<%@ page import="java.util.Date" %>
+
+<%@ page import="static action.dao.UserDAO.getUpdatedPacket" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -35,8 +43,6 @@
     <%-- chart library --%>
 
     <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
-    <%--<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>--%>
 
     <%-- jQuery library --%>
 
@@ -254,9 +260,13 @@
                                {
                                    ResultSet resultSet = UserDAO.getDashboardData();
 
+                                   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+                                   Date date = new Date();
+
                                    Calendar currentTime = Calendar.getInstance();
 
-
+                                   currentTime.setTime(date);
 
                                    while (resultSet.next())
                                    {
@@ -264,19 +274,22 @@
 
                                        String Response = resultSet.getString(7);
 
-                                       String ipStatus = resultSet.getString(8);
+                                       int id = resultSet.getInt(1);
 
-                                       String timestamp = resultSet.getString(9);
+                                       String time = resultSet.getString(9);
+
+                                       String time1 = dateFormat.format(date);
+
                         %>
 
 
                         axisY: {
-                            title: "Packet"
+                            title: "Received Packet"
                         },
 
                         axisX: {
                             valueFormatString: "##",
-                            title: "Minute Interval"
+                            title: "Minutes Interval"
                         },
 
                         data: [
@@ -286,36 +299,79 @@
 
                                 dataPoints: [
 
-                                    { label: "<%=currentTime.getTime() %>", y: <%=getReceivedPacket(Response)%> },
+                                    { label: "<%=time1%>", y: <%=getReceivedPacket(Response) %> },
+
+                                    <%
+                                        currentTime.add(Calendar.MINUTE, -5);
+
+                                        Date secondTime = currentTime.getTime();
+
+                                        String time2 = dateFormat.format(secondTime);
+
+                                    %>
+
+                                    { label: "<%=time2 %>", y: <%=getUpdatedPacket(id, IP, time2) %> },
 
                                     <%
 
                                         currentTime.add(Calendar.MINUTE, -5);
+
+                                        Date thirdTime = currentTime.getTime();
+
+                                        String time3 = dateFormat.format(thirdTime);
                                     %>
 
-                                    { label: "<%=currentTime.getTime() %>", y: <%=getReceivedPacket(Response)%> },
+                                    { label: "<%=time3 %>", y: <%=getUpdatedPacket(id, IP, time3) %> },
 
                                     <%
-
                                         currentTime.add(Calendar.MINUTE, -5);
+
+                                        Date fourthTime = currentTime.getTime();
+
+                                        String time4 = dateFormat.format(fourthTime);
                                     %>
 
-                                    { label: "<%=currentTime.getTime() %>", y: <%=getReceivedPacket(Response)%> },
+                                    { label: "<%=time4 %>", y: <%=getUpdatedPacket(id, IP, time4) %> },
 
                                     <%
-
                                         currentTime.add(Calendar.MINUTE, -5);
+
+                                        Date fifthTime = currentTime.getTime();
+
+                                        String time5 = dateFormat.format(fifthTime);
                                     %>
 
-                                    { label: "<%=currentTime.getTime() %>", y: <%=getReceivedPacket(Response)%> },
+                                    { label: "<%=time5 %>", y: <%=getUpdatedPacket(id, IP, time5) %> },
 
                                     <%
-
                                         currentTime.add(Calendar.MINUTE, -5);
+
+                                        Date sixthTime = currentTime.getTime();
+
+                                        String time6 = dateFormat.format(sixthTime);
                                     %>
 
-                                    { label: "<%=currentTime.getTime() %>", y: 1 },
+                                    { label: "<%=time6 %>", y: <%=getUpdatedPacket(id, IP, time6) %> },
 
+                                    <%
+                                        currentTime.add(Calendar.MINUTE, -5);
+
+                                        Date sevenTime = currentTime.getTime();
+
+                                        String time7 = dateFormat.format(sevenTime);
+                                    %>
+
+                                    { label: "<%=time7 %>", y: <%=getUpdatedPacket(id, IP, time7) %> },
+
+                                    <%
+                                        currentTime.add(Calendar.MINUTE, -5);
+
+                                        Date eightTime = currentTime.getTime();
+
+                                        String time8 = dateFormat.format(eightTime);
+                                    %>
+
+                                    { label: "<%=time8 %>", y: 1 },
 
                                 ],
                             }
@@ -347,7 +403,7 @@
                         <%-- dougnut chart --%>
                         <td class="dash__firstRow">
 
-                            <div id="dougnutChart" style="height: 270px; width: 100%;"></div>
+                            <div id="dougnutChart" style="height: 270px;"></div>
 
                         </td>
 
@@ -590,6 +646,3 @@
         </div>
 
     </body>
-
-
-

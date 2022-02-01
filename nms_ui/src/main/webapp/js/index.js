@@ -199,43 +199,51 @@ function showForm(idName1, id) {
 
 // show monitor table data
 
-function monitorData(idName) {
-
-    if (document.getElementById(idName).checked)
-    {
-        // var hideId = (this).closest('tr').attr('td');
-
-        var key = $("input[name=key]").val();
-
-        $.ajax({
-
-            type : "POST",
-
-            cache : false,
-
-            timeout : 180000,
-
-            async : true,
-
-            url : "monitorData.action",
-
-            data : "id=" + key,
-
-            success : function (data) {
-
-                alert("successfully monitored!");
-            },
-            error : function () {
-
-                alert("something went wrong!");
-            }
-        });
-    }
-    else
-    {
-        alert("must be checked checkbox!");
-    }
-}
+// function monitorData(idName, flag) {
+//
+//     if (document.getElementById(idName).checked)
+//     {
+//         // var hideId = (this).closest('tr').attr('td');
+//
+//         var key = $("input[name=key]").val();
+//
+//         $.ajax({
+//
+//             type : "POST",
+//
+//             cache : false,
+//
+//             timeout : 180000,
+//
+//             async : true,
+//
+//             url : "monitorData.action",
+//
+//             data : "id=" + key,
+//
+//             success : function (data) {
+//
+//                 if (flag)
+//                 {
+//                     alert("successfully monitored!");
+//                 }
+//                 else
+//                 {
+//                     alert("ip is already exist!");
+//                 }
+//
+//             },
+//             error : function () {
+//
+//                 alert("something went wrong!");
+//             }
+//         });
+//     }
+//     else
+//     {
+//         alert("must be checked checkbox!");
+//     }
+// }
 
 // show dashboard
 

@@ -7,6 +7,7 @@
 <%@ page import="java.sql.ResultSet" %>
 
 <%@ page import="java.util.HashMap" %>
+<%@ page import="action.monitor.Monitor" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -317,6 +318,62 @@
                     </div>
 
                 </form>
+
+            <script>
+
+                function monitorData(idName) {
+
+                    if (document.getElementById(idName).checked)
+                    {
+                        // var hideId = (this).closest('tr').attr('td');
+
+                        var key = $("input[name=key]").val();
+
+                        $.ajax({
+
+                            type : "POST",
+
+                            cache : false,
+
+                            timeout : 180000,
+
+                            async : true,
+
+                            url : "monitorData.action",
+
+                            data : "id=" + key,
+
+                            success : function (data) {
+
+                                <%
+
+                                     boolean flag = Monitor.flag;
+
+                                %>
+
+                                if (<%=flag %>)
+                                {
+                                    alert("successfully monitored!");
+                                }
+                                else
+                                {
+                                    alert("ip is already exist!");
+                                }
+
+                            },
+                            error : function () {
+
+                                alert("something went wrong!");
+                            }
+                        });
+                    }
+                    else
+                    {
+                        alert("must be checked checkbox!");
+                    }
+                }
+
+            </script>
 
             </div>
 
