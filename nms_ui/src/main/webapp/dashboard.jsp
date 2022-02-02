@@ -101,7 +101,7 @@
 
                     <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
 
-                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" onclick="reDiscoverData('<%=IP %>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
+                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" onclick="getPolling('<%=IP %>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
 
                 </tr>
 

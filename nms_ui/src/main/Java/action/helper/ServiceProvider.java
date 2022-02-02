@@ -182,6 +182,8 @@ public class ServiceProvider
             {
                 Timestamp timestamp = null;
 
+                SSHConnectionUtil sshConnectionUtil = null;
+
                 try
                 {
                     ResultSet resultSet = UserDAO.getReDiscoveryData(ip);
@@ -193,7 +195,7 @@ public class ServiceProvider
                         setRediscoverProperties(resultSet);
                     }
 
-                    SSHConnectionUtil sshConnectionUtil = SSHConnectionUtil.getNewSSHObject(ip, 22, discoveryUsername, discoveryPassword, 30);
+                    sshConnectionUtil = SSHConnectionUtil.getNewSSHObject(ip, 22, discoveryUsername, discoveryPassword, 30);
 
                     if(sshConnectionUtil != null)
                     {
@@ -268,6 +270,21 @@ public class ServiceProvider
                     _logger.error("something went wrong on linux discovery verify side!", exception);
 
                     status = false;
+                }
+                finally
+                {
+                    try
+                    {
+                        if (sshConnectionUtil != null)
+                        {
+                            sshConnectionUtil.destroy();
+                        }
+
+                    }
+                    catch (Exception exception)
+                    {
+
+                    }
                 }
 
                 return status;

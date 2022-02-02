@@ -1,12 +1,7 @@
-<%@ page import="java.sql.Statement" %>
-
 <%@ page import="action.dao.UserDAO" %>
-
-<%@ page import="java.sql.Connection" %>
 
 <%@ page import="java.sql.ResultSet" %>
 
-<%@ page import="java.util.HashMap" %>
 <%@ page import="action.monitor.Monitor" %>
 
 <%--
@@ -287,7 +282,7 @@
                                         {
                                 %>
 
-                                <%=map%>
+                                <%=map %>
 
                                 <%
                                         }
@@ -319,63 +314,65 @@
 
                 </form>
 
-            <script>
+        </div>
 
-                function monitorData(idName) {
+        <script>
 
-                    if (document.getElementById(idName).checked)
-                    {
-                        // var hideId = (this).closest('tr').attr('td');
+            function monitorData(idName) {
 
-                        var key = $("input[name=key]").val();
+                if (document.getElementById(idName).checked)
+                {
+                    // var hideId = (this).closest('tr').attr('td');
 
-                        $.ajax({
+                    var key = $("input[name=key]").val();
 
-                            type : "POST",
+                    $.ajax({
 
-                            cache : false,
+                        type : "POST",
 
-                            timeout : 180000,
+                        cache : false,
 
-                            async : true,
+                        timeout : 180000,
 
-                            url : "monitorData.action",
+                        async : true,
 
-                            data : "id=" + key,
+                        url : "monitorData.action",
 
-                            success : function (data) {
+                        data : "id=" + key,
 
-                                <%
+                        success : function (data) {
 
-                                     boolean flag = Monitor.flag;
+                            <%
 
-                                %>
+                                 boolean flag = Monitor.flag;
 
-                                if (<%=flag %>)
-                                {
-                                    alert("successfully monitored!");
-                                }
-                                else
-                                {
-                                    alert("ip is already exist!");
-                                }
+                            %>
 
-                            },
-                            error : function () {
-
-                                alert("something went wrong!");
+                            if (<%=flag %>)
+                            {
+                                alert("successfully monitored!");
                             }
-                        });
-                    }
-                    else
-                    {
-                        alert("must be checked checkbox!");
-                    }
+                            else
+                            {
+                                alert("ip is already exist!");
+                            }
+
+                        },
+                        error : function () {
+
+                            alert("something went wrong!");
+                        }
+                    });
                 }
+                else
+                {
+                    alert("must be checked checkbox!");
+                }
+            }
 
-            </script>
+        </script>
 
-            </div>
+
 
     </div>
 

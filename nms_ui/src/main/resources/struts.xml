@@ -118,7 +118,9 @@
 
         <action name="dashboard">
 
-            <result>dashboard.jsp</result>
+            <result name="success">dashboard.jsp</result>
+
+            <result name="error">linux_dashboard.jsp</result>
 
         </action>
 

@@ -27,17 +27,18 @@ function closeForm(idName) {
 }
 
 $(document).ready(function() {
+
     $('.clickable').click(function () {
+
         $('#newData').load(window.location.href);
+
     })
     $('.change').click(function () {
-        $('#mainTable').load(window.location.href)
+
+        $('#mainTable').load(window.location.href);
+
     })
 });
-
-// create pie chart
-
-
 
 // show discovery form
 
@@ -116,6 +117,33 @@ function reDiscoverData(ip) {
     refreshPage();
 }
 
+function getPolling(ip) {
+
+    $.ajax({
+
+        type : "POST",
+
+        cache : false,
+
+        timeout : 180000,
+
+        async : true,
+
+        url : "",
+
+        data : "ip=" + ip,
+
+        success : function (data) {
+
+            alert("discovery successfully completed!");
+        },
+        error : function () {
+
+            alert("discovery not completed!");
+        }
+    });
+}
+
 // toggle discovery table
 
 function toggleTable() {
@@ -152,11 +180,11 @@ function deleteRow(idAttribute) {
 
         success : function (data) {
 
-            console.log("successfully row deleted!");
+            alert("successfully row deleted!");
         },
         error : function () {
 
-            console.log("still row not deleted!");
+            alert("still row not deleted!");
         }
     });
 
@@ -196,54 +224,6 @@ function showForm(idName1, id) {
 
     refreshPage();
 }
-
-// show monitor table data
-
-// function monitorData(idName, flag) {
-//
-//     if (document.getElementById(idName).checked)
-//     {
-//         // var hideId = (this).closest('tr').attr('td');
-//
-//         var key = $("input[name=key]").val();
-//
-//         $.ajax({
-//
-//             type : "POST",
-//
-//             cache : false,
-//
-//             timeout : 180000,
-//
-//             async : true,
-//
-//             url : "monitorData.action",
-//
-//             data : "id=" + key,
-//
-//             success : function (data) {
-//
-//                 if (flag)
-//                 {
-//                     alert("successfully monitored!");
-//                 }
-//                 else
-//                 {
-//                     alert("ip is already exist!");
-//                 }
-//
-//             },
-//             error : function () {
-//
-//                 alert("something went wrong!");
-//             }
-//         });
-//     }
-//     else
-//     {
-//         alert("must be checked checkbox!");
-//     }
-// }
 
 // show dashboard
 
@@ -286,7 +266,6 @@ function showDashboard(id, ip, deviceType) {
 
 
 
-
 // currently unused or not working
 
 function startLoader() {
@@ -310,12 +289,10 @@ function showMessage() {
 }
 
 $(document).ready(function() {
+
     $('#new').click(function() {
+
         $('#discoveryForm').fadeIn(6000);
+
     });
 });
-
-// function addClassByClick() {
-//
-//     $('.in').addClass('active');
-// }

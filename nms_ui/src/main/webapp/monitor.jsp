@@ -1,7 +1,6 @@
 <%@ page import="java.sql.ResultSet" %>
 
 <%@ page import="action.dao.UserDAO" %>
-<%@ page import="action.monitor.Monitor" %>
 
 <%--
   Created by IntelliJ IDEA.
