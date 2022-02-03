@@ -1,3 +1,5 @@
+---------------------------------------------------------------- Work Flow -----------------------------------------------------------------------
+
 -> one ui & maven project
 
 -> In the ui project I created one jsp file and also web.xml and struts-congif.xml file for mapping with jetty or tomcat configuration.
@@ -40,7 +42,7 @@
 
 -> TimeStamp class is used for getting current time at a discovery and monitoring.   
 
------------------------------------- Server -------------------------
+------------------------------------------------------- Server -------------------------------------------------------
 
 -> 45.116.206.194
 
@@ -50,7 +52,17 @@
 
 -> ssh osboxes@172.16.11.100
 
------------------------------------ error -----------------------------------
+-------------------------------------------------------- Linux Command ------------------------------------------------------
+
+-> free - memory data
+
+-> iostat - cpu data
+
+-> df -h - disk data
+
+-> top -H - thread data
+
+---------------------------------------------------------- Error ------------------------------------------------------------------
 
 -> type cast error can not be converted into ArrayList of HashMap (change data type)
 
@@ -64,7 +76,11 @@
 
 -> The Channel.connect() call usually returns in under 100 ms, but when this error ocurrs the call hangs for more than 20 seconds before throwing the exception. (timeout : 30)
 
------------------------------------------------- SQL Queries --------------------------------------------
+-> socket not established (vpn is not connected either ssh is now working in terminal)
+
+-> null pointer exception (method parameter take null value at a calling time)
+
+------------------------------------------------------------------ SQL Queries --------------------------------------------------------
 
 -> CREATE TABLE TB_MONITOR(ip varchar(20), response varchar(20), username varchar(20), password varchar(20), device varchar(20));
 
@@ -72,16 +88,22 @@
 
 -> create table TB_MONITOR(Id int, Name varchar(20), IP varchar(20), Profile varchar(20), DeviceType varchar(10), Response varchar(300), Status varchar(10), CurrentTime varchar(40));
 
--> create table TB_RESULT(Id int, IP varchar(20), Profile varchar(20), DeviceType varchar(20), Response varchar(300))
+-> create table TB_RESULT(Id int, IP varchar(20), Profile varchar(20), DeviceType varchar(20), Response varchar(300));
 
--> CREATE TABLE TB_DATADUMP(Id int, IP varchar(20), Packet varchar(10), Memory double, Device varchar(20), CurrentTime varchar(40))
+-> INSERT INTO TB_MONITOR VALUES (30, 'Trial', '127.0.0.1234', 'admin', 'admin', 'Linux', '[Linux, ubuntu, x86_64, 8174812, 4935904, 1205740, 4.4.0-131-generic, GNU/Linux, 7999484, 109220, 7890264, 31, 
+
+   1.70, 1.87]', 'Up', '2022-02-02 19:05');
+
+-> CREATE TABLE TB_DATADUMP(Id int, IP varchar(20), Packet varchar(10), Memory double, Device varchar(20), CurrentTime varchar(40));
 
 -> insert into TB_DISCOVER(Name, IP, Username, Password, Device) values('Test', '127.0.0.1', 'null', 'null', 'Ping'); // for auto increment
 
--> ALTER TABLE TB_DISCOVER MODIFY COLUMN Id INT auto_increment
+-> ALTER TABLE TB_DISCOVER MODIFY COLUMN Id INT auto_increment;
 
 -> ALTER TABLE TB_MONITOR ADD Status VARCHAR(10);
 
 -> ALTER TABLE TB_MONITOR ADD CurrentTime DATETIME DEFAULT CURRENT_TIMESTAMP;
 
--> ALTER TABLE TB_RESULT DROP COLUMN CurrentTime
+-> ALTER TABLE TB_RESULT DROP COLUMN CurrentTime;
+
+-> DELETE FROM TB_DATADUMP LIMIT 500;
