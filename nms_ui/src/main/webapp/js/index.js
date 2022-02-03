@@ -117,7 +117,7 @@ function reDiscoverData(ip) {
     refreshPage();
 }
 
-function getPolling(ip) {
+function getPolling(id, ip, device) {
 
     $.ajax({
 
@@ -129,13 +129,20 @@ function getPolling(ip) {
 
         async : true,
 
-        url : "",
+        url : "monitorPolling.action",
 
-        data : "ip=" + ip,
+        data : "id=" + id + "&ip=" + ip,
 
         success : function (data) {
 
-            alert("discovery successfully completed!");
+            if (device == 'Ping')
+            {
+                window.location.href = "dashboard.jsp";
+            }
+            else
+            {
+                window.location.href = "linux_dashboard.jsp";
+            }
         },
         error : function () {
 

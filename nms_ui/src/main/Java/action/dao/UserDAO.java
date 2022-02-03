@@ -5,24 +5,74 @@ import action.util.CommonConstantUI;
 import action.util.Logger;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Date;
 
-/**
- * Created by smit on 31/12/21.
- */
 public class UserDAO
 {
-    private static int newId;
+    private static int id;
 
     private static String ip;
 
-    static String URL = CommonConstantUI.DATABASE_URL;
 
-    static String USER = "motadata";
+    private static String DATABASE_URL = CommonConstantUI.DATABASE_URL;
 
-    static String PASS = "motadata";
+    private static String DATABASE_USERNAME = CommonConstantUI.DATABASE_USERNAME;
+
+    private static String DATABASE_PASSWORD = CommonConstantUI.DATABASE_PASSWORD;
+
+
+    private static String selectUser = "SELECT * FROM TB_USER WHERE USER = ? AND PASSWORD = ?";
+
+    private static String selectColumnDiscover = "SELECT ID, NAME, IP FROM TB_DISCOVER";
+
+    private static String selectDiscover = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
+
+    private static String selectIdDiscover = "SELECT ID FROM TB_DISCOVER WHERE IP = ?";
+
+    private static String selectColumnResult = "SELECT ID, IP, PROFILE, DEVICETYPE FROM TB_RESULT";
+
+    private static String selectColumnMonitor = "SELECT * FROM TB_MONITOR WHERE IP = ?";
+
+    private static String selectMonitor = "SELECT * FROM TB_MONITOR";
+
+    private static String selectDataDump = "SELECT * FROM TB_DATADUMP WHERE ID = ? AND CURRENTTIME = ?";
+
+
+    private static String insertUser = "INSERT INTO TB_USER(USER, PASSWORD) VALUES(?, ?)";
+
+    private static String insertDiscover = "INSERT INTO TB_DISCOVER(NAME, IP, USERNAME, PASSWORD, DEVICE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private static String insertResult = "INSERT INTO TB_RESULT(ID, IP, PROFILE, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+    private static String insertMonitor = "INSERT INTO TB_MONITOR(ID, NAME, IP, PROFILE, PASSWORD, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?)";
+
+
+    private static String updateDiscover = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+
+    private static String updateMonitor = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+
+    private static String updateResult = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+
+
+    private static String deleteDiscover = "DELETE FROM TB_DISCOVER WHERE ID = ?";
+
+    private static String idQuery = "SELECT * FROM TB_DISCOVER WHERE ID = ?";
+
+    private static String findData = "SELECT * FROM TB_MONITOR WHERE ID = ?";
+
+    private static Connection connection = null;
+
+    public int getNewId()
+    {
+        return this.id;
+    }
+
+    public void setNewId(int id)
+    {
+        this.id = id;
+    }
+
 
     public UserDAO()
     {
@@ -31,68 +81,23 @@ public class UserDAO
 
     public UserDAO(int id, String ip)
     {
-        this.newId = id;
+        this.id = id;
 
         this.ip = ip;
     }
 
-    public int getNewId()
-    {
-        return this.newId;
-    }
-
-    public void setNewId(int id)
-    {
-        this.newId = id;
-    }
 
     private static final Logger _logger = new Logger();
 
     private static final UserDAO _dao = new UserDAO();
 
-    static String select_query = "SELECT * FROM TB_USER WHERE USER = ? AND PASSWORD = ?";
-
-    static String tableInsert_query = "SELECT ID, NAME, IP FROM TB_DISCOVER";
-
-    static String re_query = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
-
-    static String insert_query = "INSERT INTO TB_USER(USER, PASSWORD) VALUES(?, ?)";
-
-    static String result_query = "INSERT INTO TB_RESULT(ID, IP, PROFILE, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?)";
-
-    static String discover_query = "INSERT INTO TB_DISCOVER(NAME, IP, USERNAME, PASSWORD, DEVICE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-
-    static String query = "SELECT ID, IP, PROFILE, DEVICETYPE FROM TB_RESULT";
-
-    static String Id_query = "SELECT ID FROM TB_DISCOVER WHERE IP = ?";
-
-    static String delete_query = "DELETE FROM TB_DISCOVER WHERE ID = ?";
-
-    static String monitor_query = "INSERT INTO TB_MONITOR(ID, NAME, IP, PROFILE, PASSWORD, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    static String idQuery = "SELECT * FROM TB_DISCOVER WHERE ID = ?";
-
-    static String findData = "SELECT * FROM TB_MONITOR WHERE ID = ?";
-
-    static String m_select = "SELECT * FROM TB_MONITOR";
-
-    static String dump_select = "SELECT * FROM TB_DATADUMP WHERE ID = ? AND CURRENTTIME = ?";
-
-    static String m_update = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
-
-    static String d_update = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
-
-    static String r_update = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
-
-    private static Connection getConnection()
+    private Connection getConnection()
     {
-        Connection connection = null;
-
         try
         {
             Class.forName("org.h2.Driver");
 
-            connection = DriverManager.getConnection(URL, USER, PASS);
+            connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
 
             return connection;
         }
@@ -114,11 +119,11 @@ public class UserDAO
 
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
             statement = connection.createStatement();
 
-            resultSet = statement.executeQuery(query + " WHERE ID=" + _dao.getNewId());
+            resultSet = statement.executeQuery(selectColumnResult + " WHERE ID = " + _dao.getNewId());
 
             while (resultSet.next())
             {
@@ -165,11 +170,11 @@ public class UserDAO
 
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
             statement = connection.createStatement();
 
-            resultSet = statement.executeQuery(tableInsert_query);
+            resultSet = statement.executeQuery(selectColumnDiscover);
 
             return resultSet;
         }
@@ -189,11 +194,11 @@ public class UserDAO
 
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
             statement = connection.createStatement();
 
-            resultSet = statement.executeQuery(m_select);
+            resultSet = statement.executeQuery(selectMonitor);
 
             return resultSet;
         }
@@ -215,9 +220,9 @@ public class UserDAO
         {
             Class.forName("org.h2.Driver");
 
-            Connection connection = DriverManager.getConnection(URL, USER, PASS);
+            connection = _dao.getConnection();
 
-            statement = connection.prepareStatement(select_query);
+            statement = connection.prepareStatement(selectUser);
 
             statement.setString(1, username);
 
@@ -256,24 +261,26 @@ public class UserDAO
     {
         boolean status = true;
 
+        PreparedStatement preparedStatement = null;
+
         try
         {
             Class.forName("org.h2.Driver");
 
-            Connection connection = DriverManager.getConnection(URL, USER, PASS);
+            connection = _dao.getConnection();
 
-            PreparedStatement statement = connection.prepareStatement(insert_query);
+            preparedStatement = connection.prepareStatement(insertUser);
 
-            statement.setString(1, username);
+            preparedStatement.setString(1, username);
 
-            statement.setString(2, password);
+            preparedStatement.setString(2, password);
 
-            if (statement.execute())
+            if (preparedStatement.execute())
             {
                 return true;
             }
 
-            statement.close();
+            preparedStatement.close();
 
         }
         catch (Exception exception)
@@ -294,9 +301,9 @@ public class UserDAO
         {
             Class.forName("org.h2.Driver");
 
-            Connection connection = DriverManager.getConnection(URL, USER, PASS);
+            connection = _dao.getConnection();
 
-            PreparedStatement discover_statement = connection.prepareStatement(discover_query);
+            PreparedStatement discover_statement = connection.prepareStatement(insertDiscover);
 
             if (deviceType.equals("0"))
             {
@@ -366,9 +373,9 @@ public class UserDAO
         {
             Class.forName("org.h2.Driver");
 
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(m_update);
+            preparedStatement = connection.prepareStatement(updateMonitor);
 
             updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
@@ -395,9 +402,9 @@ public class UserDAO
         {
             Class.forName("org.h2.Driver");
 
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
-            PreparedStatement preparedStatement = connection.prepareStatement(d_update);
+            PreparedStatement preparedStatement = connection.prepareStatement(updateDiscover);
 
             updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
@@ -423,15 +430,15 @@ public class UserDAO
 
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
-            PreparedStatement preparedStatement = connection.prepareStatement(Id_query);
+            PreparedStatement preparedStatement = connection.prepareStatement(selectIdDiscover);
 
             preparedStatement.setString(1, ip);
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            PreparedStatement result_statement = connection.prepareStatement(result_query);
+            PreparedStatement result_statement = connection.prepareStatement(insertResult);
 
             while (resultSet.next())
             {
@@ -491,9 +498,9 @@ public class UserDAO
 
         try
         {
-            Connection connection = getConnection();
+            Connection connection = _dao.getConnection();
 
-            PreparedStatement result_statement = connection.prepareStatement(r_update);
+            PreparedStatement result_statement = connection.prepareStatement(updateResult);
 
             updateData(result_statement, response, ipStatus, timestamp, ip);
 
@@ -535,11 +542,17 @@ public class UserDAO
     {
         boolean result = true;
 
+        PreparedStatement preparedStatement = null;
+
+        PreparedStatement preparedStatement1 = null;
+
+        PreparedStatement preparedStatement2 = null;
+
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
-            PreparedStatement preparedStatement2 = connection.prepareStatement(findData);
+            preparedStatement2 = connection.prepareStatement(findData);
 
             preparedStatement2.setInt(1, id);
 
@@ -550,9 +563,9 @@ public class UserDAO
                 return false;
             }
 
-            PreparedStatement preparedStatement = connection.prepareStatement(monitor_query);
+            preparedStatement = connection.prepareStatement(insertMonitor);
 
-            PreparedStatement preparedStatement1 = connection.prepareStatement(idQuery);
+            preparedStatement1 = connection.prepareStatement(idQuery);
 
             preparedStatement1.setInt(1, id);
 
@@ -603,11 +616,13 @@ public class UserDAO
     {
         boolean status = true;
 
+        PreparedStatement preparedStatement = null;
+
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
-            PreparedStatement preparedStatement = connection.prepareStatement(delete_query);
+            preparedStatement = connection.prepareStatement(deleteDiscover);
 
             preparedStatement.setInt(1, idAttribute); // setString(1, String.valueOf(idAttribute));
 
@@ -630,15 +645,15 @@ public class UserDAO
 
     public static ResultSet getReDiscoveryData(String ip)
     {
-        Statement statement = null;
-
         ResultSet resultSet = null;
+
+        PreparedStatement preparedStatement = null;
 
         try
         {
-            Connection connection = getConnection();
+            Connection connection = _dao.getConnection();
 
-            PreparedStatement preparedStatement = connection.prepareStatement(re_query);
+            preparedStatement = connection.prepareStatement(selectDiscover);
 
             preparedStatement.setString(1, ip);
 
@@ -662,9 +677,9 @@ public class UserDAO
 
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(re_query);
+            preparedStatement = connection.prepareStatement(selectColumnMonitor);
 
             preparedStatement.setString(1, ip);
 
@@ -692,9 +707,9 @@ public class UserDAO
 
         try
         {
-            Connection connection = getConnection();
+            connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(re_query);
+            preparedStatement = connection.prepareStatement(selectDiscover);
 
             preparedStatement.setString(1, ip);
 
@@ -722,13 +737,11 @@ public class UserDAO
 
         PreparedStatement preparedStatement = null;
 
-        Connection connection = null;
-
         try
         {
-            connection = getConnection();
+            connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(dump_select);
+            preparedStatement = connection.prepareStatement(selectDataDump);
 
             preparedStatement.setInt(1, id);
 
@@ -756,15 +769,13 @@ public class UserDAO
 
         PreparedStatement preparedStatement = null;
 
-        Connection connection = null;
-
         ResultSet resultSet;
 
         try
         {
-            connection = getConnection();
+            connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(dump_select);
+            preparedStatement = connection.prepareStatement(selectDataDump);
 
             preparedStatement.setInt(1, id);
 
@@ -784,6 +795,45 @@ public class UserDAO
         }
 
         return memoryPercent;
+    }
+
+    public static boolean enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time)
+    {
+        boolean status = true;
+
+        PreparedStatement preparedStatement = null;
+
+        try
+        {
+            connection = _dao.getConnection();
+
+            preparedStatement = connection.prepareStatement(insertDataDump);
+
+            preparedStatement.setInt(1, id);
+
+            preparedStatement.setString(2, ip);
+
+            preparedStatement.setString(3, packet);
+
+            preparedStatement.setDouble(4, memory);
+
+            preparedStatement.setString(5, deviceType);
+
+            preparedStatement.setString(6, time.substring(0, 16));
+
+            if (preparedStatement.execute())
+            {
+                return true;
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.error("not inserted data into tb_dataDump!", exception);
+
+            status = false;
+        }
+
+        return status;
     }
 }
 

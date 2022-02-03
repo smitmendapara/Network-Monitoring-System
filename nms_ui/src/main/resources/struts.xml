@@ -114,6 +114,15 @@
 
         </action>
 
+        <action name="monitorPolling" class="action.monitor.Monitor" method="getPolling">
+
+            <result name="success">dashboard.jsp</result>
+
+            <result name="error">linux_dashboard.jsp</result>
+
+        </action>
+
+
         <!-- DASHBOARD ACTION -->
 
         <action name="dashboard">

@@ -19,6 +19,8 @@ public class ServiceProvider
 {
     private static final Logger _logger = new Logger();
 
+    private static int id;
+
     private static String name;
 
     private static String ip;
@@ -33,6 +35,10 @@ public class ServiceProvider
 
     private static String response;
 
+    private static String packet = null;
+
+    private static Double memory;
+
     private static String uName_Output = null;
 
     private static String free_Output = null;
@@ -42,6 +48,16 @@ public class ServiceProvider
     private static String ioStat_Output = null;
 
     private static String specificData = null;
+
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
+    public static int getId()
+    {
+        return id;
+    }
 
     public static String getIp()
     {
@@ -302,6 +318,216 @@ public class ServiceProvider
 
     }
 
+    public static boolean pollingDevice()
+    {
+        boolean status = true;
+
+        try
+        {
+            if (deviceType.equals("0") || deviceType.equals("Ping"))
+            {
+                String pingResult = "";
+
+                String pingCmd = "ping -c 4 " + ip;
+
+                try
+                {
+                    Runtime runtime = Runtime.getRuntime();
+
+                    Process process = runtime.exec(pingCmd);
+
+                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                    BufferedReader bufferedInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                    String inputLine;
+
+                    while ((inputLine = bufferedInput.readLine()) != null)
+                    {
+                        pingResult += inputLine;
+                    }
+
+                    bufferedInput.close();
+
+                    String string = pingResult.toString();
+
+                    response = string.substring(string.indexOf("-"));
+
+                    ipStatus = checkPingIpStatus(response, ip);
+
+                    ResultSet resultSet = UserDAO.getReDiscoveryData(ip);
+
+                    boolean next = resultSet.next();
+
+                    if (next)
+                    {
+                        setRediscoverProperties(resultSet);
+
+                        if (UserDAO.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                        {
+                            if (UserDAO.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                            {
+                                packet = getReceivedPacket(response);
+
+                                memory = 0.0;
+
+                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                {
+                                    _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
+                                }
+                                else
+                                {
+                                    _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
+                                }
+                            }
+                            else
+                            {
+                                _logger.warn("still not re-inserted data into tb_result table!");
+                            }
+                        }
+                        else
+                        {
+                            _logger.warn("still not re-inserted into tb_monitor, tb_discover and tb_result table!");
+                        }
+                    }
+
+                }
+                catch (Exception exception)
+                {
+                    _logger.error("something went wrong on ping discovery verify side!", exception);
+
+                    status = false;
+                }
+
+                return status;
+
+            }
+
+            if (deviceType.equals("1") || deviceType.equals("Linux"))
+            {
+                Timestamp timestamp = null;
+
+                SSHConnectionUtil sshConnectionUtil = null;
+
+                try
+                {
+                    ResultSet resultSet = UserDAO.getReDiscoveryData(ip);
+
+                    boolean next = resultSet.next();
+
+                    if (next)
+                    {
+                        setRediscoverProperties(resultSet);
+                    }
+
+                    sshConnectionUtil = SSHConnectionUtil.getNewSSHObject(ip, 22, discoveryUsername, discoveryPassword, 30);
+
+                    if(sshConnectionUtil != null)
+                    {
+                        uName_Output = sshConnectionUtil.executeCommand("uname -a");
+
+                        free_Output = sshConnectionUtil.executeCommand("free");
+
+                        df_Output = sshConnectionUtil.executeCommand("df -h");
+
+                        ioStat_Output = sshConnectionUtil.executeCommand("iostat");
+
+                        ipStatus = "Up";
+
+                        timestamp = new Timestamp(System.currentTimeMillis());
+
+                        specificData = getSpecificData(uName_Output, free_Output, df_Output, ioStat_Output);
+
+                        _logger.info("Command output : " + "\n" + uName_Output + "\n" + free_Output + "\n" + specificData);
+                    }
+                    else
+                    {
+                        _logger.warn("ssh object is null!");
+
+                        ipStatus = "Down";
+
+                        specificData = "null";
+
+                        timestamp = new Timestamp(System.currentTimeMillis());
+
+                    }
+
+                    if (next)
+                    {
+                        if (UserDAO.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                        {
+                            if (UserDAO.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                            {
+                                packet = "0";
+
+                                memory = 0.0;
+
+                                if (specificData != null && !specificData.equals("null"))
+                                {
+                                    memory = getFreeMemoryPercent(specificData);
+                                }
+
+                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                {
+                                    _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
+                                }
+                                else
+                                {
+                                    _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
+                                }
+                            }
+
+                            else
+                            {
+                                _logger.debug("successfully data inserted into tb_discovery table!");
+
+                                _logger.warn("still not inserted data into tb_result table!");
+                            }
+                        }
+                        else
+                        {
+                            _logger.warn("still not inserted data into tb_monitor & tb_result table!");
+                        }
+                    }
+
+                }
+                catch (Exception exception)
+                {
+                    _logger.error("something went wrong on linux discovery verify side!", exception);
+
+                    status = false;
+                }
+                finally
+                {
+                    try
+                    {
+                        if (sshConnectionUtil != null)
+                        {
+                            sshConnectionUtil.destroy();
+                        }
+
+                    }
+                    catch (Exception exception)
+                    {
+
+                    }
+                }
+
+                return status;
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.error("something went wrong on discovery side!", exception);
+
+            status = false;
+        }
+
+        return status;
+
+    }
+
     private static String getSpecificData(String uName_output, String free_output, String df_Output, String ioStat_Output)
     {
         String data = null;
@@ -335,10 +561,6 @@ public class ServiceProvider
             String[] dfSplit = df_Output.split("\n");
 
             String disk = dfSplit[8].substring(42, 46).trim();
-
-//            String[] topSplit = top_Output.split("\n");
-//
-//            String threads = topSplit[2].substring(8, 14).trim();
 
             String[] ioSplit = ioStat_Output.split("\n");
 
@@ -754,4 +976,6 @@ public class ServiceProvider
             _logger.warn("not set your re discover data properties!");
         }
     }
+
+
 }

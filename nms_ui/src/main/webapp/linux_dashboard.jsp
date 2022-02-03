@@ -89,7 +89,11 @@
 
                         while (resultSet.next())
                         {
+                            int id = resultSet.getInt(1);
+
                             String IP = resultSet.getString(3);
+
+                            String deviceType = resultSet.getString(6);
 
                             String status = resultSet.getString(8);
 
@@ -101,7 +105,7 @@
 
                     <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
 
-                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></td>
+                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=IP %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
 
                 </tr>
 
@@ -272,6 +276,8 @@
 
                                        String Response = resultSet.getString(7);
 
+                                       String ipStatus = resultSet.getString(8);
+
                                        String time1 = dateFormat.format(date);
 
                         %>
@@ -391,6 +397,16 @@
 
                 <tbody>
 
+
+                <tr style="height: 300px">
+
+                    <%-- dougnut chart --%>
+                    <td class="dash__firstRow">
+
+                        <div id="dougnutChart" style="height: 270px; width: 100%;"></div>
+
+                    </td>
+
                 <%
                     try
                     {
@@ -406,15 +422,6 @@
                             {
 
                 %>
-
-                <tr style="height: 300px">
-
-                    <%-- dougnut chart --%>
-                    <td class="dash__firstRow">
-
-                        <div id="dougnutChart" style="height: 270px; width: 100%;"></div>
-
-                    </td>
 
                     <%-- first widgets --%>
                     <td class="linux__Widget">
@@ -655,6 +662,198 @@
                     </td>
 
                 </tr>
+
+                <%
+                            }
+                            if (Status.equals("Down"))
+                            {
+
+                %>
+
+                    <%-- first widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="">
+
+
+                        </div>
+
+                    </td>
+
+                    <%-- second widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>Memory Used (%)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <%-- third widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>Memory Free (%)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <%-- fourth widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>RTT (ms)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                <tr style="height: 300px">
+
+                    <%-- dougnut chart --%>
+                    <td class="linux__initial">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>CPU User (%)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <%-- first widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>CPU System (%)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <%-- second widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>Swap Used Memory (%)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <%-- third widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>Swap Free Memory (%)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                    <%-- fourth widgets --%>
+                    <td class="linux__Widget">
+
+                        <div class="dash__widget">
+
+                            <div>
+
+                                <p>Disk (%)</p>
+
+                            </div>
+
+                            <div>
+
+                                <b><p></p></b>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
 
                 <%
                             }

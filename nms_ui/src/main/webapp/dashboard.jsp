@@ -89,7 +89,11 @@
 
                         while (resultSet.next())
                         {
+                            int id = resultSet.getInt(1);
+
                             String IP = resultSet.getString(3);
+
+                            String deviceType = resultSet.getString(6);
 
                             String status = resultSet.getString(8);
 
@@ -101,7 +105,7 @@
 
                     <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
 
-                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" onclick="getPolling('<%=IP %>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
+                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=IP %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
 
                 </tr>
 
@@ -274,6 +278,8 @@
 
                                        String Response = resultSet.getString(7);
 
+                                       String ipStatus = resultSet.getString(8);
+
                                        int id = resultSet.getInt(1);
 
                                        String time = resultSet.getString(9);
@@ -299,7 +305,7 @@
 
                                 dataPoints: [
 
-                                    { label: "<%=time1%>", y: <%=getReceivedPacket(Response) %> },
+                                    { label: "<%=time1 %>", y: <%=getReceivedPacket(Response) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -372,7 +378,6 @@
                                     %>
 
                                     { label: "<%=time8 %>", y: 1 },
-
                                 ],
                             }
                         ]
