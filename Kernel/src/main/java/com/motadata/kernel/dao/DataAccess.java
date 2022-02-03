@@ -14,33 +14,31 @@ import java.util.List;
 
 public class DataAccess
 {
-    private static final Logger _logger = new Logger();
+    private static String DATABASE_URL = CommonConstant.DATABASE_URL;
 
-    private static String DB_URL = CommonConstant.DATABASE_URL;
+    private static String DATABASE_USERNAME = CommonConstant.DATABASE_USERNAME;
 
-    private static String USER = "motadata";
+    private static String DATABASE_PASSWORD = CommonConstant.DATABASE_PASSWORD;
 
-    private static String PASS = "motadata";
+    private static String selectDiscover = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
 
-    static String re_query = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
+    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?)";
 
-    static String dump_insert = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?)";
+    private static String updateMonitor = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
 
-    static String m_update = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
-
-    static String d_update = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
-
-    static String r_update = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+    private static String updateResult = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
 
     private static Connection connection = null;
 
-    private static DataAccess _dao = new DataAccess();
+    private static final DataAccess _dao = new DataAccess();
+
+    private static final Logger _logger = new Logger();
 
     public Connection getConnection()
     {
         try
         {
-            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
         }
         catch (Exception exception)
         {
@@ -350,19 +348,19 @@ public class DataAccess
 
     public static ResultSet getReDiscoveryData(String ip)
     {
-        Statement statement = null;
+        PreparedStatement preparedStatement = null;
 
         ResultSet resultSet = null;
 
         try
         {
-            Connection connection = _dao.getConnection();
+            connection = _dao.getConnection();
 
-            PreparedStatement preparedStatement = connection.prepareStatement(re_query);
+            preparedStatement = connection.prepareStatement(selectDiscover);
 
             preparedStatement.setString(1, ip);
 
-            resultSet  = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             return resultSet;
         }
@@ -374,17 +372,17 @@ public class DataAccess
         return resultSet;
     }
 
-    private static void updateData(PreparedStatement result_statement, String response, String ipStatus, String timestamp, String ip)
+    private static void updateData(PreparedStatement preparedStatement, String response, String ipStatus, String timestamp, String ip)
     {
         try
         {
-            result_statement.setString(1, response);
+            preparedStatement.setString(1, response);
 
-            result_statement.setString(2, ipStatus);
+            preparedStatement.setString(2, ipStatus);
 
-            result_statement.setString(3, timestamp.substring(0, 16));
+            preparedStatement.setString(3, timestamp.substring(0, 16));
 
-            result_statement.setString(4, ip);
+            preparedStatement.setString(4, ip);
         }
         catch (Exception exception)
         {
@@ -402,9 +400,9 @@ public class DataAccess
         {
             Class.forName("org.h2.Driver");
 
-            Connection connection = _dao.getConnection();
+            connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(m_update);
+            preparedStatement = connection.prepareStatement(updateMonitor);
 
             updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
@@ -423,49 +421,21 @@ public class DataAccess
         return result;
     }
 
-    public static boolean enterReDiscoveryData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
-    {
-        boolean status = true;
-
-        try
-        {
-            Class.forName("org.h2.Driver");
-
-            Connection connection = _dao.getConnection();
-
-            PreparedStatement preparedStatement = connection.prepareStatement(d_update);
-
-            updateData(preparedStatement, response, ipStatus, timestamp, ip);
-
-            if (preparedStatement.execute())
-            {
-                return true;
-            }
-
-        }
-        catch (Exception exception)
-        {
-            _logger.error("discovery data not updated properly!", exception);
-
-            status = false;
-        }
-
-        return status;
-    }
-
     public static boolean enterReResultTableData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 
+        PreparedStatement preparedStatement = null;
+
         try
         {
-            Connection connection = _dao.getConnection();
+            connection = _dao.getConnection();
 
-            PreparedStatement result_statement = connection.prepareStatement(r_update);
+            preparedStatement = connection.prepareStatement(updateResult);
 
-            updateData(result_statement, response, ipStatus, timestamp, ip);
+            updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
-            if (result_statement.execute())
+            if (preparedStatement.execute())
             {
                 return true;
             }
@@ -485,15 +455,13 @@ public class DataAccess
     {
         boolean status = true;
 
-        Connection connection = null;
-
         PreparedStatement preparedStatement = null;
 
         try
         {
             connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(dump_insert);
+            preparedStatement = connection.prepareStatement(insertDataDump);
 
             preparedStatement.setInt(1, id);
 

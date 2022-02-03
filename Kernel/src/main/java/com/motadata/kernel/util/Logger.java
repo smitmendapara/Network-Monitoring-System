@@ -1,22 +1,26 @@
 package com.motadata.kernel.util;
 
 import org.joda.time.DateTime;
+
 import org.joda.time.format.DateTimeFormat;
+
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.BufferedWriter;
+
 import java.io.FileWriter;
+
 import java.io.IOException;
 
 public class Logger
 {
+    private static String dateFormat;
+
+    private static final String PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + "log/";
+
     private static final Logger _logger = new Logger();
 
-    DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MMMM-yyyy");
-
-    private static String date_Formate;
-
-    private static String PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + "log/";
+    private static final DateTimeFormatter formatter = DateTimeFormat.forPattern(CommonConstant.LOGGER_DATE_FORMAT);
 
     public void info(String message)
     {
@@ -24,9 +28,9 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-info.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-info.log", true));
 
             writer.write(message + "\n");
         }
@@ -53,9 +57,9 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-error.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-error.log", true));
 
             writer.write(message + "\n");
 
@@ -90,9 +94,9 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-warn.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-warn.log", true));
 
             writer.write(message + "\n");
         }
@@ -119,9 +123,9 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-debug.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-debug.log", true));
 
             writer.write(message + "\n");
         }

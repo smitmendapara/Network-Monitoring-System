@@ -1,34 +1,30 @@
 package com.motadata.kernel.util;
 
 import com.jcraft.jsch.ChannelExec;
+
 import com.jcraft.jsch.JSch;
+
 import com.jcraft.jsch.Session;
-import com.motadata.kernel.util.CommonConstant;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.InputStream;
+
 import java.util.Properties;
 
-/**
- * Created by smit on 18/1/22.
- */
 public class SSHConnectionUtil
 {
     private Session session = null;
 
-    private final int port;
+    private int port;
 
-    private final int timeout;
+    private int timeout;
 
-    private final String hostIp;
+    private String hostIp;
 
-    private final String username;
+    private String username;
 
-    private final String password;
-
-    private final String keyFilePath;
-
-    private final String passPhrase;
+    private String password;
 
     private static final Logger _logger = new Logger();
 
@@ -39,25 +35,16 @@ public class SSHConnectionUtil
 
     public SSHConnectionUtil(String hostIp, int port, String username, String password, int timeout)
     {
-
-        this(hostIp, port, username, password, null, null, timeout);
-    }
-
-    public SSHConnectionUtil(String hostIp, int port, String username, String password, String keyFilePath, String passPhrase, int timeout)
-    {
         this.hostIp = hostIp;
 
         this.port = port;
 
         this.username = username;
 
-        this.keyFilePath = keyFilePath;
-
-        this.passPhrase = passPhrase;
-
         this.timeout = timeout;
 
         this.password = password;
+
     }
 
     private void disconnect()
@@ -71,7 +58,7 @@ public class SSHConnectionUtil
         }
         catch (Exception exception)
         {
-            _logger.warn("disconnect problem!");
+            _logger.warn("ssh session disconnect!");
         }
     }
 
@@ -87,7 +74,7 @@ public class SSHConnectionUtil
         }
     }
 
-    public boolean reConnection()
+    public boolean reCreateConnection()
     {
         boolean result = false;
 
@@ -111,8 +98,6 @@ public class SSHConnectionUtil
 
         try
         {
-            _logger.debug("checking connection with " + hostIp + " and port " + port);
-
             JSch jschObject = new JSch();
 
             session = jschObject.getSession(username, hostIp, port);
@@ -176,10 +161,8 @@ public class SSHConnectionUtil
         return connect;
     }
 
-    public static SSHConnectionUtil getNewSSHObject(String host, int port, String username, String password, int timeout)
+    public static SSHConnectionUtil getSSHObject(String host, int port, String username, String password, int timeout)
     {
-        _logger.info("SSH to hostIp - " + host);
-
         SSHConnectionUtil sshConnectionUtil = null;
 
         try
@@ -197,37 +180,16 @@ public class SSHConnectionUtil
         }
         catch (Exception exception)
         {
-            _logger.info("SSH failed for the hostIp " + host);
-
             _logger.error("failed for get SSH object", exception);
 
             sshConnectionUtil = null;
         }
 
-
         return sshConnectionUtil;
-    }
-
-    public String executeCommand(String command)
-    {
-        String execute = null;
-
-        try
-        {
-            execute = executeCommand(command, true);
-        }
-        catch (Exception exception)
-        {
-            _logger.error("command execution failed!", exception);
-        }
-
-        return execute;
     }
 
     public String executeCommand(String command, boolean wait)
     {
-        _logger.debug(this.hostIp + " - executing command " + command);
-
         ChannelExec channel = null;
 
         InputStream inputStream = null;
@@ -236,9 +198,9 @@ public class SSHConnectionUtil
 
         try
         {
-            if (this.session != null)
+            if (session != null)
             {
-                channel = (ChannelExec) this.session.openChannel("exec");
+                channel = (ChannelExec) session.openChannel("exec");
 
                 channel.setCommand(command);
 
@@ -248,11 +210,11 @@ public class SSHConnectionUtil
 
                 channel.connect();
 
-                _logger.debug(this.hostIp + " - checking channel connection...");
+                _logger.debug(hostIp + " - checking channel connection...");
 
                 if (channel.isConnected())
                 {
-                    _logger.debug(this.hostIp + " - channel is currently connected...");
+                    _logger.debug(hostIp + " - channel is currently connected...");
 
                     if (wait)
                     {
@@ -260,31 +222,31 @@ public class SSHConnectionUtil
 
                         output.append(CommonConstant.NEW_LINE);
 
-                        _logger.debug(this.hostIp + " - command output -> \n" + output.toString());
+                        _logger.debug(hostIp + " - command output -> \n" + output.toString());
                     }
                 }
                 else
                 {
-                    _logger.warn(this.hostIp + " - channel is not connected!");
+                    _logger.warn(hostIp + " - channel is not connected!");
                 }
             }
             else
             {
-                _logger.warn(this.hostIp + " - session is expired!");
+                _logger.warn(hostIp + " - session is expired!");
             }
 
             if (inputStream != null)
             {
                 inputStream.close();
 
-                _logger.debug(this.hostIp + " - channel is closed for communication!");
+                _logger.debug(hostIp + " - channel is closed for communication!");
             }
 
             if (channel != null && !channel.isClosed())
             {
                 channel.disconnect();
 
-                _logger.debug(this.hostIp + " - channel is disconnected!");
+                _logger.debug(hostIp + " - channel is disconnected!");
             }
 
         }

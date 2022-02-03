@@ -6,15 +6,11 @@ import com.motadata.kernel.dao.DataAccess;
 
 import com.motadata.kernel.discovery.HandlerThread;
 
-import com.motadata.kernel.discovery.Polling;
-
 import com.motadata.kernel.util.CommonConstant;
 
 import com.motadata.kernel.util.Logger;
 
 import com.motadata.kernel.discovery.Scheduler;
-
-import com.motadata.kernel.util.SSHConnectionUtil;
 
 import org.h2.tools.Server;
 
@@ -38,9 +34,9 @@ public class BootManager
 
     private static final DataAccess _dao = new DataAccess();
 
-    private static Server m_server = null;
+    private static Server tcp_Server = null;
 
-    private static Server w_server = null;
+    private static Server web_Server = null;
 
     public static void main(String[] args)
     {
@@ -62,13 +58,13 @@ public class BootManager
         {
             _logger.info("Starting h2 database...");
 
-            if (starth2Database()) // first step start h2 database server
+            if (startH2Database()) // first step start h2 database server
             {
                 _logger.info("Started h2 database!");
 
                 _logger.info("Verifying h2 database...");
 
-                if (verifyh2Database()) // verify the h2 database
+                if (verifyH2Database()) // verify the h2 database
                 {
                     _logger.info("Verified h2 database!");
 
@@ -93,13 +89,6 @@ public class BootManager
                                 if (startScheduler()) // start scheduler
                                 {
                                     _logger.info("scheduler started!");
-
-                                    _logger.info("Starting discovery with ping and linux ssh...");
-
-                                    if (true) // implement discovery (ping,linux ssh)
-                                    {
-                                        _logger.info("Discovery completed");
-                                    }
                                 }
                                 else
                                 {
@@ -140,69 +129,6 @@ public class BootManager
 
     }
 
-//    private static boolean implementDiscovery()
-//    {
-//        boolean result = true;
-//
-//        try
-//        {
-////            pingBasedPolling();
-//
-////            linuxBasedPolling();
-//        }
-//        catch (Exception exception)
-//        {
-//            _logger.error("something went wrong on polling side...", exception);
-//
-//            result = false;
-//        }
-//
-//        return result;
-//    }
-
-//    public static void linuxBasedPolling()
-//    {
-//        try
-//        {
-//            SSHConnectionUtil sshObject = SSHConnectionUtil.getNewSSHObject("172.16.8.182", 22, "root", "motadata", 20);
-//
-//            if(sshObject != null)
-//            {
-//                String output = sshObject.executeCommand("ip a");
-//
-//                _logger.info("Command output : " + output);
-//            }
-//            else
-//            {
-//                _logger.warn("ssh object is null!");
-//            }
-//        }
-//        catch (Exception exception)
-//        {
-//            _logger.error("linux based discovery was failed!", exception);
-//        }
-//    }
-
-    private static void pingBasedPolling()
-    {
-        try
-        {
-            Thread[] pollingThread = new Thread[5];
-
-            for (int i = 0; i <= 4; i++)
-            {
-                pollingThread[i] = new Thread(new Polling());
-
-                pollingThread[i].start();
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.error("ping based discovery was failed", exception);
-        }
-
-    }
-
     private static boolean startScheduler()
     {
         boolean result = true;
@@ -229,7 +155,7 @@ public class BootManager
         return result;
     }
 
-    public static boolean starth2Database()
+    public static boolean startH2Database()
     {
         String baseDir = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + "h2";
 
@@ -237,17 +163,17 @@ public class BootManager
 
         try
         {
-            m_server = Server.createTcpServer("-baseDir", baseDir, "-tcpAllowOthers").start();
+            tcp_Server = Server.createTcpServer("-baseDir", baseDir, CommonConstant.TCP_OPTION).start();
 
-            w_server = Server.createWebServer("-baseDir", baseDir, "-webAllowOthers").start();
+            web_Server = Server.createWebServer("-baseDir", baseDir, CommonConstant.WEB_OPTION).start();
 
             System.out.println("-------------------------- start h2 Database ------------------------------");
 
             System.out.println();
 
-            System.out.println("h2 database tcp server started! " + m_server);
+            System.out.println("h2 database tcp server started! " + tcp_Server);
 
-            System.out.println("h2 database web server started! " + w_server);
+            System.out.println("h2 database web server started! " + web_Server);
         }
         catch (Exception exception)
         {
@@ -259,7 +185,7 @@ public class BootManager
         return result;
     }
 
-    public static boolean verifyh2Database()
+    public static boolean verifyH2Database()
     {
         Connection connection = null;
 
@@ -297,15 +223,15 @@ public class BootManager
 
     public static boolean startJettyServer()
     {
-        String jetty_PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + "jetty-distribution-9.4.44.v20210927/";
+        String jettyPATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + CommonConstant.JETTY_NAME;
 
-        String jettyCommand = "java -jar " + jetty_PATH + "start.jar";
+        String jettyCommand = "java -jar " + jettyPATH + CommonConstant.JETTY_JAR;
 
         boolean result = true;
 
         try
         {
-            Process process = execute_Command(jettyCommand);
+            Process process = executeCommand(jettyCommand);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
@@ -453,11 +379,11 @@ public class BootManager
 
     public static boolean startNSQServer()
     {
-        String nsq_PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + "nsq-1.2.1.linux-amd64.go1.16.6/bin/";
+        String nsq_PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + CommonConstant.NSQ_NAME;
 
-        String nsqLookUpCommand = nsq_PATH + "./nsqlookupd";
+        String nsqLookUpCommand = nsq_PATH + CommonConstant.NSQ_LOOKUP_COMMAND;
 
-        String nsqdCommand = nsq_PATH + "./nsqd --lookupd-tcp-address=127.0.0.1:4160";
+        String nsqDCommand = nsq_PATH + CommonConstant.NSQ_D_COMMAND;
 
         boolean result = true;
 
@@ -485,7 +411,7 @@ public class BootManager
             {
                 CountDownLatch latch = new CountDownLatch(1);
 
-                new HandlerThread(latch, nsqdCommand).start();
+                new HandlerThread(latch, nsqDCommand).start();
 
                 latch.await();
 
@@ -502,7 +428,7 @@ public class BootManager
         return result;
     }
 
-    public static Process execute_Command(String command)
+    public static Process executeCommand(String command)
     {
         Runtime runtime;
 

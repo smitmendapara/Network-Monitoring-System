@@ -14,48 +14,62 @@ import java.sql.Statement;
 
 import java.util.TimerTask;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 public class Scheduler extends TimerTask implements Runnable
 {
+    private static int id;
+
+    private static String name;
+
+    private static String ip;
+
+    private static String discoveryUsername;
+
+    private static String discoveryPassword;
+
+    private static String deviceType;
+
+    private static String selectMonitor = "SELECT * FROM TB_MONITOR";
+
     private static final Logger _logger = new Logger();
 
     private static final DataAccess _dao = new DataAccess();
-
-    String query = "SELECT * FROM TB_MONITOR";
 
     @Override
     public void run()
     {
         Statement statement = null;
 
+        Connection connection = null;
+
+        ResultSet resultSet = null;
+
         try
         {
-            Connection connection = _dao.getConnection();
+            connection = _dao.getConnection();
 
             statement = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery(query);
+            resultSet = statement.executeQuery(selectMonitor);
 
             while (resultSet.next())
             {
-                int id = resultSet.getInt(1);
+                id = resultSet.getInt(1);
 
-                String name = resultSet.getString(2);
+                name = resultSet.getString(2);
 
-                String ip = resultSet.getString(3);
+                ip = resultSet.getString(3);
 
-                String discoveryUsername = resultSet.getString(4);
+                discoveryUsername = resultSet.getString(4);
 
-                String discoveryPassword = resultSet.getString(5);
+                discoveryPassword = resultSet.getString(5);
 
-                String deviceType = resultSet.getString(6);
+                deviceType = resultSet.getString(6);
 
                 ServiceProvider serviceProvider = new ServiceProvider(name, ip, discoveryUsername, discoveryPassword, deviceType);
 
                 serviceProvider.setId(id);
 
-                ServiceProvider.checkDiscovery();
+                ServiceProvider.pollingDevice();
 
             }
         }
@@ -68,6 +82,11 @@ public class Scheduler extends TimerTask implements Runnable
         {
             try
             {
+                if (connection != null && !connection.isClosed())
+                {
+                    connection.close();
+                }
+
                 if (statement != null && !statement.isClosed())
                 {
                     statement.close();
@@ -75,7 +94,7 @@ public class Scheduler extends TimerTask implements Runnable
             }
             catch (Exception ignored)
             {
-
+                _logger.warn("still connection and statement is not closed!");
             }
         }
     }

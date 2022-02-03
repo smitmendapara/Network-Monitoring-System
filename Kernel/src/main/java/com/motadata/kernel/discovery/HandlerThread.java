@@ -10,9 +10,9 @@ public class HandlerThread extends Thread
 {
     private static final Logger _logger = new Logger();
 
-    CountDownLatch latch;
+    private CountDownLatch latch;
 
-    String command;
+    private String command;
 
     public HandlerThread(CountDownLatch latch, String command)
     {

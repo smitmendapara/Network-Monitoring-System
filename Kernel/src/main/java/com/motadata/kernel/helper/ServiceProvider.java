@@ -2,11 +2,13 @@ package com.motadata.kernel.helper;
 
 import com.motadata.kernel.dao.DataAccess;
 
+import java.util.Arrays;
+
+import com.motadata.kernel.util.CommonConstant;
 import com.motadata.kernel.util.Logger;
 
 import com.motadata.kernel.util.SSHConnectionUtil;
 
-import javax.xml.crypto.Data;
 import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
@@ -16,12 +18,9 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
 
 public class ServiceProvider
 {
-    private static final Logger _logger = new Logger();
-
     private static int id;
 
     private static String name;
@@ -52,7 +51,8 @@ public class ServiceProvider
 
     private static Double memory;
 
-    public static int getId() {
+    public static int getId()
+    {
         return id;
     }
 
@@ -71,6 +71,19 @@ public class ServiceProvider
         this.ip = ip;
     }
 
+    public ServiceProvider()
+    {
+
+    }
+
+    public ServiceProvider(String ip, String deviceType)
+    {
+
+        this.ip = ip;
+
+        this.deviceType = deviceType;
+    }
+
     public ServiceProvider(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
     {
         this.name = name;
@@ -84,28 +97,19 @@ public class ServiceProvider
         this.deviceType = deviceType;
     }
 
-    public ServiceProvider(String ip, String deviceType) {
+    private static final Logger _logger = new Logger();
 
-        this.ip = ip;
-
-        this.deviceType = deviceType;
-    }
-
-    public ServiceProvider() {
-
-    }
-
-    public static boolean checkDiscovery()
+    public static boolean pollingDevice()
     {
         boolean status = true;
 
         try
         {
-            if (deviceType.equals("0") || deviceType.equals("Ping"))
+            if (deviceType.equals(CommonConstant.STRING_ZERO) || deviceType.equals(CommonConstant.PING_DEVICE))
             {
                 String pingResult = "";
 
-                String pingCmd = "ping -c 4 " + ip;
+                String pingCmd = CommonConstant.PING_COMMAND + ip;
 
                 try
                 {
@@ -142,32 +146,24 @@ public class ServiceProvider
 
                         if (DataAccess.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                         {
-                            if (DataAccess.enterReDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                            if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                             {
-                                if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                                packet = getReceivedPacket(response);
+
+                                memory = CommonConstant.DOUBLE_ZERO;
+
+                                if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
                                 {
-                                    packet = getReceivedPacket(response);
-
-                                    memory = 0.0;
-
-                                    if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
-                                    {
-                                        _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
-                                    }
-                                    else
-                                    {
-                                        _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
-                                    }
+                                    _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                                 }
                                 else
                                 {
-                                    _logger.warn("still not re-inserted data into tb_result table!");
+                                    _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
                                 }
-
                             }
                             else
                             {
-                                _logger.warn("still not re-inserted into tb_discover and tb_result table!");
+                                _logger.warn("still not re-inserted data into tb_result table!");
                             }
                         }
                         else
@@ -188,9 +184,11 @@ public class ServiceProvider
 
             }
 
-            if (deviceType.equals("1") || deviceType.equals("Linux"))
+            if (deviceType.equals(CommonConstant.STRING_ONE) || deviceType.equals(CommonConstant.LINUX_DEVICE))
             {
                 Timestamp timestamp = null;
+
+                SSHConnectionUtil sshConnectionUtil = null;
 
                 try
                 {
@@ -203,72 +201,73 @@ public class ServiceProvider
                         setRediscoverProperties(resultSet);
                     }
 
-                    SSHConnectionUtil sshConnectionUtil = SSHConnectionUtil.getNewSSHObject(ip, 22, discoveryUsername, discoveryPassword, 30);
+                    sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, 22, discoveryUsername, discoveryPassword, 30);
 
                     if(sshConnectionUtil != null)
                     {
-                        uName_Output = sshConnectionUtil.executeCommand("uname -a");
+                        uName_Output = sshConnectionUtil.executeCommand(CommonConstant.LINUX_U_NAME_COMMAND, true);
 
-                        free_Output = sshConnectionUtil.executeCommand("free");
+                        free_Output = sshConnectionUtil.executeCommand(CommonConstant.LINUX_FREE_COMMAND, true);
 
-                        df_Output = sshConnectionUtil.executeCommand("df -h");
+                        df_Output = sshConnectionUtil.executeCommand(CommonConstant.LINUX_DISK_COMMAND, true);
 
-                        ioStat_Output = sshConnectionUtil.executeCommand("iostat");
+                        ioStat_Output = sshConnectionUtil.executeCommand(CommonConstant.LINUX_CPU_COMMAND, true);
+
+                        ipStatus = CommonConstant.DEVICE_UP;
 
                         timestamp = new Timestamp(System.currentTimeMillis());
 
-                        ipStatus = "Up";
-
                         specificData = getSpecificData(uName_Output, free_Output, df_Output, ioStat_Output);
 
-                        _logger.info("Command output : " + "\n" + uName_Output + "\n" + free_Output + "\n" + specificData);
+                        _logger.info("Command output : " + specificData);
                     }
                     else
                     {
                         _logger.warn("ssh object is null!");
 
-                        ipStatus = "Down";
+                        ipStatus = CommonConstant.DEVICE_DOWN;
 
-                        status = false;
+                        specificData = CommonConstant.STRING_NULL;
+
+                        timestamp = new Timestamp(System.currentTimeMillis());
+
                     }
 
-                    if (specificData != null && next)
+                    if (next)
                     {
                         if (DataAccess.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
-                            if (DataAccess.enterReDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                            if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                             {
-                                if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                                packet = CommonConstant.STRING_ZERO;
+
+                                memory = CommonConstant.DOUBLE_ZERO;
+
+                                if (specificData != null && !specificData.equals(CommonConstant.STRING_NULL))
                                 {
-                                    packet = "0";
-
                                     memory = getFreeMemoryPercent(specificData);
-
-                                    if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
-                                    {
-                                        _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
-                                    }
-                                    else
-                                    {
-                                        _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
-                                    }
                                 }
 
+                                if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                {
+                                    _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
+                                }
                                 else
                                 {
-                                    _logger.debug("successfully data inserted into tb_discovery table!");
-
-                                    _logger.warn("still not inserted data into tb_result table!");
+                                    _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
                                 }
                             }
+
                             else
                             {
-                                _logger.warn("data not inserted into tb_discover and tb_result table!");
+                                _logger.debug("successfully data inserted into tb_discovery table!");
+
+                                _logger.warn("still not inserted data into tb_result table!");
                             }
                         }
                         else
                         {
-
+                            _logger.warn("still not inserted data into tb_monitor & tb_result table!");
                         }
                     }
 
@@ -278,6 +277,21 @@ public class ServiceProvider
                     _logger.error("something went wrong on linux discovery verify side!", exception);
 
                     status = false;
+                }
+                finally
+                {
+                    try
+                    {
+                        if (sshConnectionUtil != null)
+                        {
+                            sshConnectionUtil.destroy();
+                        }
+
+                    }
+                    catch (Exception exception)
+                    {
+
+                    }
                 }
 
                 return status;
@@ -329,10 +343,6 @@ public class ServiceProvider
 
             String disk = dfSplit[8].substring(42, 46).trim();
 
-//            String[] topSplit = top_Output.split("\n");
-//
-//            String threads = topSplit[2].substring(8, 14).trim();
-
             String[] ioSplit = ioStat_Output.split("\n");
 
             String CPU_System = ioSplit[3].substring(23, 31).trim();
@@ -356,13 +366,13 @@ public class ServiceProvider
     {
         try
         {
-            if (packet.equals("0"))
+            if (packet.equals(CommonConstant.STRING_ZERO))
             {
-                ipStatus = "Down";
+                ipStatus = CommonConstant.DEVICE_DOWN;
             }
             else
             {
-                ipStatus = "Up";
+                ipStatus = CommonConstant.DEVICE_UP;
             }
         }
         catch (Exception exception)
@@ -392,7 +402,7 @@ public class ServiceProvider
 
     public static Double getFreeMemoryPercent(String linuxResponse)
     {
-        double free = 0;
+        double free = CommonConstant.DOUBLE_ZERO;
 
         try
         {
@@ -416,7 +426,7 @@ public class ServiceProvider
 
     public static String getRTTTime(String subString)
     {
-        String rttTime = "0";
+        String rttTime = CommonConstant.STRING_ZERO;
 
         try
         {
@@ -448,25 +458,25 @@ public class ServiceProvider
 
             switch (receivedPacket)
             {
-                case "0" : packetLoss = "100";
+                case CommonConstant.STRING_ZERO  : packetLoss = CommonConstant.STRING_HUNDRED;
 
-                           break;
+                                                   break;
 
-                case "1" : packetLoss = "75";
+                case CommonConstant.STRING_ONE   : packetLoss = CommonConstant.STRING_SEVENTY_FIVE;
 
-                           break;
+                                                   break;
 
-                case "2" : packetLoss = "50";
+                case CommonConstant.STRING_TWO   : packetLoss = CommonConstant.STRING_FIFTY;
 
-                           break;
+                                                   break;
 
-                case "3" : packetLoss = "25";
+                case CommonConstant.STRING_THREE : packetLoss = CommonConstant.STRING_TWENTY_FIVE;
 
-                           break;
+                                                   break;
 
-                case "4" : packetLoss = "0";
+                case CommonConstant.STRING_FOUR  : packetLoss = CommonConstant.STRING_ZERO;
 
-                           break;
+                                                   break;
             }
         }
         catch (Exception exception)
@@ -508,8 +518,6 @@ public class ServiceProvider
 
         return packet;
     }
-
-
 
     private static void setRediscoverProperties(ResultSet resultSet)
     {
