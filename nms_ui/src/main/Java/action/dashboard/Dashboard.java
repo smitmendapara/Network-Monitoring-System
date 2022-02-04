@@ -1,14 +1,13 @@
 package action.dashboard;
 
 import action.dao.UserDAO;
+
 import action.util.Logger;
+
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.sql.ResultSet;
 
-/**
- * Created by smit on 17/1/22.
- */
 public class Dashboard extends ActionSupport
 {
     private int id;
@@ -43,15 +42,18 @@ public class Dashboard extends ActionSupport
 
     private static final Logger _logger = new Logger();
 
+
     public String showDashboardData()
     {
         String deviceType = null;
 
+        ResultSet resultSet = null;
+
+        UserDAO _dao = new UserDAO(id, ip);
+
         try
         {
-            UserDAO _dao = new UserDAO(id, ip);
-
-            ResultSet resultSet = UserDAO.getDashboardData();
+            resultSet = UserDAO.getDashboardData();
 
             while (resultSet.next())
             {

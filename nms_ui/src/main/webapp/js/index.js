@@ -7,11 +7,8 @@ function refreshPage() {
 
 function openForm(idName) {
 
-    // document.getElementById("discoveryPage").style.opacity = 0.2;
-
     document.getElementById(idName).style.display = 'block';
 
-    // setTimeout(refreshPage(), 1000);
 }
 
 function closeForm(idName) {
@@ -86,7 +83,7 @@ function displayLinuxProfile(idName, elementValue) {
     document.getElementById(idName).style.display = elementValue.value == 1 ? 'block' : 'none';
 }
 
-// for re discovery
+// for rediscovery
 
 function reDiscoverData(ip) {
 
@@ -270,36 +267,3 @@ function showDashboard(id, ip, deviceType) {
         }
     });
 }
-
-
-
-// currently unused or not working
-
-function startLoader() {
-
-    var myVar;
-
-    document.getElementById("myForm").style.opacity = 0.2;
-
-    document.getElementById("loader").style.display = 'block';
-
-    myVar = setTimeout(showMessage, 1000);
-}
-
-function showMessage() {
-
-    document.getElementById("loader").style.display = 'none';
-
-    document.getElementById("myForm").style.opacity = 1;
-
-    alert("Discovery is successfully done!");
-}
-
-$(document).ready(function() {
-
-    $('#new').click(function() {
-
-        $('#discoveryForm').fadeIn(6000);
-
-    });
-});

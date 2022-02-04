@@ -91,21 +91,21 @@
                         {
                             int id = resultSet.getInt(1);
 
-                            String IP = resultSet.getString(3);
+                            String ip = resultSet.getString(3);
 
                             String deviceType = resultSet.getString(6);
 
-                            String status = resultSet.getString(8);
+                            String ipStatus = resultSet.getString(8);
 
                 %>
 
                 <tr>
 
-                    <td><b>IP/Host</b>: <%=IP %>&nbsp;&nbsp;<i class="bi bi-activity" style="color: #2a92ff;"></i></td>
+                    <td><b>IP/Host</b>: <%=ip %>&nbsp;&nbsp;<i class="bi bi-activity" style="color: #2a92ff;"></i></td>
 
                     <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
 
-                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=IP %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
+                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=ip %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
 
                 </tr>
 
@@ -115,7 +115,7 @@
 
                     <%
 
-                        if (status.equals("Up"))
+                        if (ipStatus.equals("Up"))
                         {
 
                     %>
@@ -175,16 +175,14 @@
 
                                    while (resultSet.next())
                                    {
-                                       String IP = resultSet.getString(3);
+                                       String ip = resultSet.getString(3);
 
                                        String ipStatus = resultSet.getString(8);
-
-
 
                         %>
 
                         title:{
-                            text: "<%=IP %>"
+                            text: "<%=ip %>"
                         },
 
                         toolTip: {
@@ -209,7 +207,7 @@
                                 color: "#A21919",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
                                 ]
 
                                 <%
@@ -227,7 +225,7 @@
                                 color: "#008000",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
                                 ]
 
                                 <%
@@ -274,15 +272,11 @@
 
                                    while (resultSet.next())
                                    {
-                                       String IP = resultSet.getString(3);
+                                       String ip = resultSet.getString(3);
 
-                                       String Response = resultSet.getString(7);
-
-                                       String ipStatus = resultSet.getString(8);
+                                       String responseData = resultSet.getString(7);
 
                                        int id = resultSet.getInt(1);
-
-                                       String time = resultSet.getString(9);
 
                                        String time1 = dateFormat.format(date);
 
@@ -305,7 +299,7 @@
 
                                 dataPoints: [
 
-                                    { label: "<%=time1 %>", y: <%=getReceivedPacket(Response) %> },
+                                    { label: "<%=time1 %>", y: <%=getReceivedPacket(responseData) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -316,7 +310,7 @@
 
                                     %>
 
-                                    { label: "<%=time2 %>", y: <%=getUpdatedPacket(id, IP, time2) %> },
+                                    { label: "<%=time2 %>", y: <%=getUpdatedPacket(id, ip, time2) %> },
 
                                     <%
 
@@ -327,7 +321,7 @@
                                         String time3 = dateFormat.format(thirdTime);
                                     %>
 
-                                    { label: "<%=time3 %>", y: <%=getUpdatedPacket(id, IP, time3) %> },
+                                    { label: "<%=time3 %>", y: <%=getUpdatedPacket(id, ip, time3) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -337,7 +331,7 @@
                                         String time4 = dateFormat.format(fourthTime);
                                     %>
 
-                                    { label: "<%=time4 %>", y: <%=getUpdatedPacket(id, IP, time4) %> },
+                                    { label: "<%=time4 %>", y: <%=getUpdatedPacket(id, ip, time4) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -347,7 +341,7 @@
                                         String time5 = dateFormat.format(fifthTime);
                                     %>
 
-                                    { label: "<%=time5 %>", y: <%=getUpdatedPacket(id, IP, time5) %> },
+                                    { label: "<%=time5 %>", y: <%=getUpdatedPacket(id, ip, time5) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -357,7 +351,7 @@
                                         String time6 = dateFormat.format(sixthTime);
                                     %>
 
-                                    { label: "<%=time6 %>", y: <%=getUpdatedPacket(id, IP, time6) %> },
+                                    { label: "<%=time6 %>", y: <%=getUpdatedPacket(id, ip, time6) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -367,7 +361,7 @@
                                         String time7 = dateFormat.format(sevenTime);
                                     %>
 
-                                    { label: "<%=time7 %>", y: <%=getUpdatedPacket(id, IP, time7) %> },
+                                    { label: "<%=time7 %>", y: <%=getUpdatedPacket(id, ip, time7) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -419,13 +413,11 @@
 
                                     while (resultSet.next())
                                     {
-                                        String IP = resultSet.getString(3);
+                                        String responseData = resultSet.getString(7);
 
-                                        String Response = resultSet.getString(7);
+                                        String ipStatus = resultSet.getString(8);
 
-                                        String Status = resultSet.getString(8);
-
-                                        if (Status.equals("Up"))
+                                        if (ipStatus.equals("Up"))
                                         {
 
                             %>
@@ -443,7 +435,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getSentPacket(Response) %></p>
+                                        <p class="dash__response"><%=getSentPacket(responseData) %></p>
 
                                     </div>
 
@@ -464,7 +456,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getPacketLoss(Response) + " %" %></p>
+                                        <p class="dash__response"><%=getPacketLoss(responseData) + " %" %></p>
 
                                     </div>
 
@@ -485,7 +477,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getReceivedPacket(Response) %></p>
+                                        <p class="dash__response"><%=getReceivedPacket(responseData) %></p>
 
                                     </div>
 
@@ -506,7 +498,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getRTTTime(Response) + " ms" %></p>
+                                        <p class="dash__response"><%=getRTTTime(responseData) + " ms" %></p>
 
                                     </div>
 
@@ -517,7 +509,7 @@
                             <%
                                         }
 
-                                        if (Status.equals("Down"))
+                                        if (ipStatus.equals("Down"))
                                         {
 
                             %>
@@ -535,7 +527,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getSentPacket(Response) %></p>
+                                        <p class="dash__response"><%=getSentPacket(responseData) %></p>
 
                                     </div>
 
@@ -556,7 +548,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getPacketLoss(Response) + " %" %></p>
+                                        <p class="dash__response"><%=getPacketLoss(responseData) + " %" %></p>
 
                                     </div>
 
@@ -577,7 +569,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getReceivedPacket(Response) %></p>
+                                        <p class="dash__response"><%=getReceivedPacket(responseData) %></p>
 
                                     </div>
 
@@ -598,7 +590,7 @@
 
                                     <div>
 
-                                        <p class="dash__response"><%=getRTTTime(Response) %></p>
+                                        <p class="dash__response"><%=getRTTTime(responseData) %></p>
 
                                     </div>
 
@@ -607,7 +599,6 @@
                             </td>
 
                             <%
-
                                         }
 
                                     }

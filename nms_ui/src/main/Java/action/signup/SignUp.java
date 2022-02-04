@@ -1,12 +1,11 @@
 package action.signup;
 
 import action.dao.UserDAO;
+
 import action.util.Logger;
+
 import com.opensymphony.xwork2.ActionSupport;
 
-/**
- * Created by smit on 3/1/22.
- */
 public class SignUp extends ActionSupport
 {
     private String username;

@@ -9,26 +9,22 @@ import org.joda.time.format.DateTimeFormatter;
 import java.io.BufferedWriter;
 
 import java.io.File;
+
 import java.io.FileWriter;
 
 import java.io.IOException;
 
-/**
- * Created by smit on 3/1/22.
- */
 public class Logger
 {
+    private static String dateFormat;
+
+    private File file = new File(CommonConstantUI.CURRENT_DIR + CommonConstantUI.PATH_SEPARATOR + "log");
+
+    private static final String PATH = CommonConstantUI.CURRENT_DIR + CommonConstantUI.PATH_SEPARATOR + CommonConstantUI.DIRECTORY_NAME + CommonConstantUI.PATH_SEPARATOR;
+
+    private static final DateTimeFormatter formatter = DateTimeFormat.forPattern(CommonConstantUI.LOGGER_DATE_FORMAT);
+
     private static final Logger _logger = new Logger();
-
-    DateTimeFormatter formatter = DateTimeFormat.forPattern("dd-MMMM-yyyy");
-
-    private static String date_Formate;
-
-    File file = new File(CommonConstantUI.CURRENT_DIR + CommonConstantUI.PATH_SEPARATOR + "log");
-
-//    private static String PATH =  CommonConstantUI.CURRENT_DIR + CommonConstantUI.PATH_SEPARATOR + CommonConstantUI.DIRECTORY_NAME;
-
-    private static String PATH = "/home/smit/Downloads/nms_ui/" + CommonConstantUI.DIRECTORY_NAME + CommonConstantUI.PATH_SEPARATOR;
 
     public void info(String message)
     {
@@ -36,11 +32,11 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-info.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-info.log", true));
 
             writer.write(message + "\n");
         }
@@ -67,11 +63,11 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-error.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-error.log", true));
 
             writer.write(message + "\n");
 
@@ -106,11 +102,11 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-warn.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-warn.log", true));
 
             writer.write(message + "\n");
         }
@@ -137,11 +133,11 @@ public class Logger
 
         try
         {
-            date_Formate = getDateFormat();
+            dateFormat = getDateFormat();
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + date_Formate +"-debug.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-debug.log", true));
 
             writer.write(message + "\n");
         }

@@ -20,15 +20,25 @@
 
             <%@ taglib uri="/struts-tags" prefix="s" %>
 
+            <%-- css file --%>
+
             <link rel="stylesheet" href="css/style.css">
+
+            <%-- icon library --%>
 
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
+            <%-- chart library --%>
+
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+            <%-- jQuery library --%>
 
             <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 
             <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+            <%-- js file --%>
 
             <script src="js/index.js"></script>
 
@@ -129,80 +139,77 @@
 
             </div>
 
+            <%-- discovery form --%>
 
-            <%--<div id="loader"></div>--%>
+            <div class="form-popUp" id="discoveryForm" style="display: none">
 
-        <%-- discovery form --%>
-
-        <div class="form-popUp" id="discoveryForm" style="display: none">
-
-            <form action="discoveryProcess" method="POST">
-
-                <div class="demo">
-
-                    <h3>Discover IP</h3> <br>
-
-                </div>
-
-                <div id="type" class="disc__title">
-
-                    <p class="name">Name</p>
-
-                    <p class="ip">IP/Host</p><br>
-
-                </div>
-
-                <div class="disc__entry">
-
-                    <input type="text" name="name" placeholder="Enter Name" id="name" class="disc__name" required>
-
-                    <input type="text" name="ip" placeholder="Enter IP/Host" id="ip" class="disc__address" required> <br>
-
-                </div>
-
-                <div class="demo">
-
-                    <p class="name">Device Type</p>
-
-                    <select name="deviceType" id="deviceType" class="list" style="width: 10%;height: 25px" data-drop-down="true" data-required="true" onchange="displayLinuxProfile('profile', this)" required>
-
-                        <option value="0" class="ping">Ping</option>
-
-                        <option value="1" class="linux">Linux</option>
-
-                    </select>
-
-                    <br><br>
-
-                </div>
-
-                <div class="event" id="profile">
+                <form action="discoveryProcess" method="POST">
 
                     <div class="demo">
 
-                        Username : <input type="text" name="discoveryUsername" id="discoveryUsername" class="linux_user" placeholder="Linux Username" required> &nbsp;&nbsp;
-
-                        Password : <input type="password" id="discoveryPassword" class="linux_pass" placeholder="Linux Password" required> <br><br>
+                        <h3>Discover IP</h3> <br>
 
                     </div>
 
-                </div>
+                    <div id="type" class="disc__title">
 
-                <div class="demo">
+                        <p class="name">Name</p>
 
-                    <button type="button" class="btn change" onclick="discoverData()" style="cursor: pointer">Create</button>
+                        <p class="ip">IP/Host</p><br>
 
-                    <button type="button" class="btn cancel" onclick="closeForm('discoveryForm')" style="cursor: pointer">Cancel</button>
+                    </div>
 
-                </div>
+                    <div class="disc__entry">
 
-            </form>
+                        <input type="text" name="name" placeholder="Enter Name" id="name" class="disc__name" required>
 
-        </div>
+                        <input type="text" name="ip" placeholder="Enter IP/Host" id="ip" class="disc__address" required> <br>
 
-        <%-- view result form --%>
+                    </div>
 
-        <div class="disc__popUp" id="provisionForm">
+                    <div class="demo">
+
+                        <p class="name">Device Type</p>
+
+                        <select name="deviceType" id="deviceType" class="list" style="width: 10%;height: 25px" data-drop-down="true" data-required="true" onchange="displayLinuxProfile('profile', this)" required>
+
+                            <option value="0" class="ping">Ping</option>
+
+                            <option value="1" class="linux">Linux</option>
+
+                        </select>
+
+                        <br><br>
+
+                    </div>
+
+                    <div class="event" id="profile">
+
+                        <div class="demo">
+
+                            Username : <input type="text" name="discoveryUsername" id="discoveryUsername" class="linux_user" placeholder="Linux Username" required> &nbsp;&nbsp;
+
+                            Password : <input type="password" id="discoveryPassword" class="linux_pass" placeholder="Linux Password" required> <br><br>
+
+                        </div>
+
+                    </div>
+
+                    <div class="demo">
+
+                        <button type="button" class="btn change" onclick="discoverData()" style="cursor: pointer">Create</button>
+
+                        <button type="button" class="btn cancel" onclick="closeForm('discoveryForm')" style="cursor: pointer">Cancel</button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <%-- view result form --%>
+
+            <div class="disc__popUp" id="provisionForm">
 
                 <form action="" class="disc__container" method="POST">
 
@@ -226,7 +233,7 @@
 
                         <div class="demo popUp__body">
 
-                             <i class="bi bi-search"></i><input type="text" placeholder="search here" style="height:25px;border-radius:10px;margin-left:6px;">
+                            <i class="bi bi-search"></i><input type="text" placeholder="search here" style="height:25px;border-radius:10px;margin-left:6px;">
 
                             <select name="" id="" class="popUp__list" style="width: 10%;height: 30px; margin-left: 400px">
 
@@ -314,65 +321,63 @@
 
                 </form>
 
-        </div>
+            </div>
 
-        <script>
+            <script>
 
-            function monitorData(idName) {
+                function monitorData(idName) {
 
-                if (document.getElementById(idName).checked)
-                {
-                    // var hideId = (this).closest('tr').attr('td');
+                    if (document.getElementById(idName).checked)
+                    {
+                        // var hideId = (this).closest('tr').attr('td');
 
-                    var key = $("input[name=key]").val();
+                        var key = $("input[name=key]").val();
 
-                    $.ajax({
+                        $.ajax({
 
-                        type : "POST",
+                            type : "POST",
 
-                        cache : false,
+                            cache : false,
 
-                        timeout : 180000,
+                            timeout : 180000,
 
-                        async : true,
+                            async : true,
 
-                        url : "monitorData.action",
+                            url : "monitorData.action",
 
-                        data : "id=" + key,
+                            data : "id=" + key,
 
-                        success : function (data) {
+                            success : function (data) {
 
-                            <%
+                                <%
 
-                                 boolean flag = Monitor.flag;
+                                     boolean flag = Monitor.flag;
 
-                            %>
+                                %>
 
-                            if (<%=flag %>)
-                            {
-                                alert("successfully monitored!");
+                                if (<%=flag %>)
+                                {
+                                    alert("ip is already exist!");
+                                }
+                                else
+                                {
+                                    alert("successfully monitored!");
+                                }
+
+                            },
+                            error : function () {
+
+                                alert("something went wrong!");
                             }
-                            else
-                            {
-                                alert("ip is already exist!");
-                            }
-
-                        },
-                        error : function () {
-
-                            alert("something went wrong!");
-                        }
-                    });
+                        });
+                    }
+                    else
+                    {
+                        alert("must be checked checkbox!");
+                    }
                 }
-                else
-                {
-                    alert("must be checked checkbox!");
-                }
-            }
 
-        </script>
-
-
+            </script>
 
     </div>
 

@@ -3,6 +3,7 @@ package action.login;
 import action.dao.UserDAO;
 
 import action.util.Logger;
+
 import com.opensymphony.xwork2.ActionSupport;
 
 import org.apache.struts2.ServletActionContext;
@@ -18,8 +19,6 @@ public class Login extends ActionSupport
     private String username;
 
     private String password;
-
-    private static final Logger _logger = new Logger();
 
     public String getUsername() {
         return username;
@@ -37,6 +36,8 @@ public class Login extends ActionSupport
         this.password = password;
     }
 
+    private static final Logger _logger = new Logger();
+
     HttpServletRequest request = ServletActionContext.getRequest();
 
     HttpSession session = request.getSession();
@@ -45,7 +46,7 @@ public class Login extends ActionSupport
     {
         try
         {
-            if(UserDAO.check(username, password)) // username.equals("motadata") & password.equals("admin")
+            if(UserDAO.checkCredential(username, password))
             {
                 session.setAttribute("login", "true");
 
@@ -65,5 +66,4 @@ public class Login extends ActionSupport
 
         return null;
     }
-
 }

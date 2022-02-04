@@ -3,14 +3,13 @@ package action.monitor;
 import action.dao.UserDAO;
 
 import action.helper.ServiceProvider;
+
 import action.util.Logger;
+
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.sql.ResultSet;
 
-/**
- * Created by smit on 10/1/22.
- */
 public class Monitor extends ActionSupport
 {
     private int id;
@@ -75,9 +74,9 @@ public class Monitor extends ActionSupport
         this.deviceType = deviceType;
     }
 
-    private static UserDAO _dao = new UserDAO();
+    private static final UserDAO _dao = new UserDAO();
 
-    private static Logger _logger = new Logger();
+    private static final Logger _logger = new Logger();
 
     public String executeMonitor()
     {
@@ -113,11 +112,13 @@ public class Monitor extends ActionSupport
 
     public String getPolling()
     {
+        UserDAO _dao = new UserDAO(id, ip);
+
+        ResultSet resultSet = null;
+
         try
         {
-            UserDAO _dao = new UserDAO(id, ip);
-
-            ResultSet resultSet = UserDAO.getDashboardData();
+            resultSet = UserDAO.getDashboardData();
 
             while (resultSet.next())
             {

@@ -21,12 +21,9 @@ public class Test
 {
     public static void main(String[] args) throws ParseException {
 
+        String str = "/home/smit/Downloads/nms_ui/";
 
-
-
-
-
-
+        System.out.println(System.getProperty("user.dir"));
 
 
 
@@ -61,27 +58,9 @@ public class Test
 
 //        System.out.println(new Date().getMinutes());
 
-        String str = "2022-02-01 15:08:47.313";
-
-        Date d = new Date();
-
-        String substring = str.substring(0, 16);
-        System.out.println(substring);
-
-
-//
 //        java.util.Date date
 //
 //        System.out.println(date);
-
-        System.out.println(d);
-
-
-
-
-
-        System.out.println();
-
 
 //        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 //

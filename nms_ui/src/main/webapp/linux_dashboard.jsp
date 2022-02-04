@@ -91,21 +91,21 @@
                         {
                             int id = resultSet.getInt(1);
 
-                            String IP = resultSet.getString(3);
+                            String ip = resultSet.getString(3);
 
                             String deviceType = resultSet.getString(6);
 
-                            String status = resultSet.getString(8);
+                            String ipStatus = resultSet.getString(8);
 
                 %>
 
                 <tr>
 
-                    <td><b>IP/Host</b>: <%=IP %>&nbsp;&nbsp;<i class="bi bi-activity" style="color: #2a92ff"></i></td>
+                    <td><b>IP/Host</b>: <%=ip %>&nbsp;&nbsp;<i class="bi bi-activity" style="color: #2a92ff"></i></td>
 
                     <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
 
-                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=IP %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
+                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=ip %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
 
                 </tr>
 
@@ -115,7 +115,7 @@
 
                     <%
 
-                        if (status.equals("Up"))
+                        if (ipStatus.equals("Up"))
                         {
 
                     %>
@@ -175,14 +175,14 @@
 
                                    while (resultSet.next())
                                    {
-                                       String IP = resultSet.getString(3);
+                                       String ip = resultSet.getString(3);
 
                                        String ipStatus = resultSet.getString(8);
 
                         %>
 
                         title:{
-                            text: "<%=IP %>"
+                            text: "<%=ip %>"
                         },
 
                         data: [
@@ -204,7 +204,7 @@
                                 color: "#A21919",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
                                 ]
 
                                 <%
@@ -222,7 +222,7 @@
                                 color: "#008000",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
                                 ]
 
                                 <%
@@ -397,7 +397,6 @@
 
                 <tbody>
 
-
                 <tr style="height: 300px">
 
                     <%-- dougnut chart --%>
@@ -414,11 +413,11 @@
 
                         while (resultSet.next())
                         {
-                            String Status = resultSet.getString(8);
+                            String ipStatus = resultSet.getString(8);
 
-                            String Response = resultSet.getString(7);
+                            String responseData = resultSet.getString(7);
 
-                            if (Status.equals("Up"))
+                            if (ipStatus.equals("Up"))
                             {
 
                 %>
@@ -444,7 +443,7 @@
 
                                     <td><b>Type</b></td>
 
-                                    <td><%=getDeviceType(Response) %></td>
+                                    <td><%=getDeviceType(responseData) %></td>
 
                                 </tr>
 
@@ -452,7 +451,7 @@
 
                                     <td><b>System Name</b></td>
 
-                                    <td><%=getSystemName(Response) %></td>
+                                    <td><%=getSystemName(responseData) %></td>
 
                                 </tr>
 
@@ -460,7 +459,7 @@
 
                                     <td><b>CPU Type</b></td>
 
-                                    <td><%=getCPUType(Response) %></td>
+                                    <td><%=getCPUType(responseData) %></td>
 
                                 </tr>
 
@@ -468,7 +467,7 @@
 
                                     <td><b>OS Version</b></td>
 
-                                    <td><%=getOSVersion(Response) %></td>
+                                    <td><%=getOSVersion(responseData) %></td>
 
                                 </tr>
 
@@ -476,7 +475,7 @@
 
                                     <td><b>OS Name</b></td>
 
-                                    <td><%=getOSName(Response) %></td>
+                                    <td><%=getOSName(responseData) %></td>
 
                                 </tr>
 
@@ -502,7 +501,7 @@
 
                             <div>
 
-                                <b><p><%=getUsedMemoryPercent(Response) + " %" %></p></b>
+                                <b><p><%=getUsedMemoryPercent(responseData) + " %" %></p></b>
 
                             </div>
 
@@ -523,7 +522,7 @@
 
                             <div>
 
-                                <b><p><%=getFreeMemoryPercent(Response) + " %" %></p></b>
+                                <b><p><%=getFreeMemoryPercent(responseData) + " %" %></p></b>
 
                             </div>
 
@@ -569,7 +568,7 @@
 
                             <div>
 
-                                <b><p><%=getUserCPUPercent(Response) + " %" %></p></b>
+                                <b><p><%=getUserCPUPercent(responseData) + " %" %></p></b>
 
                             </div>
 
@@ -590,7 +589,7 @@
 
                             <div>
 
-                                <b><p><%=getSystemCPUPercent(Response) + " %" %></p></b>
+                                <b><p><%=getSystemCPUPercent(responseData) + " %" %></p></b>
 
                             </div>
 
@@ -611,7 +610,7 @@
 
                             <div>
 
-                                <b><p><%=getUsedSwapPercent(Response) + " %" %></p></b>
+                                <b><p><%=getUsedSwapPercent(responseData) + " %" %></p></b>
 
                             </div>
 
@@ -632,7 +631,7 @@
 
                             <div>
 
-                                <b><p><%=getFreeSwapPercent(Response) + " %" %></p></b>
+                                <b><p><%=getFreeSwapPercent(responseData) + " %" %></p></b>
 
                             </div>
 
@@ -653,7 +652,7 @@
 
                             <div>
 
-                                <b><p><%=getDiskPercent(Response) + " %" %></p></b>
+                                <b><p><%=getDiskPercent(responseData) + " %" %></p></b>
 
                             </div>
 
@@ -661,11 +660,10 @@
 
                     </td>
 
-                </tr>
 
                 <%
                             }
-                            if (Status.equals("Down"))
+                            if (ipStatus.equals("Down"))
                             {
 
                 %>
@@ -675,6 +673,7 @@
 
                         <div class="">
 
+                            <p>Device Details</p>
 
                         </div>
 

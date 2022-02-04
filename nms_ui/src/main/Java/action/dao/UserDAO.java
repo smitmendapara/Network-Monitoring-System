@@ -24,9 +24,9 @@ public class UserDAO
 
     private static String selectColumnDiscover = "SELECT ID, NAME, IP FROM TB_DISCOVER";
 
-    private static String selectDiscover = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
-
     private static String selectIdDiscover = "SELECT ID FROM TB_DISCOVER WHERE IP = ?";
+
+    private static String selectDiscover = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
 
     private static String selectColumnResult = "SELECT ID, IP, PROFILE, DEVICETYPE FROM TB_RESULT";
 
@@ -109,6 +109,42 @@ public class UserDAO
         return connection;
     }
 
+    private static PreparedStatement getPreparedStatement(String sqlQuery)
+    {
+        PreparedStatement preparedStatement = null;
+
+        try
+        {
+            connection = _dao.getConnection();
+
+            preparedStatement = connection.prepareStatement(sqlQuery);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("prepared statement is not ready!");
+        }
+
+        return preparedStatement;
+    }
+
+    private static Statement getStatement()
+    {
+        Statement statement = null;
+
+        try
+        {
+            connection = _dao.getConnection();
+
+            statement = connection.createStatement();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("statement is not ready!");
+        }
+
+        return statement;
+    }
+
     public static String getResultSet()
     {
         Statement statement = null;
@@ -119,9 +155,7 @@ public class UserDAO
 
         try
         {
-            connection = _dao.getConnection();
-
-            statement = connection.createStatement();
+            statement = getStatement();
 
             resultSet = statement.executeQuery(selectColumnResult + " WHERE ID = " + _dao.getNewId());
 
@@ -170,9 +204,7 @@ public class UserDAO
 
         try
         {
-            connection = _dao.getConnection();
-
-            statement = connection.createStatement();
+            statement = getStatement();
 
             resultSet = statement.executeQuery(selectColumnDiscover);
 
@@ -194,9 +226,7 @@ public class UserDAO
 
         try
         {
-            connection = _dao.getConnection();
-
-            statement = connection.createStatement();
+            statement = getStatement();
 
             resultSet = statement.executeQuery(selectMonitor);
 
@@ -210,25 +240,23 @@ public class UserDAO
         return resultSet;
     }
 
-    public static boolean check(String username, String password)
+    public static boolean checkCredential(String username, String password)
     {
         boolean status = false;
 
-        PreparedStatement statement = null;
+        PreparedStatement preparedStatement = null;
+
+        ResultSet resultSet = null;
 
         try
         {
-            Class.forName("org.h2.Driver");
+            preparedStatement = getPreparedStatement(selectUser);
 
-            connection = _dao.getConnection();
+            preparedStatement.setString(1, username);
 
-            statement = connection.prepareStatement(selectUser);
+            preparedStatement.setString(2, password);
 
-            statement.setString(1, username);
-
-            statement.setString(2, password);
-
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next())
             {
@@ -238,20 +266,6 @@ public class UserDAO
         catch (Exception exception)
         {
             _logger.error("data not get properly!", exception);
-        }
-        finally
-        {
-            try
-            {
-                if (statement != null && !statement.isClosed())
-                {
-                    statement.close();
-                }
-            }
-            catch (Exception ignored)
-            {
-
-            }
         }
 
         return status;
@@ -265,11 +279,7 @@ public class UserDAO
 
         try
         {
-            Class.forName("org.h2.Driver");
-
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(insertUser);
+            preparedStatement = getPreparedStatement(insertUser);
 
             preparedStatement.setString(1, username);
 
@@ -297,58 +307,56 @@ public class UserDAO
     {
         boolean status = true;
 
+        PreparedStatement preparedStatement = null;
+
         try
         {
-            Class.forName("org.h2.Driver");
-
-            connection = _dao.getConnection();
-
-            PreparedStatement discover_statement = connection.prepareStatement(insertDiscover);
+            preparedStatement = getPreparedStatement(insertDiscover);
 
             if (deviceType.equals("0"))
             {
-                discover_statement.setString(1, name);
+                preparedStatement.setString(1, name);
 
-                discover_statement.setString(2, ip);
+                preparedStatement.setString(2, ip);
 
-                discover_statement.setString(3, CommonConstantUI.NULL);
+                preparedStatement.setString(3, CommonConstantUI.NULL);
 
-                discover_statement.setString(4, CommonConstantUI.NULL);
+                preparedStatement.setString(4, CommonConstantUI.NULL);
 
-                discover_statement.setString(5, "Ping");
+                preparedStatement.setString(5, "Ping");
 
-                discover_statement.setString(6, response);
+                preparedStatement.setString(6, response);
 
-                discover_statement.setString(7, ipStatus);
+                preparedStatement.setString(7, ipStatus);
 
-                discover_statement.setString(8, timestamp.substring(0, 16));
+                preparedStatement.setString(8, timestamp.substring(0, 16));
 
             }
             if (deviceType.equals("1"))
             {
-                discover_statement.setString(1, name);
+                preparedStatement.setString(1, name);
 
-                discover_statement.setString(2, ip);
+                preparedStatement.setString(2, ip);
 
-                discover_statement.setString(3, discoveryUsername);
+                preparedStatement.setString(3, discoveryUsername);
 
-                discover_statement.setString(4, discoveryPassword);
+                preparedStatement.setString(4, discoveryPassword);
 
-                discover_statement.setString(5, "Linux");
+                preparedStatement.setString(5, "Linux");
 
-                discover_statement.setString(6, response);
+                preparedStatement.setString(6, response);
 
-                discover_statement.setString(7, ipStatus);
+                preparedStatement.setString(7, ipStatus);
 
-                discover_statement.setString(8, timestamp.substring(0, 16));
+                preparedStatement.setString(8, timestamp.substring(0, 16));
             }
 
-            if (discover_statement.execute())
+            if (preparedStatement.execute())
             {
                 return true;
             }
 
-            discover_statement.close();
+            preparedStatement.close();
 
 
             //kernel message for ping
@@ -363,6 +371,24 @@ public class UserDAO
         return status;
     }
 
+    private static void updateData(PreparedStatement preparedStatement, String response, String ipStatus, String timestamp, String ip)
+    {
+        try
+        {
+            preparedStatement.setString(1, response);
+
+            preparedStatement.setString(2, ipStatus);
+
+            preparedStatement.setString(3, timestamp.substring(0, 16));
+
+            preparedStatement.setString(4, ip);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("data not updated!");
+        }
+    }
+
     public static boolean enterReMonitorData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
@@ -371,11 +397,7 @@ public class UserDAO
 
         try
         {
-            Class.forName("org.h2.Driver");
-
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(updateMonitor);
+            preparedStatement = getPreparedStatement(updateMonitor);
 
             updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
@@ -398,13 +420,11 @@ public class UserDAO
     {
         boolean status = true;
 
+        PreparedStatement preparedStatement = null;
+
         try
         {
-            Class.forName("org.h2.Driver");
-
-            connection = _dao.getConnection();
-
-            PreparedStatement preparedStatement = connection.prepareStatement(updateDiscover);
+            preparedStatement = getPreparedStatement(updateDiscover);
 
             updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
@@ -428,17 +448,21 @@ public class UserDAO
     {
         boolean result = true;
 
+        PreparedStatement preparedStatement = null;
+
+        PreparedStatement result_statement = null;
+
+        ResultSet resultSet = null;
+
         try
         {
-            connection = _dao.getConnection();
-
-            PreparedStatement preparedStatement = connection.prepareStatement(selectIdDiscover);
+            preparedStatement = getPreparedStatement(selectIdDiscover);
 
             preparedStatement.setString(1, ip);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
-            PreparedStatement result_statement = connection.prepareStatement(insertResult);
+            result_statement = getPreparedStatement(insertResult);
 
             while (resultSet.next())
             {
@@ -496,15 +520,15 @@ public class UserDAO
     {
         boolean result = true;
 
+        PreparedStatement preparedStatement = null;
+
         try
         {
-            Connection connection = _dao.getConnection();
+            preparedStatement = getPreparedStatement(updateResult);
 
-            PreparedStatement result_statement = connection.prepareStatement(updateResult);
+            updateData(preparedStatement, response, ipStatus, timestamp, ip);
 
-            updateData(result_statement, response, ipStatus, timestamp, ip);
-
-            if (result_statement.execute())
+            if (preparedStatement.execute())
             {
                 return true;
             }
@@ -520,27 +544,11 @@ public class UserDAO
         return result;
     }
 
-    private static void updateData(PreparedStatement result_statement, String response, String ipStatus, String timestamp, String ip)
-    {
-        try
-        {
-            result_statement.setString(1, response);
-
-            result_statement.setString(2, ipStatus);
-
-            result_statement.setString(3, timestamp.substring(0, 16));
-
-            result_statement.setString(4, ip);
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("data not updated!");
-        }
-    }
-
     public static boolean enterMonitorTableData(int id)
     {
         boolean result = true;
+
+        Timestamp timestamp = null;
 
         PreparedStatement preparedStatement = null;
 
@@ -548,30 +556,32 @@ public class UserDAO
 
         PreparedStatement preparedStatement2 = null;
 
+        ResultSet resultSet1 = null;
+
+        ResultSet resultSet = null;
+
         try
         {
-            connection = _dao.getConnection();
-
-            preparedStatement2 = connection.prepareStatement(findData);
+            preparedStatement2 = getPreparedStatement(findData);
 
             preparedStatement2.setInt(1, id);
 
-            ResultSet resultSet1 = preparedStatement2.executeQuery();
+            resultSet1 = preparedStatement2.executeQuery();
 
             if (resultSet1.next())
             {
                 return false;
             }
 
-            preparedStatement = connection.prepareStatement(insertMonitor);
+            preparedStatement = getPreparedStatement(insertMonitor);
 
-            preparedStatement1 = connection.prepareStatement(idQuery);
+            preparedStatement1 = getPreparedStatement(idQuery);
 
             preparedStatement1.setInt(1, id);
 
-            ResultSet resultSet = preparedStatement1.executeQuery();
+            resultSet = preparedStatement1.executeQuery();
 
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            timestamp = new Timestamp(System.currentTimeMillis());
 
             while (resultSet.next())
             {
@@ -620,11 +630,9 @@ public class UserDAO
 
         try
         {
-            connection = _dao.getConnection();
+            preparedStatement = getPreparedStatement(deleteDiscover);
 
-            preparedStatement = connection.prepareStatement(deleteDiscover);
-
-            preparedStatement.setInt(1, idAttribute); // setString(1, String.valueOf(idAttribute));
+            preparedStatement.setInt(1, idAttribute);
 
             if (preparedStatement.execute())
             {
@@ -651,9 +659,31 @@ public class UserDAO
 
         try
         {
-            Connection connection = _dao.getConnection();
+            preparedStatement = getPreparedStatement(selectDiscover);
 
-            preparedStatement = connection.prepareStatement(selectDiscover);
+            preparedStatement.setString(1, ip);
+
+            resultSet  = preparedStatement.executeQuery();
+
+            return resultSet;
+        }
+        catch (Exception exception)
+        {
+            _logger.error("not find re discover table data!!", exception);
+        }
+
+        return resultSet;
+    }
+
+    public static ResultSet getReMonitorData(String ip)
+    {
+        ResultSet resultSet = null;
+
+        PreparedStatement preparedStatement = null;
+
+        try
+        {
+            preparedStatement = getPreparedStatement(selectColumnMonitor);
 
             preparedStatement.setString(1, ip);
 
@@ -671,15 +701,13 @@ public class UserDAO
 
     public static ResultSet getDashboardData()
     {
-        PreparedStatement preparedStatement;
+        PreparedStatement preparedStatement = null;
 
         ResultSet resultSet = null;
 
         try
         {
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(selectColumnMonitor);
+            preparedStatement = getPreparedStatement(selectColumnMonitor);
 
             preparedStatement.setString(1, ip);
 
@@ -697,57 +725,23 @@ public class UserDAO
         return resultSet;
     }
 
-    public static String getLinuxDashboardData()
-    {
-        PreparedStatement preparedStatement;
-
-        ResultSet resultSet = null;
-
-        String responseRow = null;
-
-        try
-        {
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(selectDiscover);
-
-            preparedStatement.setString(1, ip);
-
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next())
-            {
-                responseRow = resultSet.getString(7);
-            }
-
-        }
-        catch (Exception exception)
-        {
-            _logger.error("not find re discover table data!!", exception);
-
-            resultSet = null;
-        }
-
-        return responseRow;
-    }
-
     public static String getUpdatedPacket(int id, String ip, String time)
     {
         String packet = null;
 
         PreparedStatement preparedStatement = null;
 
+        ResultSet resultSet = null;
+
         try
         {
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(selectDataDump);
+            preparedStatement = getPreparedStatement(selectDataDump);
 
             preparedStatement.setInt(1, id);
 
             preparedStatement.setString(2, time);
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next())
             {
@@ -773,9 +767,7 @@ public class UserDAO
 
         try
         {
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(selectDataDump);
+            preparedStatement = getPreparedStatement(selectDataDump);
 
             preparedStatement.setInt(1, id);
 
@@ -805,9 +797,7 @@ public class UserDAO
 
         try
         {
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(insertDataDump);
+            preparedStatement = getPreparedStatement(insertDataDump);
 
             preparedStatement.setInt(1, id);
 

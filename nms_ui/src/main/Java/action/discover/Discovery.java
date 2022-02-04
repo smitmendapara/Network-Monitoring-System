@@ -1,15 +1,15 @@
 package action.discover;
 
 import action.dao.UserDAO;
+
 import action.helper.ServiceProvider;
+
 import action.util.Logger;
+
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.sql.ResultSet;
 
-/**ex
- * Created by smit on 3/1/22.
- */
 public class Discovery extends ActionSupport
 {
     private int idAttribute;
@@ -25,8 +25,6 @@ public class Discovery extends ActionSupport
     private String deviceType;
 
     private Object result;
-
-    private static final Logger _logger = new Logger();
 
     public String getName() {
         return name;
@@ -84,6 +82,8 @@ public class Discovery extends ActionSupport
         this.deviceType = deviceType;
     }
 
+    private static final Logger _logger = new Logger();
+
     public String executeDiscovery()
     {
         ServiceProvider serviceProvider = new ServiceProvider(name, ip, discoveryUsername, discoveryPassword, deviceType);
@@ -126,9 +126,11 @@ public class Discovery extends ActionSupport
 
     public String reDiscovery()
     {
+        ResultSet resultSet = null;
+
         try
         {
-            ResultSet resultSet = UserDAO.getReDiscoveryData(ip);
+            resultSet = UserDAO.getReDiscoveryData(ip);
 
             while (resultSet.next())
             {
