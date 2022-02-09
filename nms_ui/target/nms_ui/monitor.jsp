@@ -1,7 +1,3 @@
-<%@ page import="java.sql.ResultSet" %>
-
-<%@ page import="action.dao.UserDAO" %>
-
 <%--
   Created by IntelliJ IDEA.
   User: smit
@@ -14,6 +10,16 @@
 
 <hr/>
 
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+    if (session.getAttribute("username") == null)
+    {
+        response.sendRedirect("login.jsp");
+    }
+
+%>
+
 <%@ taglib uri="/struts-tags" prefix="s" %>
 
     <link rel="stylesheet" href="css/style.css">
@@ -25,6 +31,7 @@
     <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
 
     <script src="js/index.js"></script>
+
 
     <br/>
 
@@ -68,49 +75,22 @@
 
                 <hr/>
 
-                <tbody>
-
-                <%
-                    try
-                    {
-                        ResultSet resultSet = UserDAO.getMonitorTB();
-
-                        while (resultSet.next())
-                        {
-                            String id = resultSet.getString(1);
-
-                            String ip = resultSet.getString(3);
-
-                            String deviceType = resultSet.getString(6);
-                %>
-                            <tr>
-
-                                <td><input type="checkbox"></td>
-
-                                <td><%=id %></td>
-
-                                <%--<td><%=ip %>&nbsp;&nbsp;&nbsp;&nbsp;<a href="dashboard" onclick="showDashboard('<%=id %>', '<%=ip %>')" target="_blank"><i class="bi bi-box-arrow-up-right monitor__icon"></i></a></td>--%>
-
-                                <td><%=ip %>&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" onclick="showDashboard('<%=id %>', '<%=ip %>', '<%=deviceType%>')" target="_blank"><i class="bi bi-box-arrow-up-right monitor__icon"></i></button></td>
-
-                                <td><%=resultSet.getString(3) %></td>
-
-                            </tr>
-                <%
-                        }
-
-                        resultSet.close();
-                    }
-
-                    catch (Exception exception)
-                    {
-                        exception.printStackTrace();
-                    }
-                %>
+                <tbody id="monitorTable">
 
                 </tbody>
 
             </table>
 
         </div>
+
+        <script>
+
+    window.onload = function () {
+
+        getMonitorDetails();
+    }
+
+</script>
+
+
 

@@ -1,6 +1,6 @@
 package action.profile;
 
-import action.util.Logger;
+import util.Logger;
 
 import org.apache.struts2.ServletActionContext;
 
@@ -24,6 +24,7 @@ public class Profile
 
             if(string != null && !string.equals(""))
             {
+
                 return "success";
             }
             else

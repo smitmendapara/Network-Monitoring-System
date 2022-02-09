@@ -1,3 +1,5 @@
+<%@ page import="org.apache.struts2.ServletActionContext" %>
+
 <%--
   Created by IntelliJ IDEA.
   User: smit
@@ -15,6 +17,11 @@
         <link rel="stylesheet" href="css/style.css">
 
         <br/>
+
+        <%
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+        %>
 
         <h4 class="access middle">Welcome, <s:property value="username"/></h4>
 

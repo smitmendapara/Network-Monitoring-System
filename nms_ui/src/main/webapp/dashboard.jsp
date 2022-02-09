@@ -1,6 +1,6 @@
 <%@ page import="java.sql.ResultSet" %>
 
-<%@ page import="action.dao.UserDAO" %>
+<%@ page import="dao.UserDAO" %>
 
 <%@ page import="static action.helper.ServiceProvider.getSentPacket" %>
 
@@ -16,7 +16,7 @@
 
 <%@ page import="java.util.Date" %>
 
-<%@ page import="static action.dao.UserDAO.getUpdatedPacket" %>
+<%@ page import="static dao.UserDAO.getUpdatedPacket" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -58,6 +58,15 @@
 
     <body>
 
+        <%
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+            if (session.getAttribute("username") == null)
+            {
+                response.sendRedirect("login.jsp");
+            }
+        %>
+
         <div class="demo" style="float:left;margin-top: 10px">
 
             <nav>
@@ -76,83 +85,12 @@
 
         <hr/>
 
-        <div class="dashboard__details">
+        <div>
 
             <table width="100%">
 
-                <tbody>
+                <tbody id="dashboardHeader">
 
-                <%
-                    try
-                    {
-                        ResultSet resultSet = UserDAO.getDashboardData();
-
-                        while (resultSet.next())
-                        {
-                            int id = resultSet.getInt(1);
-
-                            String ip = resultSet.getString(3);
-
-                            String deviceType = resultSet.getString(6);
-
-                            String ipStatus = resultSet.getString(8);
-
-                %>
-
-                <tr>
-
-                    <td><b>IP/Host</b>: <%=ip %>&nbsp;&nbsp;<i class="bi bi-activity" style="color: #2a92ff;"></i></td>
-
-                    <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
-
-                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=ip %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
-
-                </tr>
-
-                <tr>
-
-                    <td><b>Id</b>: <%=resultSet.getString(1)%></td>
-
-                    <%
-
-                        if (ipStatus.equals("Up"))
-                        {
-
-                    %>
-
-                    <td><b>Status</b>: <%=resultSet.getString(8)%> &nbsp;&nbsp;<i class="bi bi-arrow-up-circle"></i></td>
-
-                    <%
-
-                    }
-                    else
-                    {
-
-                    %>
-
-                    <td><b>Status</b>: <%=resultSet.getString(8)%> &nbsp;&nbsp;<i class="bi bi-arrow-down-circle"></i></td>
-
-                    <%
-                        }
-
-                    %>
-
-                    <td><b>DeviceType</b>: <%=resultSet.getString(6)%></td>
-
-                </tr>
-
-                <%
-                        }
-
-                        resultSet.close();
-                    }
-
-                    catch (Exception exception)
-                    {
-                        exception.printStackTrace();
-                    }
-
-                %>
 
                 </tbody>
 
@@ -175,18 +113,18 @@
 
                                    while (resultSet.next())
                                    {
-                                       String ip = resultSet.getString(3);
+                                       String IP = resultSet.getString(3);
 
-                                       String ipStatus = resultSet.getString(8);
+                                       String status = resultSet.getString(8);
 
                         %>
 
                         title:{
-                            text: "<%=ip %>"
+                            text: "<%=IP %>"
                         },
 
                         toolTip: {
-                          shared: true
+                            shared: true
                         },
 
                         data: [
@@ -195,7 +133,7 @@
 
                                 <%
 
-                                    if (ipStatus.equals("Down"))
+                                    if (status.equals("Down"))
                                     {
 
                                 %>
@@ -207,7 +145,7 @@
                                 color: "#A21919",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
                                 ]
 
                                 <%
@@ -225,7 +163,7 @@
                                 color: "#008000",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
                                 ]
 
                                 <%
@@ -272,7 +210,7 @@
 
                                    while (resultSet.next())
                                    {
-                                       String ip = resultSet.getString(3);
+                                       String IP = resultSet.getString(3);
 
                                        String responseData = resultSet.getString(7);
 
@@ -282,9 +220,9 @@
 
                         %>
 
-
                         axisY: {
-                            title: "Received Packet"
+                            title: "Received Packet",
+                            minimum: 0
                         },
 
                         axisX: {
@@ -310,7 +248,7 @@
 
                                     %>
 
-                                    { label: "<%=time2 %>", y: <%=getUpdatedPacket(id, ip, time2) %> },
+                                    { label: "<%=time2 %>", y: <%=getUpdatedPacket(id, IP, time2) %> },
 
                                     <%
 
@@ -321,7 +259,7 @@
                                         String time3 = dateFormat.format(thirdTime);
                                     %>
 
-                                    { label: "<%=time3 %>", y: <%=getUpdatedPacket(id, ip, time3) %> },
+                                    { label: "<%=time3 %>", y: <%=getUpdatedPacket(id, IP, time3) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -331,7 +269,7 @@
                                         String time4 = dateFormat.format(fourthTime);
                                     %>
 
-                                    { label: "<%=time4 %>", y: <%=getUpdatedPacket(id, ip, time4) %> },
+                                    { label: "<%=time4 %>", y: <%=getUpdatedPacket(id, IP, time4) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -341,7 +279,7 @@
                                         String time5 = dateFormat.format(fifthTime);
                                     %>
 
-                                    { label: "<%=time5 %>", y: <%=getUpdatedPacket(id, ip, time5) %> },
+                                    { label: "<%=time5 %>", y: <%=getUpdatedPacket(id, IP, time5) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -351,7 +289,7 @@
                                         String time6 = dateFormat.format(sixthTime);
                                     %>
 
-                                    { label: "<%=time6 %>", y: <%=getUpdatedPacket(id, ip, time6) %> },
+                                    { label: "<%=time6 %>", y: <%=getUpdatedPacket(id, IP, time6) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -361,7 +299,7 @@
                                         String time7 = dateFormat.format(sevenTime);
                                     %>
 
-                                    { label: "<%=time7 %>", y: <%=getUpdatedPacket(id, ip, time7) %> },
+                                    { label: "<%=time7 %>", y: <%=getUpdatedPacket(id, IP, time7) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -371,7 +309,7 @@
                                         String time8 = dateFormat.format(eightTime);
                                     %>
 
-                                    { label: "<%=time8 %>", y: 1 },
+                                    { label: "<%=time8 %>", y: <%=getUpdatedPacket(id, IP, time8) %> },
                                 ],
                             }
                         ]
@@ -395,221 +333,9 @@
 
             <table width="100%">
 
-                <tbody>
+                <tbody id="dashboardTableBody">
 
-                    <tr style="height: 300px">
 
-                        <%-- dougnut chart --%>
-                        <td class="dash__firstRow">
-
-                            <div id="dougnutChart" style="height: 270px;"></div>
-
-                        </td>
-
-                            <%
-                                try
-                                {
-                                    ResultSet resultSet = UserDAO.getDashboardData();
-
-                                    while (resultSet.next())
-                                    {
-                                        String responseData = resultSet.getString(7);
-
-                                        String ipStatus = resultSet.getString(8);
-
-                                        if (ipStatus.equals("Up"))
-                                        {
-
-                            %>
-
-                            <%-- first widgets --%>
-                            <td class="dash__secondRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>Sent Packet</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getSentPacket(responseData) %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%-- second widgets --%>
-                            <td class="dash__thirdRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>Packet Loss (%)</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getPacketLoss(responseData) + " %" %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%-- third widgets --%>
-                            <td class="dash__fourthRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>Received Packet</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getReceivedPacket(responseData) %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%-- fourth widgets --%>
-                            <td class="dash__fifthRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>RTT (ms)</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getRTTTime(responseData) + " ms" %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%
-                                        }
-
-                                        if (ipStatus.equals("Down"))
-                                        {
-
-                            %>
-
-                            <%-- first widgets --%>
-                            <td class="dash__secondRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>Sent Packet</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getSentPacket(responseData) %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%-- second widgets --%>
-                            <td class="dash__thirdRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>Packet Loss (%)</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getPacketLoss(responseData) + " %" %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%-- third widgets --%>
-                            <td class="dash__fourthRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>Received Packet</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getReceivedPacket(responseData) %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%-- fourth widgets --%>
-                            <td class="dash__fifthRow">
-
-                                <div class="dash__widget">
-
-                                    <div>
-
-                                        <p>RTT (ms)</p>
-
-                                    </div>
-
-                                    <div>
-
-                                        <p class="dash__response"><%=getRTTTime(responseData) %></p>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-                            <%
-                                        }
-
-                                    }
-                                }
-                                catch (Exception exception)
-                                {
-                                    exception.printStackTrace();
-                                }
-                            %>
-
-                    </tr>
 
                 </tbody>
 
@@ -623,17 +349,17 @@
 
                 <tbody>
 
-                    <tr>
+                <tr>
 
-                        <td>
+                    <td>
 
-                            <%-- area chart --%>
+                        <%-- area chart --%>
 
-                            <div id="areaChart" style="height: 300px; width: 100%;"></div>
+                        <div id="areaChart" style="height: 300px; width: 100%;"></div>
 
-                        </td>
+                    </td>
 
-                    </tr>
+                </tr>
 
                 </tbody>
 
@@ -642,3 +368,15 @@
         </div>
 
     </body>
+
+    <script>
+
+        window.onload = function () {
+
+            getDashboardHeader();
+
+            getDashboardBody();
+
+        }
+
+    </script>

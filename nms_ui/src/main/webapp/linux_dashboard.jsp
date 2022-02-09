@@ -1,6 +1,6 @@
 <%@ page import="java.sql.ResultSet" %>
 
-<%@ page import="action.dao.UserDAO" %>
+<%@ page import="dao.UserDAO" %>
 
 <%@ page import="java.text.SimpleDateFormat" %>
 
@@ -16,7 +16,7 @@
 
 <%@ page import="static action.helper.ServiceProvider.*" %>
 
-<%@ page import="static action.dao.UserDAO.getUpdatedMemory" %>
+<%@ page import="static dao.UserDAO.getUpdatedMemory" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -58,6 +58,16 @@
 
     <body>
 
+        <%
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+            if (session.getAttribute("username") == null)
+            {
+                response.sendRedirect("login.jsp");
+            }
+
+        %>
+
         <div class="demo" style="float:left;margin-top: 10px">
 
             <nav>
@@ -91,21 +101,21 @@
                         {
                             int id = resultSet.getInt(1);
 
-                            String ip = resultSet.getString(3);
+                            String IP = resultSet.getString(3);
 
-                            String deviceType = resultSet.getString(6);
+                            String device = resultSet.getString(6);
 
-                            String ipStatus = resultSet.getString(8);
+                            String status = resultSet.getString(8);
 
                 %>
 
                 <tr>
 
-                    <td><b>IP/Host</b>: <%=ip %>&nbsp;&nbsp;<i class="bi bi-activity" style="color: #2a92ff"></i></td>
+                    <td><b>IP/Host</b>: <%=IP %>&nbsp;&nbsp;<i class="bi bi-activity" style="color: #2a92ff"></i></td>
 
                     <td><b>Profile</b>: <%=resultSet.getString(4)%></td>
 
-                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=ip %>', '<%=deviceType%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
+                    <td><b>Poll Time</b>: <%=resultSet.getString(9)%>&nbsp;&nbsp;<a href="" title="Poll Now" onclick="getPolling('<%=id %>', '<%=IP %>', '<%=device%>')"><i class="bi bi-arrow-repeat" style="cursor:pointer;"></i></a></td>
 
                 </tr>
 
@@ -115,7 +125,7 @@
 
                     <%
 
-                        if (ipStatus.equals("Up"))
+                        if (status.equals("Up"))
                         {
 
                     %>
@@ -175,14 +185,14 @@
 
                                    while (resultSet.next())
                                    {
-                                       String ip = resultSet.getString(3);
+                                       String IP = resultSet.getString(3);
 
-                                       String ipStatus = resultSet.getString(8);
+                                       String status = resultSet.getString(8);
 
                         %>
 
                         title:{
-                            text: "<%=ip %>"
+                            text: "<%=IP %>"
                         },
 
                         data: [
@@ -191,7 +201,7 @@
 
                                 <%
 
-                                    if (ipStatus.equals("Down"))
+                                    if (status.equals("Down"))
                                     {
 
                                 %>
@@ -204,7 +214,7 @@
                                 color: "#A21919",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
                                 ]
 
                                 <%
@@ -222,7 +232,7 @@
                                 color: "#008000",
 
                                 dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=ip %>" },
+                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
                                 ]
 
                                 <%
@@ -274,9 +284,7 @@
 
                                        String IP = resultSet.getString(3);
 
-                                       String Response = resultSet.getString(7);
-
-                                       String ipStatus = resultSet.getString(8);
+                                       String responseData = resultSet.getString(7);
 
                                        String time1 = dateFormat.format(date);
 
@@ -284,7 +292,8 @@
 
 
                         axisY: {
-                            title: "Memory (%)"
+                            title: "Memory (%)",
+                            minimum: 0
                         },
 
                         axisX: {
@@ -299,7 +308,7 @@
 
                                 dataPoints: [
 
-                                    { label: "<%=time1 %>", y: <%=getFreeMemoryPercent(Response) %> },
+                                    { label: "<%=time1 %>", y: <%=getFreeMemoryPercent(responseData) %> },
 
                                     <%
                                         currentTime.add(Calendar.MINUTE, -5);
@@ -413,11 +422,11 @@
 
                         while (resultSet.next())
                         {
-                            String ipStatus = resultSet.getString(8);
+                            String status = resultSet.getString(8);
 
                             String responseData = resultSet.getString(7);
 
-                            if (ipStatus.equals("Up"))
+                            if (status.equals("Up"))
                             {
 
                 %>
@@ -663,7 +672,7 @@
 
                 <%
                             }
-                            if (ipStatus.equals("Down"))
+                            if (status.equals("Down"))
                             {
 
                 %>
@@ -671,7 +680,7 @@
                     <%-- first widgets --%>
                     <td class="linux__Widget">
 
-                        <div class="">
+                        <div class="" style="margin:20px 0 175px 10px">
 
                             <p>Device Details</p>
 

@@ -1,8 +1,4 @@
-<%@ page import="action.dao.UserDAO" %>
-
-<%@ page import="java.sql.ResultSet" %>
-
-<%@ page import="action.monitor.Monitor" %>
+<%@ page import="dao.UserDAO" %>
 
 <%--
   Created by IntelliJ IDEA.
@@ -42,6 +38,16 @@
 
             <script src="js/index.js"></script>
 
+            <%
+                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+                if (session.getAttribute("username") == null)
+                {
+                    response.sendRedirect("login.jsp");
+                }
+
+            %>
+
             <h3 class="middle" style="margin:15px 0 0 1330px;">Create IP</h3>
 
             <%-- static navigation discovery page content --%>
@@ -66,7 +72,7 @@
 
             <hr/>
 
-            <%-- discovered ip table --%>
+            <%-- discovered IP table --%>
 
             <div class="demo" id="myTableDiv">
 
@@ -90,49 +96,6 @@
 
                     <tbody id="mainTable">
 
-                    <%
-                        try
-                        {
-                            ResultSet resultSet = UserDAO.getDiscoverTB();
-
-                            while (resultSet.next())
-                            {
-                                String id = resultSet.getString(1);
-
-                                String ip = resultSet.getString(3);
-
-                    %>
-                                    <tr class="disc__data" id="<%=id %>">
-
-                                        <td><%=resultSet.getString(2) %></td>
-
-                                        <td><%=ip %></td>
-
-                                        <td class="disc__icon">
-
-                                            <i class="bi bi-play disc__discovery" title="Discovery" onclick="reDiscoverData('<%=ip %>')"></i> &nbsp;
-
-                                            <button type="button" class="clickable" onclick="showForm('provisionForm', '<%=id %>')" ><i class="bi bi-eye disc__monitor" title="View Result"></i></button> &nbsp;
-
-                                            <i class="bi bi-pencil-square disc__edit" title="Edit"></i> &nbsp;
-
-                                            <i class="bi bi-trash disc__delete" title="Delete" onclick="deleteRow('<%=id %>')"></i>
-
-                                        </td>
-
-                                    </tr>
-                    <%
-                            }
-
-                            resultSet.close();
-                        }
-                        catch (Exception exception)
-                        {
-                            exception.printStackTrace();
-                        }
-
-                    %>
-
                     </tbody>
 
                 </table>
@@ -155,7 +118,7 @@
 
                         <p class="name">Name</p>
 
-                        <p class="ip">IP/Host</p><br>
+                        <p class="IP">IP/Host</p><br>
 
                     </div>
 
@@ -163,7 +126,7 @@
 
                         <input type="text" name="name" placeholder="Enter Name" id="name" class="disc__name" required>
 
-                        <input type="text" name="ip" placeholder="Enter IP/Host" id="ip" class="disc__address" required> <br>
+                        <input type="text" name="IP" placeholder="Enter IP/Host" id="IP" class="disc__address" required> <br>
 
                     </div>
 
@@ -171,7 +134,7 @@
 
                         <p class="name">Device Type</p>
 
-                        <select name="deviceType" id="deviceType" class="list" style="width: 10%;height: 25px" data-drop-down="true" data-required="true" onchange="displayLinuxProfile('profile', this)" required>
+                        <select name="device" id="device" class="list" style="width: 10%;height: 25px" data-drop-down="true" data-required="true" onchange="displayLinuxProfile('profile', this)" required>
 
                             <option value="0" class="ping">Ping</option>
 
@@ -187,9 +150,9 @@
 
                         <div class="demo">
 
-                            Username : <input type="text" name="discoveryUsername" id="discoveryUsername" class="linux_user" placeholder="Linux Username" required> &nbsp;&nbsp;
+                            Username : <input type="text" name="username" id="username" class="linux_user" placeholder="Linux Username" required> &nbsp;&nbsp;
 
-                            Password : <input type="password" id="discoveryPassword" class="linux_pass" placeholder="Linux Password" required> <br><br>
+                            Password : <input type="password" id="password" class="linux_pass" placeholder="Linux Password" required> <br><br>
 
                         </div>
 
@@ -323,61 +286,13 @@
 
             </div>
 
-            <script>
-
-                function monitorData(idName) {
-
-                    if (document.getElementById(idName).checked)
-                    {
-                        // var hideId = (this).closest('tr').attr('td');
-
-                        var key = $("input[name=key]").val();
-
-                        $.ajax({
-
-                            type : "POST",
-
-                            cache : false,
-
-                            timeout : 180000,
-
-                            async : true,
-
-                            url : "monitorData.action",
-
-                            data : "id=" + key,
-
-                            success : function (data) {
-
-                                <%
-
-                                     boolean flag = Monitor.flag;
-
-                                %>
-
-                                if (<%=flag %>)
-                                {
-                                    alert("ip is already exist!");
-                                }
-                                else
-                                {
-                                    alert("successfully monitored!");
-                                }
-
-                            },
-                            error : function () {
-
-                                alert("something went wrong!");
-                            }
-                        });
-                    }
-                    else
-                    {
-                        alert("must be checked checkbox!");
-                    }
-                }
-
-            </script>
-
     </div>
 
+    <script>
+
+        window.onload = function () {
+
+            getDiscoveryDetails();
+        }
+
+    </script>

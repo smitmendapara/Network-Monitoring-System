@@ -132,7 +132,7 @@ tr:nth-child(even) {
     text-align: center;
 }
 
-.disc__monitor {
+.disc__monitor, .disc__edit, .disc__delete, .disc__discovery {
     cursor: pointer;
 }
 
@@ -140,9 +140,6 @@ tr:nth-child(even) {
     color: #2a92ff;
 }
 
-.disc__monitor, .disc__edit, .disc__delete, .disc__discovery {
-    cursor: pointer;
-}
 
 .form-popUp {
     width: 40%;

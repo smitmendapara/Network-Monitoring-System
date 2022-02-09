@@ -10,4 +10,9 @@
 
     <link rel="stylesheet" href="css/style.css">
 
+    <%
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+    %>
+
     <h4 class="denied middle">something went wrong in discovery page!</h4>

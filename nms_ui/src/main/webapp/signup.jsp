@@ -14,6 +14,11 @@
 
     <link rel="stylesheet" href="css/style.css">
 
+        <%
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+        %>
+
         <s:form action="signupProcess" method="POST">
 
             <div class="demo">

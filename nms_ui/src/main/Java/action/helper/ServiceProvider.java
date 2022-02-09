@@ -1,12 +1,12 @@
 package action.helper;
 
-import action.dao.UserDAO;
+import dao.UserDAO;
 
-import action.util.CommonConstantUI;
+import util.CommonConstantUI;
 
-import action.util.Logger;
+import util.Logger;
 
-import action.util.SSHConnectionUtil;
+import util.SSHConnectionUtil;
 
 import java.io.BufferedReader;
 
@@ -85,14 +85,15 @@ public class ServiceProvider
         this.deviceType = deviceType;
     }
 
-    public ServiceProvider(String ip, String deviceType) {
-
+    public ServiceProvider(String ip, String deviceType)
+    {
         this.ip = ip;
 
         this.deviceType = deviceType;
     }
 
-    public ServiceProvider() {
+    public ServiceProvider()
+    {
 
     }
 
@@ -145,7 +146,7 @@ public class ServiceProvider
 
                     ipStatus = checkPingIpStatus(response, ip);
 
-                    resultSet = UserDAO.getReDiscoveryData(ip);
+                    resultSet = UserDAO.getReDiscoveryData(ip, deviceType);
 
                     boolean next = resultSet.next();
 
@@ -212,7 +213,7 @@ public class ServiceProvider
 
                 try
                 {
-                    resultSet = UserDAO.getReDiscoveryData(ip);
+                    resultSet = UserDAO.getReDiscoveryData(ip, deviceType);
 
                     boolean next = resultSet.next();
 
@@ -377,7 +378,7 @@ public class ServiceProvider
 
                     ipStatus = checkPingIpStatus(response, ip);
 
-                    resultSet = UserDAO.getReMonitorData(ip);
+                    resultSet = UserDAO.getReMonitorData(ip, deviceType);
 
                     boolean next = resultSet.next();
 
@@ -435,7 +436,7 @@ public class ServiceProvider
 
                 try
                 {
-                    resultSet = UserDAO.getReMonitorData(ip);
+                    resultSet = UserDAO.getReMonitorData(ip, deviceType);
 
                     boolean next = resultSet.next();
 
@@ -1000,6 +1001,5 @@ public class ServiceProvider
             _logger.warn("not set your re discover data properties!");
         }
     }
-
 
 }

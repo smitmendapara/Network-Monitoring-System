@@ -1,8 +1,8 @@
 package action.signup;
 
-import action.dao.UserDAO;
+import dao.UserDAO;
 
-import action.util.Logger;
+import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
 

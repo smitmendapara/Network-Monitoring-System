@@ -1,0 +1,190 @@
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        8174812     6097812      145844       21984     1931156     1724536
+Swap:       7999484       52092     7947392
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Filesystem                Size  Used Avail Use% Mounted on
+udev                      3.9G     0  3.9G   0% /dev
+tmpfs                     799M   50M  750M   7% /run
+/dev/mapper/vg0-root       14G  4.9G  8.4G  37% /
+tmpfs                     3.9G     0  3.9G   0% /dev/shm
+tmpfs                     5.0M     0  5.0M   0% /run/lock
+tmpfs                     3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/sda1                 361M   59M  280M  18% /boot
+/dev/mapper/vg0-motadata   39G   13G   24G  34% /motadata
+tmpfs                     799M     0  799M   0% /run/user/0
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	02/08/2022 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+          26.06    0.00    1.12    0.85    0.00   71.97
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          5          0
+sda               4.90        16.05       448.69     997499   27880221
+dm-0              2.71         7.48        23.84     464773    1481296
+dm-1              0.22         0.06         0.84       3908      52388
+dm-2              5.92         8.37       424.01     519780   26346484
+
+
+
+172.16.8.182 - channel is closed for communication!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+172.16.8.182 - connection established!
+connected to 172.16.8.182
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        8174812     6097672      142360       22012     1934780     1724692
+Swap:       7999484       52092     7947392
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Filesystem                Size  Used Avail Use% Mounted on
+udev                      3.9G     0  3.9G   0% /dev
+tmpfs                     799M   50M  750M   7% /run
+/dev/mapper/vg0-root       14G  4.9G  8.4G  37% /
+tmpfs                     3.9G     0  3.9G   0% /dev/shm
+tmpfs                     5.0M     0  5.0M   0% /run/lock
+tmpfs                     3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/sda1                 361M   59M  280M  18% /boot
+/dev/mapper/vg0-motadata   39G   13G   24G  34% /motadata
+tmpfs                     799M     0  799M   0% /run/user/0
+
+
+172.16.8.182 - channel is closed for communication!
+172.16.8.182 - checking channel connection...
+172.16.8.182 - channel is currently connected...
+172.16.8.182 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	02/08/2022 	_x86_64_	(4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+          26.06    0.00    1.12    0.85    0.00   71.97
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          5          0
+sda               4.91        16.04       448.96     997499   27920269
+dm-0              2.71         7.47        23.83     464773    1482064
+dm-1              0.22         0.06         0.84       3908      52388
+dm-2              5.93         8.36       424.28     519780   26385764
+
+
+
+172.16.8.182 - channel is closed for communication!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_discovery & tb_result table!
+successfully data inserted into tb_discovery & tb_result table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!
+172.16.11.160 - connection established!
+connected to 172.16.11.160
+172.16.11.160 - checking channel connection...
+172.16.11.160 - command output -> 
+Linux ubuntu 4.4.0-131-generic #157-Ubuntu SMP Thu Jul 12 15:51:36 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+
+
+172.16.11.160 - checking channel connection...
+172.16.11.160 - command output -> 
+              total        used        free      shared  buff/cache   available
+Mem:        7142080     5468448      315624       25032     1358008     1325380
+Swap:       7999484      160056     7839428
+
+
+172.16.11.160 - checking channel connection...
+172.16.11.160 - command output -> 
+Filesystem                Size  Used Avail Use% Mounted on
+udev                      3.4G     0  3.4G   0% /dev
+tmpfs                     698M   73M  625M  11% /run
+/dev/mapper/vg0-root      9.3G  6.3G  2.6G  72% /
+tmpfs                     3.5G     0  3.5G   0% /dev/shm
+tmpfs                     5.0M     0  5.0M   0% /run/lock
+tmpfs                     3.5G     0  3.5G   0% /sys/fs/cgroup
+/dev/sda1                 361M   59M  280M  18% /boot
+/dev/mapper/vg0-motadata   24G  6.2G   16G  28% /motadata
+tmpfs                     698M     0  698M   0% /run/user/1000
+tmpfs                     698M     0  698M   0% /run/user/0
+
+
+172.16.11.160 - checking channel connection...
+172.16.11.160 - command output -> 
+Linux 4.4.0-131-generic (ubuntu) 	02/08/2022 	_x86_64_	(8 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+          13.58    0.00    1.27    0.94    0.00   84.20
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+loop0             0.00         0.00         0.00          8          0
+sda              47.24       182.93       808.42  192398365  850247135
+dm-0              3.32        20.81        21.23   21886021   22328128
+dm-1             64.23       127.34       129.59  133929476  136296300
+dm-2             11.46        34.77       657.60   36573808  691622644
+
+
+
+successfully data inserted into tb_discovery & tb_result table!
+172.16.13.5 - connection established!
+connected to 172.16.13.5
+172.16.13.5 - checking channel connection...
+172.16.13.5 - command output -> 
+
+The command you have entered is available in the IOS.sh.
+However, the shell is currently disabled. You can enable
+it on this terminal by typing
+   'term shell'
+You can also enable it for all terminals by configuring the
+   'shell processing full'
+command. There is additional information in the man command.
+For more information, enable shell, and then enter:
+'man IOS.sh'
+
+successfully data inserted into tb_discovery & tb_result table!

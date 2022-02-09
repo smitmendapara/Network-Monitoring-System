@@ -1,6 +1,6 @@
 package action.logout;
 
-import action.util.Logger;
+import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
 

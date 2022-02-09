@@ -1,14 +1,18 @@
 package action.monitor;
 
-import action.dao.UserDAO;
+import bean.MonitorBean;
+import bean.NMSBean;
+import dao.UserDAO;
 
 import action.helper.ServiceProvider;
 
-import action.util.Logger;
+import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Monitor extends ActionSupport
 {
@@ -24,7 +28,15 @@ public class Monitor extends ActionSupport
 
     private String deviceType;
 
-    public static boolean flag;
+    private boolean flag = true;
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
 
     public int getId() {
         return id;
@@ -78,18 +90,53 @@ public class Monitor extends ActionSupport
 
     private static final Logger _logger = new Logger();
 
+    ResultSet resultSet = null;
+
+    MonitorBean bean = null;
+
+    List<MonitorBean> beanList = null;
+
+    public List<MonitorBean> getBeanList() {
+        return beanList;
+    }
+
+    public void setBeanList(List<MonitorBean> beanList) {
+        this.beanList = beanList;
+    }
+
     public String executeMonitor()
     {
         _dao.setNewId(id);
 
-        if (true)
+        try
         {
-            return "success";
+            beanList = new ArrayList<MonitorBean>();
+
+            resultSet = UserDAO.getMonitorTable();
+
+            if (resultSet != null)
+            {
+                while (resultSet.next())
+                {
+                    bean = new MonitorBean();
+
+                    bean.setName(resultSet.getString(2));
+
+                    bean.setId(resultSet.getInt(1));
+
+                    bean.setIP(resultSet.getString(3));
+
+                    bean.setDevice(resultSet.getString(6));
+
+                    beanList.add(bean);
+                }
+            }
         }
-        else
+        catch (Exception exception)
         {
-            return "error";
+
         }
+        return "success";
     }
 
     public String provisionMonitor()
@@ -98,21 +145,17 @@ public class Monitor extends ActionSupport
 
         if (UserDAO.enterMonitorTableData(id))
         {
-            this.flag = true;
-
             return "success";
         }
         else
         {
-            this.flag = false;
-
             return "error";
         }
     }
 
     public String getPolling()
     {
-        UserDAO _dao = new UserDAO(id, ip);
+        UserDAO _dao = new UserDAO(id, ip, deviceType);
 
         ResultSet resultSet = null;
 

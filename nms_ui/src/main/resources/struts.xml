@@ -8,6 +8,14 @@
 
     <package name="abc" extends="struts-default">
 
+        <result-types>
+            <result-type name="json" class="org.apache.struts2.json.JSONResult">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="enableGZIP">true</param>
+            </result-type>
+        </result-types>
+
         <!-- LOGIN ACTION -->
 
         <action name="login">
@@ -70,6 +78,12 @@
 
         </action>
 
+        <action name="discoveryTable" class="action.discover.Discovery" method="execute">
+
+            <result name="success" type="json" />
+
+        </action>
+
         <action name="reDiscoveryProcess" class="action.discover.Discovery" method="reDiscovery">
 
             <result name="success">discovery.jsp</result>
@@ -100,9 +114,7 @@
 
         <action name="monitorProcess" class="action.monitor.Monitor" method="executeMonitor">
 
-            <result name="success">discovery.jsp</result>
-
-            <result name="error">discovery_error.jsp</result>
+            <result name="success" type="json" />
 
         </action>
 
@@ -134,9 +146,15 @@
 
         <action name="dashboardProcess" class="action.dashboard.Dashboard" method="showDashboardData">
 
-            <result name="success" type="redirect">dashboard.jsp</result>
+            <result name="success">dashboard.jsp</result>
 
-            <result name="error" type="redirect">linux_dashboard.jsp</result>
+            <result name="error">linux_dashboard.jsp</result>
+
+        </action>
+
+        <action name="dashboardTable" class="action.dashboard.Dashboard" method="execute">
+
+            <result name="success" type="json" />
 
         </action>
 

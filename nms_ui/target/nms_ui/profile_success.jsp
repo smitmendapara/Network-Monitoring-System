@@ -12,4 +12,9 @@
 
 <br/>
 
+    <%
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+
+    %>
+
     <h4 class="access middle">Welcome to profile <s:property value="username"/>!</h4>
