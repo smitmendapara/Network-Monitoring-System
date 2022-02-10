@@ -7,9 +7,9 @@ public class Test
 {
     public static void main(String[] args) throws ParseException {
 
-        String str = "";
+        String str = " 2599004]";
 
-        System.out.println(System.getProperty("user.dir"));
+        System.out.println(str.substring(0, str.length()-1).trim());
 
 
 

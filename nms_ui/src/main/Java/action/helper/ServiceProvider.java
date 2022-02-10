@@ -18,7 +18,10 @@ import java.sql.Timestamp;
 
 import java.text.DecimalFormat;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ServiceProvider
 {
@@ -593,7 +596,11 @@ public class ServiceProvider
 
             String CPU_User = ioSplit[3].substring(0, 15).trim();
 
-            String []stringArray = {linux, ubuntu, x86, totalMemory, usedMemory, freeMemory, osVersion, osName, totalSwap, usedSwap, freeSwap, disk, CPU_User, CPU_System};
+            String sharedMemory = freeSplit[1].substring(43, 55).trim();
+
+            String cacheMemory = freeSplit[1].substring(55, 67).trim();
+
+            String []stringArray = {linux, ubuntu, x86, totalMemory, usedMemory, freeMemory, osVersion, osName, totalSwap, usedSwap, freeSwap, disk, CPU_User, CPU_System, sharedMemory, cacheMemory};
 
             data = Arrays.toString(stringArray);
 
@@ -1000,6 +1007,82 @@ public class ServiceProvider
         {
             _logger.warn("not set your re discover data properties!");
         }
+    }
+
+    public static String[] getDateTime()
+    {
+        String[] currentDate = null;
+
+        try
+        {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            Date date = new Date();
+
+            Calendar currentTime = Calendar.getInstance();
+
+            currentTime.setTime(date);
+
+            String firstTime = dateFormat.format(date);
+
+
+            currentTime.add(Calendar.MINUTE, -5);
+
+            Date date2 = currentTime.getTime();
+
+            String secondTime = dateFormat.format(date2);
+
+
+            currentTime.add(Calendar.MINUTE, -5);
+
+            Date date3 = currentTime.getTime();
+
+            String thirdTime = dateFormat.format(date3);
+
+
+            currentTime.add(Calendar.MINUTE, -5);
+
+            Date date4 = currentTime.getTime();
+
+            String fourthTime = dateFormat.format(date4);
+
+
+            currentTime.add(Calendar.MINUTE, -5);
+
+            Date date5 = currentTime.getTime();
+
+            String fifthTime = dateFormat.format(date5);
+
+
+            currentTime.add(Calendar.MINUTE, -5);
+
+            Date date6 = currentTime.getTime();
+
+            String sixthTime = dateFormat.format(date6);
+
+
+            currentTime.add(Calendar.MINUTE, -5);
+
+            Date date7 = currentTime.getTime();
+
+            String sevenTime = dateFormat.format(date7);
+
+
+            currentTime.add(Calendar.MINUTE, -5);
+
+            Date date8 = currentTime.getTime();
+
+            String eightTime = dateFormat.format(date8);
+
+            currentDate = new String[]{firstTime, secondTime, thirdTime, fourthTime, fifthTime, sixthTime, sevenTime, eightTime};
+
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("still not get current date and time!");
+        }
+
+        return currentDate;
     }
 
 }

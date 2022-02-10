@@ -102,91 +102,6 @@
 
             window.onload = function () {
 
-                var firstChart = new CanvasJS.Chart("dougnutChart",
-                    {
-                        width : 350,
-
-                        <%
-                               try
-                               {
-                                   ResultSet resultSet = UserDAO.getDashboardData();
-
-                                   while (resultSet.next())
-                                   {
-                                       String IP = resultSet.getString(3);
-
-                                       String status = resultSet.getString(8);
-
-                        %>
-
-                        title:{
-                            text: "<%=IP %>"
-                        },
-
-                        toolTip: {
-                            shared: true
-                        },
-
-                        data: [
-                            {
-                                type: "doughnut",
-
-                                <%
-
-                                    if (status.equals("Down"))
-                                    {
-
-                                %>
-
-                                xValueFormatString:"Up # %",
-
-                                yValueFormatString:"Down # %",
-
-                                color: "#A21919",
-
-                                dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
-                                ]
-
-                                <%
-
-                                    }
-                                    else
-                                    {
-
-                                %>
-
-                                xValueFormatString:"Down # %",
-
-                                yValueFormatString:"Up # %",
-
-                                color: "#008000",
-
-                                dataPoints: [
-                                    {  x: 0, y: 1.0, indexLabel: "<%=IP %>" },
-                                ]
-
-                                <%
-
-                                    }
-
-                                %>
-                            }
-                        ]
-
-                        <%
-                                   }
-                               }
-                               catch (Exception exception)
-                               {
-                                   exception.printStackTrace();
-                               }
-                        %>
-
-                    });
-
-                firstChart.render();
-
                 var secondChart = new CanvasJS.Chart("areaChart",
                     {
                         width: 1420,
@@ -235,82 +150,9 @@
 
                                 type: "column",
 
-                                dataPoints: [
+                                dataPoints: []
 
-                                    { label: "<%=time1 %>", y: <%=getReceivedPacket(responseData) %> },
 
-                                    <%
-                                        currentTime.add(Calendar.MINUTE, -5);
-
-                                        Date secondTime = currentTime.getTime();
-
-                                        String time2 = dateFormat.format(secondTime);
-
-                                    %>
-
-                                    { label: "<%=time2 %>", y: <%=getUpdatedPacket(id, IP, time2) %> },
-
-                                    <%
-
-                                        currentTime.add(Calendar.MINUTE, -5);
-
-                                        Date thirdTime = currentTime.getTime();
-
-                                        String time3 = dateFormat.format(thirdTime);
-                                    %>
-
-                                    { label: "<%=time3 %>", y: <%=getUpdatedPacket(id, IP, time3) %> },
-
-                                    <%
-                                        currentTime.add(Calendar.MINUTE, -5);
-
-                                        Date fourthTime = currentTime.getTime();
-
-                                        String time4 = dateFormat.format(fourthTime);
-                                    %>
-
-                                    { label: "<%=time4 %>", y: <%=getUpdatedPacket(id, IP, time4) %> },
-
-                                    <%
-                                        currentTime.add(Calendar.MINUTE, -5);
-
-                                        Date fifthTime = currentTime.getTime();
-
-                                        String time5 = dateFormat.format(fifthTime);
-                                    %>
-
-                                    { label: "<%=time5 %>", y: <%=getUpdatedPacket(id, IP, time5) %> },
-
-                                    <%
-                                        currentTime.add(Calendar.MINUTE, -5);
-
-                                        Date sixthTime = currentTime.getTime();
-
-                                        String time6 = dateFormat.format(sixthTime);
-                                    %>
-
-                                    { label: "<%=time6 %>", y: <%=getUpdatedPacket(id, IP, time6) %> },
-
-                                    <%
-                                        currentTime.add(Calendar.MINUTE, -5);
-
-                                        Date sevenTime = currentTime.getTime();
-
-                                        String time7 = dateFormat.format(sevenTime);
-                                    %>
-
-                                    { label: "<%=time7 %>", y: <%=getUpdatedPacket(id, IP, time7) %> },
-
-                                    <%
-                                        currentTime.add(Calendar.MINUTE, -5);
-
-                                        Date eightTime = currentTime.getTime();
-
-                                        String time8 = dateFormat.format(eightTime);
-                                    %>
-
-                                    { label: "<%=time8 %>", y: <%=getUpdatedPacket(id, IP, time8) %> },
-                                ],
                             }
                         ]
 
@@ -355,7 +197,7 @@
 
                         <%-- area chart --%>
 
-                        <div id="areaChart" style="height: 300px; width: 100%;"></div>
+                        <div id="areaChart" style="height: 300px;"></div>
 
                     </td>
 

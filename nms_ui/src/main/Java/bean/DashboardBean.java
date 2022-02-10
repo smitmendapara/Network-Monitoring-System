@@ -18,7 +18,11 @@ public class DashboardBean
 
     private String Status;
 
-    private String CurrentTime;
+    private String[] CurrentTime;
+
+    private String[] Packet;
+
+    private String[] Memory;
 
     public int getId() {
         return Id;
@@ -76,11 +80,11 @@ public class DashboardBean
         this.Status = status;
     }
 
-    public String getCurrentTime() {
+    public String[] getCurrentTime() {
         return CurrentTime;
     }
 
-    public void setCurrentTime(String currentTime) {
+    public void setCurrentTime(String[] currentTime) {
         CurrentTime = currentTime;
     }
 
@@ -90,5 +94,21 @@ public class DashboardBean
 
     public void setResponse(String response) {
         Response = response;
+    }
+
+    public String[] getPacket() {
+        return Packet;
+    }
+
+    public void setPacket(String[] packet) {
+        Packet = packet;
+    }
+
+    public String[] getMemory() {
+        return Memory;
+    }
+
+    public void setMemory(String[] memory) {
+        Memory = memory;
     }
 }

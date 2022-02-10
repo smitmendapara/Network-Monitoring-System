@@ -1,5 +1,6 @@
 package action.dashboard;
 
+import action.helper.ServiceProvider;
 import bean.DashboardBean;
 import dao.UserDAO;
 
@@ -121,13 +122,11 @@ public class Dashboard extends ActionSupport
                 {
                     bean = new DashboardBean();
 
-                    bean.setIP(resultSet.getString(3));
-
                     bean.setId(resultSet.getInt(1));
 
-                    bean.setDevice(resultSet.getString(6));
-
                     bean.setName(resultSet.getString(2));
+
+                    bean.setIP(resultSet.getString(3));
 
                     if (resultSet.getString(4) == null)
                     {
@@ -140,11 +139,45 @@ public class Dashboard extends ActionSupport
                         bean.setUsername(resultSet.getString(4));
                     }
 
+                    bean.setDevice(resultSet.getString(6));
+
+                    if (resultSet.getString(6).equals("Linux") && resultSet.getString(8).equals("Down"))
+                    {
+                        bean.setResponse("");
+                    }
+                    else
+                    {
+                        bean.setResponse(resultSet.getString(7));
+                    }
+
                     bean.setStatus(resultSet.getString(8));
 
-                    bean.setCurrentTime(resultSet.getString(9));
+                    String dateTime[] = ServiceProvider.getDateTime();
 
-                    bean.setResponse(resultSet.getString(7));
+                    String receivedPacket[] = new String[dateTime.length];
+
+                    String memoryStorage[] = new String[dateTime.length];
+
+                    if (resultSet.getString(6).equals("Ping"))
+                    {
+                        for (int i = 0; i < dateTime.length; i++)
+                        {
+                            receivedPacket[i] = UserDAO.getUpdatedPacket(resultSet.getInt(1), resultSet.getString(2), dateTime[i]);
+                        }
+
+                        bean.setPacket(receivedPacket);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < dateTime.length; i++)
+                        {
+                            memoryStorage[i] = String.valueOf(UserDAO.getUpdatedMemory(resultSet.getInt(1), resultSet.getString(2), dateTime[i]));
+                        }
+
+                        bean.setMemory(memoryStorage);
+                    }
+
+                    bean.setCurrentTime(dateTime);
 
                     beanList.add(bean);
                 }
