@@ -39,7 +39,9 @@ public class UserDAO
 
     private static String selectUser = "SELECT * FROM TB_USER WHERE USER = ? AND PASSWORD = ?";
 
-    private static String selectColumnDiscover = "SELECT ID, NAME, IP, DEVICE FROM TB_DISCOVER";
+    private static String selectColumnDiscover = "SELECT ID, NAME, IP, DEVICE, USERNAME FROM TB_DISCOVER";
+
+    private static String selectDiscoverTable = "SELECT ID, NAME, IP, DEVICE, USERNAME FROM TB_DISCOVER WHERE ID = ?";
 
     private static String selectIdDiscover = "SELECT ID FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?";
 
@@ -49,7 +51,7 @@ public class UserDAO
 
     private static String selectColumnMonitor = "SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?";
 
-    private static String selectMonitor = "SELECT * FROM TB_MONITOR WHERE ID = ?";
+    private static String selectDiscoverData = "SELECT * FROM TB_DISCOVER WHERE ID = ?";
 
     private static String selectMonitorTable = "SELECT * FROM TB_MONITOR";
 
@@ -64,7 +66,7 @@ public class UserDAO
 
     private static String insertMonitor = "INSERT INTO TB_MONITOR(ID, NAME, IP, PROFILE, PASSWORD, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?)";
+    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
 
     private static String updateDiscover = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
@@ -106,7 +108,6 @@ public class UserDAO
 
         this.deviceType = deviceType;
     }
-
 
     private static final Logger _logger = new Logger();
 
@@ -166,55 +167,19 @@ public class UserDAO
         return statement;
     }
 
-    public static String getResultSet()
+    public static String[] getArrayData(ResultSet resultSet)
     {
-        Statement statement = null;
-
-        ResultSet resultSet = null;
-
-        String string = "<tr class=\"disc__data\">" + "<td><input type=\"hidden\" name=\"key\" id=\"key\" value=\"zero\" >zero</td>" + "<td><input type=\"checkbox\" id=\"check\" checked></td>" + "<td >one</td>" + "<td>0</td>" + "<td>two</td>" + "<td>three</td>" + "</tr>";
+        String[] array = null;
 
         try
         {
-            statement = getStatement();
-
-            resultSet = statement.executeQuery(selectColumnResult + " WHERE ID = " + _dao.getNewId());
-
-            while (resultSet.next())
-            {
-                String string0 = resultSet.getString(1);
-
-                String string1 = resultSet.getString(2);
-
-                String string2 = resultSet.getString(3);
-
-                String string3 = resultSet.getString(4);
-
-                string = string.replace("zero", string0);
-
-                string = string.replace("one", string1);
-
-                if (resultSet.getString(3) == null)
-                {
-                    string = string.replace("two", "");
-                }
-                else
-                {
-                    string = string.replace("two", string2);
-                }
-
-                string = string.replace("three", string3);
-            }
-
-            resultSet.close();
-
+            String discoverArray[] = new String[resultSet.getRow()];
         }
         catch (Exception exception)
         {
-            _logger.error("not get resultSet!", exception);
-        }
 
-        return string;
+        }
+        return array;
     }
 
     public static ResultSet getDiscoverTB()
@@ -228,6 +193,8 @@ public class UserDAO
             statement = getStatement();
 
             resultSet = statement.executeQuery(selectColumnDiscover);
+
+//            getArrayData(resultSet);
 
             return resultSet;
         }
@@ -247,7 +214,7 @@ public class UserDAO
 
         try
         {
-            preparedStatement = getPreparedStatement(selectMonitor);
+            preparedStatement = getPreparedStatement(selectDiscoverData);
 
             preparedStatement.setInt(1, id);
 
@@ -851,7 +818,7 @@ public class UserDAO
         return memoryPercent;
     }
 
-    public static boolean enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time)
+    public static boolean enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time, String ipStatus)
     {
         boolean status = true;
 
@@ -872,6 +839,8 @@ public class UserDAO
             preparedStatement.setString(5, deviceType);
 
             preparedStatement.setString(6, time.substring(0, 16));
+
+            preparedStatement.setString(7, ipStatus);
 
             if (preparedStatement.execute())
             {

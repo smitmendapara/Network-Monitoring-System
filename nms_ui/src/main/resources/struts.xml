@@ -118,6 +118,12 @@
 
         </action>
 
+        <action name="monitorForm" class="action.monitor.Monitor" method="execute">
+
+            <result name="success" type="json" />
+
+        </action>
+
         <action name="monitorData" class="action.monitor.Monitor" method="provisionMonitor">
 
             <result name="success">discovery.jsp</result>

@@ -1,5 +1,3 @@
-<%@ page import="dao.UserDAO" %>
-
 <%--
   Created by IntelliJ IDEA.
   User: smit
@@ -52,7 +50,7 @@
 
             <%-- static navigation discovery page content --%>
 
-            <div class="demo" style="margin-top: 10px">
+            <div class="demo" style="margin: 10px 0 0 -15px">
 
                 <nav>
 
@@ -60,9 +58,9 @@
 
                     <a href="monitor" class="lg__monitor"><i class="bi bi-tv"></i>&nbsp;Monitor</a>
 
-                    <a href="dashboard" class="lg__dashboard"><i class="bi bi-grid"></i></i>&nbsp;Dashboard</a>
+                    <a href="" class="lg__dashboard"><i class="bi bi-grid"></i></i>&nbsp;Dashboard</a>
 
-                    <button type="button" class="disc__new middle" id="new" onclick="openForm('discoveryForm')" style="margin-left: 955px;cursor: pointer"><i class="bi bi-cloud-plus"></i>&nbsp;new</button>
+                    <button type="button" class="disc__new middle" id="new" onclick="openForm('discoveryForm')" style="margin-left: 965px;cursor: pointer"><i class="bi bi-cloud-plus"></i>&nbsp;new</button>
 
                     <button type="button" class="disc__new middle" onclick="toggleTable()"><i class="bi bi-app-indicator"></i>&nbsp;discoverd_IP</button>
 
@@ -243,26 +241,6 @@
 
                                 <tbody id="resultTable">
 
-                                <%
-                                    try
-                                    {
-                                        String map = UserDAO.getResultSet();
-
-                                        if (map != null)
-                                        {
-                                %>
-
-                                <%=map %>
-
-                                <%
-                                        }
-                                    }
-                                    catch (Exception exception)
-                                    {
-                                        exception.printStackTrace();
-                                    }
-
-                                %>
 
                                 </tbody>
 

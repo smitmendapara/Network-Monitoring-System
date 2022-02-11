@@ -1,6 +1,6 @@
 package action.discover;
 
-import bean.NMSBean;
+import bean.DiscoverBean;
 import dao.UserDAO;
 
 import action.helper.ServiceProvider;
@@ -91,15 +91,15 @@ public class Discovery extends ActionSupport
 
     ResultSet resultSet = null;
 
-    NMSBean bean = null;
+    DiscoverBean bean = null;
 
-    List<NMSBean> beanList = null;
+    List<DiscoverBean> beanList = null;
 
-    public List<NMSBean> getBeanList() {
+    public List<DiscoverBean> getBeanList() {
         return beanList;
     }
 
-    public void setBeanList(List<NMSBean> beanList) {
+    public void setBeanList(List<DiscoverBean> beanList) {
         this.beanList = beanList;
     }
 
@@ -107,7 +107,7 @@ public class Discovery extends ActionSupport
     {
         try
         {
-            beanList = new ArrayList<NMSBean>();
+            beanList = new ArrayList<DiscoverBean>();
 
             resultSet = UserDAO.getDiscoverTB();
 
@@ -115,11 +115,11 @@ public class Discovery extends ActionSupport
             {
                 while (resultSet.next())
                 {
-                    bean = new NMSBean();
-
-                    bean.setName(resultSet.getString(2));
+                    bean = new DiscoverBean();
 
                     bean.setId(resultSet.getInt(1));
+
+                    bean.setName(resultSet.getString(2));
 
                     bean.setIP(resultSet.getString(3));
 
@@ -131,9 +131,10 @@ public class Discovery extends ActionSupport
         }
         catch (Exception exception)
         {
-
+            _logger.warn("getting data error from DiscoverBean!");
         }
-            return "success";
+
+        return "success";
     }
 
     public String executeDiscovery()

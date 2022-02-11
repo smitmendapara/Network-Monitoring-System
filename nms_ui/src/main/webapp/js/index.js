@@ -284,42 +284,6 @@ function deleteRow(idAttribute) {
     document.getElementById(idAttribute).remove();
 }
 
-
-// show monitor form
-
-function showForm(id) {
-
-    var idName1 = $('div.disc__popUp').attr('id');
-
-    document.getElementById(idName1).style.display = 'block';
-
-    $.ajax({
-
-        type : "POST",
-
-        cache : false,
-
-        timeout : 180000,
-
-        async : true,
-
-        url : "monitorProcess.action",
-
-        data : "id=" + id,
-
-        success : function (data) {
-
-            alert("loading data...")
-        },
-        error : function () {
-
-            console.log("not worked properly!");
-        }
-    });
-
-    refreshPage();
-}
-
 // provision ip
 
 function monitorData(idName) {
@@ -357,6 +321,62 @@ function monitorData(idName) {
     {
         alert("must be checked checkbox!");
     }
+}
+
+// show monitor form
+
+function showForm(id) {
+
+    var idName1 = $('div.disc__popUp').attr('id');
+
+    document.getElementById(idName1).style.display = 'block';
+
+    $.ajax({
+
+        type : "POST",
+
+        cache : false,
+
+        timeout : 180000,
+
+        async : true,
+
+        url : "monitorForm.action",
+
+        data : "id=" + id,
+
+        success : function (data) {
+
+            var tableData = "";
+
+            $.each(data.beanList, function () {
+
+                tableData = "<tr class='disc__data'>" +
+
+                                    "<td><input type='hidden' class='one' name='key' id='key' value='"+this.id+"'>" + this.id + "</td>" +
+
+                                    "<td><input type='checkbox' id='check' checked></td>" +
+
+                                    "<td>" + this.IP + "</td>" +
+
+                                    "<td>" + "0" + "</td>" +
+
+                                    "<td>" + this.username + "</td>" +
+
+                                    "<td>" + this.device + "</td>" +
+
+                          + "</tr>";
+
+            });
+
+            $('#resultTable').html(tableData);
+
+        },
+        error : function () {
+
+            console.log("not worked properly!");
+        }
+    });
 }
 
 function getMonitorDetails() {
@@ -408,6 +428,7 @@ function getMonitorDetails() {
     })
 }
 
+
 // show dashboard
 
 function showDashboard(id, ip, deviceType) {
@@ -432,14 +453,12 @@ function showDashboard(id, ip, deviceType) {
 
             if (deviceType == 'Ping')
             {
-                window.location.href = "dashboard.jsp";
+                window.open('dashboard.jsp', '_blank');
             }
             else
             {
-                window.location.href = "linux_dashboard.jsp";
+                window.open('linux_dashboard.jsp', '_blank');
             }
-
-            getDashboardDetails(id, ip, deviceType);
 
         },
         error : function (data) {
@@ -512,7 +531,11 @@ function getDashboardHeader() {
 
             var tableData = "";
 
+            var tableTitle = "";
+
             $.each(data.beanList, function () {
+
+                tableTitle += "<p>" + this.IP + "</p>";
 
                 tableData += "<tr>" +
 
@@ -535,6 +558,8 @@ function getDashboardHeader() {
                           + "</tr>";
 
             });
+
+            $('#dashboardTitle').html(tableTitle);
 
             $('#dashboardHeader').html(tableData);
 
@@ -783,7 +808,11 @@ function getLinuxDashboardHeader() {
 
             var tableData = "";
 
+            var tableTitle = "";
+
             $.each(data.beanList, function () {
+
+                tableTitle += "<p>" + this.IP + "</p>";
 
                 tableData += "<tr>" +
 
@@ -806,6 +835,8 @@ function getLinuxDashboardHeader() {
                             + "</tr>";
 
             });
+
+            $('#dashboardTitle').html(tableTitle);
 
             $('#linuxDashboardHeader').html(tableData);
 

@@ -35,7 +35,7 @@
 
     <br/>
 
-        <div class="demo" style="float:left;margin-top: 10px">
+        <div class="demo" style="float:left;margin: 10px 0 0 5px">
 
             <nav>
 
@@ -43,9 +43,9 @@
 
                 <a href="monitor" class="lg__monitor"><i class="bi bi-tv"></i>&nbsp;Monitor</a>
 
-                <a href="dashboard" class="lg__dashboard"><i class="bi bi-grid"></i>&nbsp;Dashboard</a>
+                <a href="" class="lg__dashboard"><i class="bi bi-grid"></i>&nbsp;Dashboard</a>
 
-                <i class="bi bi-search" style="margin-left:930px;"></i><input type="text" class="monitor__search" placeholder="search here" style="height:25px;border-radius:10px;margin-left:6px;">
+                <i class="bi bi-search" style="margin-left:926px;"></i><input type="text" class="monitor__search" placeholder="search here" style="height:25px;border-radius:10px;margin-left:6px;">
 
             </nav>
 

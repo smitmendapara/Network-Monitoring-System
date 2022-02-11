@@ -1,7 +1,9 @@
 package action.dashboard;
 
 import action.helper.ServiceProvider;
+
 import bean.DashboardBean;
+
 import dao.UserDAO;
 
 import util.Logger;
@@ -9,7 +11,9 @@ import util.Logger;
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.sql.ResultSet;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class Dashboard extends ActionSupport

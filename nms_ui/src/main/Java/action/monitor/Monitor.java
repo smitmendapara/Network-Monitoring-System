@@ -1,7 +1,7 @@
 package action.monitor;
 
 import bean.MonitorBean;
-import bean.NMSBean;
+
 import dao.UserDAO;
 
 import action.helper.ServiceProvider;
@@ -11,7 +11,9 @@ import util.Logger;
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.sql.ResultSet;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class Monitor extends ActionSupport
@@ -120,9 +122,9 @@ public class Monitor extends ActionSupport
                 {
                     bean = new MonitorBean();
 
-                    bean.setName(resultSet.getString(2));
-
                     bean.setId(resultSet.getInt(1));
+
+                    bean.setName(resultSet.getString(2));
 
                     bean.setIP(resultSet.getString(3));
 
@@ -136,6 +138,51 @@ public class Monitor extends ActionSupport
         {
 
         }
+
+        return "success";
+    }
+
+    public String execute()
+    {
+        _dao.setNewId(id);
+
+        try
+        {
+            beanList = new ArrayList<MonitorBean>();
+
+            resultSet = UserDAO.getMonitorTB();
+
+            if (resultSet != null)
+            {
+                while (resultSet.next())
+                {
+                    bean = new MonitorBean();
+
+                    bean.setId(resultSet.getInt(1));
+
+                    bean.setIP(resultSet.getString(3));
+
+                    if (resultSet.getString(4) == null)
+                    {
+                        bean.setUsername("");
+                    }
+                    else
+                    {
+                        bean.setUsername(resultSet.getString(4));
+                    }
+
+
+                    bean.setDevice(resultSet.getString(6));
+
+                    beanList.add(bean);
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+
+        }
+
         return "success";
     }
 

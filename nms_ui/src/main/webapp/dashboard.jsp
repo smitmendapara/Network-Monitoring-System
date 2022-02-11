@@ -1,23 +1,3 @@
-<%@ page import="java.sql.ResultSet" %>
-
-<%@ page import="dao.UserDAO" %>
-
-<%@ page import="static action.helper.ServiceProvider.getSentPacket" %>
-
-<%@ page import="static action.helper.ServiceProvider.getPacketLoss" %>
-
-<%@ page import="static action.helper.ServiceProvider.getReceivedPacket" %>
-
-<%@ page import="static action.helper.ServiceProvider.*" %>
-
-<%@ page import="java.util.Calendar" %>
-
-<%@ page import="java.text.SimpleDateFormat" %>
-
-<%@ page import="java.util.Date" %>
-
-<%@ page import="static dao.UserDAO.getUpdatedPacket" %>
-
 <%--
   Created by IntelliJ IDEA.
   User: smit
@@ -67,23 +47,15 @@
             }
         %>
 
-        <div class="demo" style="float:left;margin-top: 10px">
+        <div>
 
-            <nav>
+            <div id="dashboardTitle" class="demo dash__title">
 
-                <a href="discover" class="lg__cover"><i class="bi bi-disc"></i>&nbsp;Discovery</a>
-
-                <a href="monitor" class="lg__monitor"><i class="bi bi-tv"></i>&nbsp;Monitor</a>
-
-                <a href="dashboard" class="lg__dashboard"><i class="bi bi-grid"></i>&nbsp;Dashboard</a>
-
-            </nav>
+            </div>
 
         </div>
 
         <br><br>
-
-        <hr/>
 
         <div>
 
@@ -98,86 +70,11 @@
 
         </div>
 
-        <script type="text/javascript">
-
-            window.onload = function () {
-
-                var secondChart = new CanvasJS.Chart("areaChart",
-                    {
-                        width: 1420,
-
-                        title: {
-                            text: ""
-                        },
-
-                        <%
-                               try
-                               {
-                                   ResultSet resultSet = UserDAO.getDashboardData();
-
-                                   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-                                   Date date = new Date();
-
-                                   Calendar currentTime = Calendar.getInstance();
-
-                                   currentTime.setTime(date);
-
-                                   while (resultSet.next())
-                                   {
-                                       String IP = resultSet.getString(3);
-
-                                       String responseData = resultSet.getString(7);
-
-                                       int id = resultSet.getInt(1);
-
-                                       String time1 = dateFormat.format(date);
-
-                        %>
-
-                        axisY: {
-                            title: "Received Packet",
-                            minimum: 0
-                        },
-
-                        axisX: {
-                            valueFormatString: "##",
-                            title: "Minutes Interval"
-                        },
-
-                        data: [
-                            {
-
-                                type: "column",
-
-                                dataPoints: []
-
-
-                            }
-                        ]
-
-                        <%
-                                   }
-                               }
-                               catch (Exception exception)
-                               {
-                                   exception.printStackTrace();
-                               }
-                        %>
-                    });
-
-                secondChart.render();
-            }
-
-        </script>
-
         <div>
 
             <table width="100%">
 
                 <tbody id="dashboardTableBody">
-
-
 
                 </tbody>
 

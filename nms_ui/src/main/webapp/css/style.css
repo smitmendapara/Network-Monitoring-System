@@ -63,6 +63,13 @@ nav a:hover {
     justify-content: center;
 }
 
+.dash__title {
+    float: left;
+    font-size: 25px;
+    margin: -25px 0 -10px 10px;
+    color: #1580a1;
+}
+
 .event {
     display: none;
 }

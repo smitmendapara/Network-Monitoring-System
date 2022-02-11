@@ -397,7 +397,7 @@ public class ServiceProvider
 
                                 memory = CommonConstantUI.DOUBLE_ZERO;
 
-                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
                                 {
                                     _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                                 }
@@ -495,7 +495,7 @@ public class ServiceProvider
                                     memory = getFreeMemoryPercent(specificData);
                                 }
 
-                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
                                 {
                                     _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                                 }
