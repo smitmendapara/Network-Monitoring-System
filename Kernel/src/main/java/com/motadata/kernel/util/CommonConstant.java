@@ -8,6 +8,8 @@ public class CommonConstant
 
     public static final String PATH_SEPARATOR = File.separator;
 
+    public static final String DIRECTORY_NAME = "log";
+
     public static final String NULL = null;
 
     public static final String NEW_LINE = System.lineSeparator();
@@ -33,6 +35,10 @@ public class CommonConstant
     public static final String NSQ_D_COMMAND = "./nsqd --lookupd-tcp-address=127.0.0.1:4160";
 
     public static final Double DOUBLE_ZERO = 0.0;
+
+    public static final int SSH_PORT = 22;
+
+    public static final int SSH_TIMEOUT = 30;
 
     public static final String STRING_NULL = "null";
 

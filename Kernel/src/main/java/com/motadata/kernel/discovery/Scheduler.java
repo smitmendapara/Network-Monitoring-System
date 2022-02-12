@@ -14,6 +14,8 @@ import java.sql.Statement;
 
 import java.util.TimerTask;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Scheduler extends TimerTask implements Runnable
 {
     private static int id;
@@ -37,11 +39,11 @@ public class Scheduler extends TimerTask implements Runnable
     @Override
     public void run()
     {
+        ResultSet resultSet = null;
+
         Statement statement = null;
 
         Connection connection = null;
-
-        ResultSet resultSet = null;
 
         try
         {
@@ -70,32 +72,12 @@ public class Scheduler extends TimerTask implements Runnable
                 serviceProvider.setId(id);
 
                 ServiceProvider.pollingDevice();
-
             }
         }
 
         catch (Exception exception)
         {
             _logger.error("something went wrong in scheduling...", exception);
-        }
-        finally
-        {
-            try
-            {
-                if (connection != null && !connection.isClosed())
-                {
-                    connection.close();
-                }
-
-                if (statement != null && !statement.isClosed())
-                {
-                    statement.close();
-                }
-            }
-            catch (Exception ignored)
-            {
-                _logger.warn("still connection and statement is not closed!");
-            }
         }
     }
 }

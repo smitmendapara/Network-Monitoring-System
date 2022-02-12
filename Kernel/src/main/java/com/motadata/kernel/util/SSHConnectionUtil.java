@@ -121,7 +121,7 @@ public class SSHConnectionUtil
             {
                 connected = true;
 
-                _logger.debug(hostIp + " - connection established!");
+                _logger.info(hostIp + " - connection established!");
             }
             else
             {
@@ -214,8 +214,6 @@ public class SSHConnectionUtil
 
                 if (channel.isConnected())
                 {
-                    _logger.debug(hostIp + " - channel is currently connected...");
-
                     if (wait)
                     {
                         output.append(IOUtils.toString(inputStream));
@@ -238,15 +236,11 @@ public class SSHConnectionUtil
             if (inputStream != null)
             {
                 inputStream.close();
-
-                _logger.debug(hostIp + " - channel is closed for communication!");
             }
 
             if (channel != null && !channel.isClosed())
             {
                 channel.disconnect();
-
-                _logger.debug(hostIp + " - channel is disconnected!");
             }
 
         }

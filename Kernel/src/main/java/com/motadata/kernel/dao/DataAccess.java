@@ -5,11 +5,7 @@ import com.motadata.kernel.util.CommonConstant;
 import com.motadata.kernel.util.Logger;
 
 import java.sql.*;
-
 import java.util.ArrayList;
-
-import java.util.HashMap;
-
 import java.util.List;
 
 public class DataAccess
@@ -20,13 +16,13 @@ public class DataAccess
 
     private static String DATABASE_PASSWORD = CommonConstant.DATABASE_PASSWORD;
 
-    private static String selectDiscover = "SELECT * FROM TB_DISCOVER WHERE IP = ?";
+    private static String selectMonitor = "SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?";
 
-    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?)";
+    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-    private static String updateMonitor = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+    private static String updateMonitor = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICETYPE = ?";
 
-    private static String updateResult = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+    private static String updateResult = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICETYPE = ?";
 
     private static Connection connection = null;
 
@@ -42,337 +38,140 @@ public class DataAccess
         }
         catch (Exception exception)
         {
-            exception.printStackTrace();
+            _logger.warn("connection is not ready!");
         }
 
         return connection;
     }
 
-    public boolean configureDB(HashMap<Short, Object> properties)
-    {
-        boolean status = true;
-
-        String columns = "*";
-
-        String update_columns = "";
-
-        String condition = "";
-
-        if (properties.containsKey(CommonConstant_DAO.COLUMN_NAME))
-        {
-           columns = String.valueOf(properties.remove(CommonConstant_DAO.COLUMN_NAME));
-        }
-
-        if (properties.containsKey(CommonConstant_DAO.UPDATE_COLUMN_NAME))
-        {
-            update_columns = String.valueOf(properties.remove(CommonConstant_DAO.UPDATE_COLUMN_NAME));
-        }
-
-        if (properties.containsKey(CommonConstant_DAO.DATABASE_CONDITION))
-        {
-            condition = String.valueOf(properties.remove(CommonConstant_DAO.DATABASE_CONDITION));
-        }
-
-        short db_operation = Short.parseShort(String.valueOf(properties.get(CommonConstant_DAO.DATABASE_OPERATION)));
-
-        connection = (Connection) properties.get(CommonConstant_DAO.DATABASE_CONNECTION);
-
-        String tableName = String.valueOf(properties.get(CommonConstant_DAO.TABLE_NAME));
-
-        HashMap<String, ArrayList<String>> tableData;
-
-        try
-        {
-            switch (db_operation)
-            {
-                case CommonConstant_DAO.SELECT : properties.put(CommonConstant_DAO.RESULT_SET, executeSELECT(connection, tableName, condition, columns));
-
-                                                 break;
-
-                case CommonConstant_DAO.INSERT : tableData = (HashMap<String, ArrayList<String>>) properties.get(CommonConstant_DAO.TABLE_DATA);
-
-                                                 if (connection != null)
-                                                 {
-                                                     for (String table : tableData.keySet())
-                                                     {
-                                                         for (String tableRow : tableData.get(table))
-                                                         {
-                                                             properties.put(CommonConstant_DAO.COLUMN_AUTO_ID, executeINSERT(connection, table, tableRow));
-                                                         }
-                                                     }
-                                                 }
-
-                                                 break;
-
-                case CommonConstant_DAO.UPDATE : properties.put(CommonConstant_DAO.QUERY_STATUS, executeUPDATE(connection, tableName, condition, update_columns));
-
-                                                 break;
-
-                case CommonConstant_DAO.DELETE : executeDELETE(connection, tableName, condition);
-
-                                                 break;
-            }
-
-        }
-        catch (Exception exception)
-        {
-            exception.printStackTrace();
-
-            status = false;
-        }
-
-        return status;
-    }
-
-    private void executeDELETE(Connection connection, String tableName, String condition)
-    {
-        String query;
-
-        Statement statement = null;
-
-        try
-        {
-            if (!connection.isClosed())
-            {
-                statement = connection.createStatement();
-
-                if (statement != null)
-                {
-                    query = "DELETE FROM " + tableName + " " + condition;
-
-                    statement.executeUpdate(query);
-
-                    statement.close();
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.error("delete query invalid", exception);
-        }
-        finally
-        {
-            try
-            {
-                if (statement != null && !statement.isClosed())
-                {
-                    statement.close();
-                }
-            }
-            catch (Exception ignored)
-            {
-
-            }
-        }
-    }
-
-    private Object executeUPDATE(Connection connection, String tableName, String condition, String update_columns)
-    {
-        boolean result = false;
-
-        Statement statement = null;
-
-        String query;
-
-        try
-        {
-            if (!connection.isClosed())
-            {
-                statement = connection.createStatement();
-
-                if (statement != null)
-                {
-                    query = "UPDATE " + tableName + " SET " + update_columns + " " + condition;
-
-                    statement.executeUpdate(query);
-
-                    result = true;
-
-                    statement.close();
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.error("update query invalid", exception);
-        }
-        finally
-        {
-            try
-            {
-                if (statement != null && !statement.isClosed())
-                {
-                    statement.close();
-                }
-            }
-            catch (Exception ignored)
-            {
-
-            }
-        }
-
-        return result;
-    }
-
-    private Object executeINSERT(Connection connection, String tableName, String tableRow)
-    {
-        String query;
-
-        Statement statement = null;
-
-        ResultSet resultSet;
-
-        int generatedId = 0;
-
-        int affectedRows;
-
-        try
-        {
-            if (!connection.isClosed())
-            {
-                statement = connection.createStatement();
-
-                if (statement != null)
-                {
-
-                    query = "INSERT INTO " + tableName + " VALUES (" + tableRow + ")";
-
-                    affectedRows = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-
-                    if (affectedRows != 0)
-                    {
-                        resultSet = statement.getGeneratedKeys();
-
-                        if (resultSet.next())
-                        {
-                            generatedId = resultSet.getInt(1);
-                        }
-                    }
-
-                    statement.close();
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.error("insert query invalid!", exception);
-        }
-        finally
-        {
-            try
-            {
-                if (statement != null && !statement.isClosed())
-                {
-                    statement.close();
-                }
-            }
-            catch (Exception ignored)
-            {
-
-            }
-        }
-
-        return generatedId;
-    }
-
-    private Object executeSELECT(Connection connection, String tableName, String condition, String columns)
-    {
-        List<HashMap<String, Object>> table = null;
-
-        HashMap<String, Object> row;
-
-        Statement statement = null;
-
-        ResultSetMetaData metaData;
-
-        try
-        {
-            if (!connection.isClosed())
-            {
-                statement = connection.createStatement();
-
-                if (statement != null)
-                {
-                    ResultSet resultSet = statement.executeQuery("SELECT " + columns + " FROM " + tableName + " " + condition);
-
-                    while (resultSet.next())
-                    {
-                        if (table == null)
-                        {
-                            table = new ArrayList<>();
-                        }
-
-                        row = new HashMap<>();
-
-                        metaData = resultSet.getMetaData();
-
-                        if (metaData != null)
-                        {
-                            for (int index = 1; index < metaData.getColumnCount() + 1; index++)
-                            {
-                                if (resultSet.getObject(index) != null && resultSet.getObject(index).toString().trim().length() > 0 && !resultSet.getObject(index).toString().equalsIgnoreCase(CommonConstant.NULL))
-                                {
-                                    row.put(metaData.getColumnName(index), resultSet.getObject(index));
-                                }
-                            }
-
-                            table.add(row);
-                        }
-
-                    }
-
-                    statement.close();
-
-                    connection.close();
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.error("select query invalid...", exception);
-        }
-        finally
-        {
-            try
-            {
-                statement.close();
-            }
-            catch (Exception ignored)
-            {
-
-            }
-        }
-
-        return table;
-    }
-
-    public static ResultSet getReDiscoveryData(String ip)
+    public static PreparedStatement getPreparedStatement(String sqlQuery)
     {
         PreparedStatement preparedStatement = null;
-
-        ResultSet resultSet = null;
 
         try
         {
             connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(selectDiscover);
+            preparedStatement = connection.prepareStatement(sqlQuery);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("prepared statement is not ready!");
+        }
+
+        return preparedStatement;
+    }
+
+    private static Statement getStatement()
+    {
+        Statement statement = null;
+
+        try
+        {
+            connection = _dao.getConnection();
+
+            statement = connection.createStatement();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("statement is not ready!");
+        }
+
+        return statement;
+    }
+
+    public static void closeConnection(Connection connection)
+    {
+        try
+        {
+            if (!connection.isClosed() && connection != null)
+            {
+                connection.close();
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("connection is still not closed!");
+        }
+    }
+
+    public static void closePreparedStatement(PreparedStatement preparedStatement)
+    {
+        try
+        {
+            if (!preparedStatement.isClosed() && preparedStatement != null)
+            {
+                preparedStatement.close();
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("prepared statement is still not closed!");
+        }
+    }
+
+    public static List<String> getMonitorArrayData(ResultSet resultSet)
+    {
+        List<String> monitorList = new ArrayList<>();
+
+        try
+        {
+            while (resultSet.next())
+            {
+                monitorList.add(resultSet.getString(2));
+
+                monitorList.add(resultSet.getString(4));
+
+                monitorList.add(resultSet.getString(5));
+
+                monitorList.add(resultSet.getString(6));
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("not get array for monitor data!");
+        }
+
+        return monitorList;
+    }
+
+    public static List<String> getReMonitorData(String ip, String deviceType)
+    {
+        PreparedStatement preparedStatement = null;
+
+        ResultSet resultSet = null;
+
+        List<String> monitorList = new ArrayList<>();
+
+        try
+        {
+            preparedStatement = getPreparedStatement(selectMonitor);
 
             preparedStatement.setString(1, ip);
 
+            preparedStatement.setString(2, deviceType);
+
             resultSet = preparedStatement.executeQuery();
 
-            return resultSet;
+            monitorList = getMonitorArrayData(resultSet);
+
         }
         catch (Exception exception)
         {
             _logger.error("not find re discover table data!!", exception);
         }
+        finally
+        {
+            closeConnection(connection);
 
-        return resultSet;
+            closePreparedStatement(preparedStatement);
+        }
+
+        return monitorList;
     }
 
-    private static void updateData(PreparedStatement preparedStatement, String response, String ipStatus, String timestamp, String ip)
+    private static void updateData(PreparedStatement preparedStatement, String response, String ipStatus, String timestamp, String ip, String deviceType)
     {
         try
         {
@@ -383,6 +182,8 @@ public class DataAccess
             preparedStatement.setString(3, timestamp.substring(0, 16));
 
             preparedStatement.setString(4, ip);
+
+            preparedStatement.setString(5, deviceType);
         }
         catch (Exception exception)
         {
@@ -398,13 +199,9 @@ public class DataAccess
 
         try
         {
-            Class.forName("org.h2.Driver");
+            preparedStatement = getPreparedStatement(updateMonitor);
 
-            connection = _dao.getConnection();
-
-            preparedStatement = connection.prepareStatement(updateMonitor);
-
-            updateData(preparedStatement, response, ipStatus, timestamp, ip);
+            updateData(preparedStatement, response, ipStatus, timestamp, ip, deviceType);
 
             if (preparedStatement.execute())
             {
@@ -416,6 +213,12 @@ public class DataAccess
             _logger.error("monitor data not updated properly!", exception);
 
             result = false;
+        }
+        finally
+        {
+            closeConnection(connection);
+
+            closePreparedStatement(preparedStatement);
         }
 
         return result;
@@ -429,11 +232,9 @@ public class DataAccess
 
         try
         {
-            connection = _dao.getConnection();
+            preparedStatement = getPreparedStatement(updateResult);
 
-            preparedStatement = connection.prepareStatement(updateResult);
-
-            updateData(preparedStatement, response, ipStatus, timestamp, ip);
+            updateData(preparedStatement, response, ipStatus, timestamp, ip, deviceType);
 
             if (preparedStatement.execute())
             {
@@ -447,11 +248,17 @@ public class DataAccess
 
             result = false;
         }
+        finally
+        {
+            closeConnection(connection);
+
+            closePreparedStatement(preparedStatement);
+        }
 
         return result;
     }
 
-    public static boolean enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time)
+    public static boolean enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time, String ipStatus)
     {
         boolean status = true;
 
@@ -459,9 +266,8 @@ public class DataAccess
 
         try
         {
-            connection = _dao.getConnection();
 
-            preparedStatement = connection.prepareStatement(insertDataDump);
+            preparedStatement = getPreparedStatement(insertDataDump);
 
             preparedStatement.setInt(1, id);
 
@@ -475,6 +281,8 @@ public class DataAccess
 
             preparedStatement.setString(6, time.substring(0, 16));
 
+            preparedStatement.setString(7, ipStatus);
+
             if (preparedStatement.execute())
             {
                 return true;
@@ -485,6 +293,12 @@ public class DataAccess
             _logger.error("not inserted data into tb_dataDump!", exception);
 
             status = false;
+        }
+        finally
+        {
+            closeConnection(connection);
+
+            closePreparedStatement(preparedStatement);
         }
 
         return status;

@@ -5,6 +5,7 @@ import com.motadata.kernel.dao.DataAccess;
 import java.util.Arrays;
 
 import com.motadata.kernel.util.CommonConstant;
+
 import com.motadata.kernel.util.Logger;
 
 import com.motadata.kernel.util.SSHConnectionUtil;
@@ -13,11 +14,11 @@ import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
 
-import java.sql.ResultSet;
-
 import java.sql.Timestamp;
 
 import java.text.DecimalFormat;
+
+import java.util.List;
 
 public class ServiceProvider
 {
@@ -103,6 +104,8 @@ public class ServiceProvider
     {
         boolean status = true;
 
+        List<String> dataList;
+
         try
         {
             if (deviceType.equals(CommonConstant.STRING_ZERO) || deviceType.equals(CommonConstant.PING_DEVICE))
@@ -111,15 +114,23 @@ public class ServiceProvider
 
                 String pingCmd = CommonConstant.PING_COMMAND + ip;
 
+                Runtime runtime = null;
+
+                Process process = null;
+
+                Timestamp timestamp = null;
+
+                BufferedReader bufferedInput = null;
+
                 try
                 {
-                    Runtime runtime = Runtime.getRuntime();
+                    runtime = Runtime.getRuntime();
 
-                    Process process = runtime.exec(pingCmd);
+                    process = runtime.exec(pingCmd);
 
-                    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                    timestamp = new Timestamp(System.currentTimeMillis());
 
-                    BufferedReader bufferedInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    bufferedInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
                     String inputLine;
 
@@ -136,13 +147,11 @@ public class ServiceProvider
 
                     ipStatus = checkPingIpStatus(response, ip);
 
-                    ResultSet resultSet = DataAccess.getReDiscoveryData(ip);
+                    dataList = DataAccess.getReMonitorData(ip, deviceType);
 
-                    boolean next = resultSet.next();
-
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
-                        setRediscoverProperties(resultSet);
+                        setRediscoverProperties(dataList);
 
                         if (DataAccess.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                         {
@@ -152,7 +161,7 @@ public class ServiceProvider
 
                                 memory = CommonConstant.DOUBLE_ZERO;
 
-                                if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
                                 {
                                     _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                                 }
@@ -192,16 +201,14 @@ public class ServiceProvider
 
                 try
                 {
-                    ResultSet resultSet = DataAccess.getReDiscoveryData(ip);
+                    dataList = DataAccess.getReMonitorData(ip, deviceType);
 
-                    boolean next = resultSet.next();
-
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
-                        setRediscoverProperties(resultSet);
+                        setRediscoverProperties(dataList);
                     }
 
-                    sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, 22, discoveryUsername, discoveryPassword, 30);
+                    sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, CommonConstant.SSH_PORT, discoveryUsername, discoveryPassword, CommonConstant.SSH_TIMEOUT);
 
                     if(sshConnectionUtil != null)
                     {
@@ -233,7 +240,7 @@ public class ServiceProvider
 
                     }
 
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
                         if (DataAccess.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
@@ -248,7 +255,7 @@ public class ServiceProvider
                                     memory = getFreeMemoryPercent(specificData);
                                 }
 
-                                if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString()))
+                                if (DataAccess.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
                                 {
                                     _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                                 }
@@ -290,7 +297,7 @@ public class ServiceProvider
                     }
                     catch (Exception exception)
                     {
-
+                        _logger.warn("ssh connection is not closed!");
                     }
                 }
 
@@ -349,7 +356,11 @@ public class ServiceProvider
 
             String CPU_User = ioSplit[3].substring(0, 15).trim();
 
-            String []stringArray = {linux, ubuntu, x86, totalMemory, usedMemory, freeMemory, osVersion, osName, totalSwap, usedSwap, freeSwap, disk, CPU_User, CPU_System};
+            String sharedMemory = freeSplit[1].substring(43, 55).trim();
+
+            String cacheMemory = freeSplit[1].substring(55, 67).trim();
+
+            String []stringArray = {linux, ubuntu, x86, totalMemory, usedMemory, freeMemory, osVersion, osName, totalSwap, usedSwap, freeSwap, disk, CPU_User, CPU_System, sharedMemory, cacheMemory};
 
             data = Arrays.toString(stringArray);
 
@@ -519,17 +530,17 @@ public class ServiceProvider
         return packet;
     }
 
-    private static void setRediscoverProperties(ResultSet resultSet)
+    private static void setRediscoverProperties(List<String> dataList)
     {
         try
         {
-            name = resultSet.getString(2);
+            name = dataList.get(0);
 
-            discoveryUsername = resultSet.getString(4);
+            discoveryUsername = dataList.get(1);
 
-            discoveryPassword = resultSet.getString(5);
+            discoveryPassword = dataList.get(2);
 
-            deviceType = resultSet.getString(6);
+            deviceType = dataList.get(3);
 
         }
         catch (Exception exception)

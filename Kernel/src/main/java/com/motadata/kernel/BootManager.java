@@ -1,7 +1,5 @@
 package com.motadata.kernel;
 
-import com.motadata.kernel.dao.CommonConstant_DAO;
-
 import com.motadata.kernel.dao.DataAccess;
 
 import com.motadata.kernel.discovery.HandlerThread;
@@ -19,10 +17,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import java.sql.*;
-
-import java.util.ArrayList;
-
-import java.util.HashMap;
 
 import java.util.Timer;
 
@@ -76,33 +70,22 @@ public class BootManager
 
                         _logger.info("Load h2 database configuration...");
 
-                        if (databaseConfigure()) // load h2 database configuration
+                        if (startNSQServer()) // start nsq
                         {
-                            _logger.info("h2 database configured!");
+                            _logger.info("NSQ server started!");
 
-                            _logger.info("Starting NSQ server...");
-
-                            if (startNSQServer()) // start nsq
+                            if (startScheduler()) // start scheduler
                             {
-                                _logger.info("NSQ server started!");
-
-                                if (startScheduler()) // start scheduler
-                                {
-                                    _logger.info("scheduler started!");
-                                }
-                                else
-                                {
-                                    _logger.warn("still not start scheduler...");
-                                }
+                                _logger.info("scheduler started!");
                             }
                             else
                             {
-                                _logger.warn("still not started NSQ server...");
+                                _logger.warn("still not start scheduler...");
                             }
                         }
                         else
                         {
-                            _logger.warn("still not configured h2 database...");
+                            _logger.warn("still not started NSQ server...");
                         }
                     }
                     else
@@ -260,121 +243,6 @@ public class BootManager
         }
 
         return result;
-    }
-
-    public static boolean databaseConfigure()
-    {
-        HashMap<Short, Object> properties = new HashMap<>();
-
-        boolean result = true;
-
-        try
-        {
-            System.out.println();
-
-            System.out.println("---------------------------- load h2 Database ------------------------------");
-
-            Connection connection = _dao.getConnection();
-
-            setProperties(properties, connection);
-
-            System.out.println();
-
-            if (_dao.configureDB(properties))
-            {
-                System.out.println("successfully configured!");
-
-                System.out.println();
-            }
-
-        }
-        catch (Exception exception)
-        {
-            _logger.error("something went wrong on the configuring h2 database server!", exception);
-
-            result = false;
-        }
-
-        return result;
-    }
-
-    private static void setProperties(HashMap<Short, Object> properties, Connection connection)
-    {
-        HashMap<String, ArrayList<String>> dataCollection = new HashMap<>();
-
-        selectStatement(properties, connection);
-
-        insertStatement(properties, connection, dataCollection);
-
-        updateStatement(properties, connection);
-
-        deleteStatement(properties, connection);
-
-    }
-
-    private static void deleteStatement(HashMap<Short, Object> properties, Connection connection)
-    {
-        properties.put(CommonConstant_DAO.DATABASE_CONNECTION, connection);
-
-        properties.put(CommonConstant_DAO.TABLE_NAME, "TB_USER");
-
-        properties.put(CommonConstant_DAO.DATABASE_CONDITION, "WHERE ID = 1");
-
-        properties.put(CommonConstant_DAO.DATABASE_OPERATION, CommonConstant_DAO.DELETE);
-    }
-
-    private static void updateStatement(HashMap<Short, Object> properties, Connection connection)
-    {
-        properties.put(CommonConstant_DAO.DATABASE_CONNECTION, connection);
-
-        properties.put(CommonConstant_DAO.TABLE_NAME, "TB_USER");
-
-        properties.put(CommonConstant_DAO. UPDATE_COLUMN_NAME, "USER = 'Dharm'");
-
-        properties.put(CommonConstant_DAO.DATABASE_CONDITION, "WHERE ID = 2");
-
-        properties.put(CommonConstant_DAO.DATABASE_OPERATION, CommonConstant_DAO.UPDATE);
-    }
-
-    private static void insertStatement(HashMap<Short, Object> properties, Connection connection, HashMap<String, ArrayList<String>> dataCollection)
-    {
-        properties.put(CommonConstant_DAO.DATABASE_CONNECTION, connection);
-
-        properties.put(CommonConstant_DAO.COLUMN_NAME, "ID,USER");
-
-        properties.put(CommonConstant_DAO.TABLE_NAME, "TB_USER");
-
-        properties.put(CommonConstant_DAO.DATABASE_OPERATION, CommonConstant_DAO.INSERT);
-
-        insertLocalData(properties, dataCollection);
-    }
-
-    private static void insertLocalData(HashMap<Short, Object> properties, HashMap<String, ArrayList<String>> dataCollection)
-    {
-        ArrayList<String> data = new ArrayList<>();
-
-        data.add("4, 'harsh', 'kaneria'");
-
-        data.add("5, 'kishan', 'khirsariya'");
-
-        data.add("6, 'parth', 'aghera'");
-
-        data.add("7, 'harsh', 'boda'");
-
-        dataCollection.put("TB_USER", data);
-
-        properties.put(CommonConstant_DAO.TABLE_DATA, dataCollection);
-    }
-
-    private static void selectStatement(HashMap<Short, Object> properties, Connection connection)
-    {
-        properties.put(CommonConstant_DAO.DATABASE_CONNECTION, connection);
-
-        properties.put(CommonConstant_DAO.COLUMN_NAME, "ID,USER");
-
-        properties.put(CommonConstant_DAO.TABLE_NAME, "TB_USER");
-
-        properties.put(CommonConstant_DAO.DATABASE_OPERATION, CommonConstant_DAO.SELECT);
     }
 
     public static boolean startNSQServer()

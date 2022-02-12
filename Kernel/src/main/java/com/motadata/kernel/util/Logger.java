@@ -8,6 +8,8 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.io.BufferedWriter;
 
+import java.io.File;
+
 import java.io.FileWriter;
 
 import java.io.IOException;
@@ -16,11 +18,13 @@ public class Logger
 {
     private static String dateFormat;
 
-    private static final String PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + "log/";
+    private File file = new File(CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + "log");
 
-    private static final Logger _logger = new Logger();
+    private static final String PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + CommonConstant.DIRECTORY_NAME + CommonConstant.PATH_SEPARATOR;
 
     private static final DateTimeFormatter formatter = DateTimeFormat.forPattern(CommonConstant.LOGGER_DATE_FORMAT);
+
+    private static final Logger _logger = new Logger();
 
     public void info(String message)
     {
@@ -29,6 +33,8 @@ public class Logger
         try
         {
             dateFormat = getDateFormat();
+
+            file.mkdir();
 
             writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-info.log", true));
 
@@ -59,11 +65,13 @@ public class Logger
         {
             dateFormat = getDateFormat();
 
+            file.mkdir();
+
             writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-error.log", true));
 
             writer.write(message + "\n");
 
-            StackTraceElement[] stackTrace = throwable.getStackTrace();// stack trace retrieve from throwable
+            StackTraceElement[] stackTrace = throwable.getStackTrace(); // stack trace retrieve from throwable
 
             for (int i = 0; i < stackTrace.length; i++)
             {
@@ -96,6 +104,8 @@ public class Logger
         {
             dateFormat = getDateFormat();
 
+            file.mkdir();
+
             writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-warn.log", true));
 
             writer.write(message + "\n");
@@ -124,6 +134,8 @@ public class Logger
         try
         {
             dateFormat = getDateFormat();
+
+            file.mkdir();
 
             writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-debug.log", true));
 
