@@ -5,6 +5,8 @@ import util.CommonConstantUI;
 import util.Logger;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO
 {
@@ -94,7 +96,6 @@ public class UserDAO
         this.id = id;
     }
 
-
     public UserDAO()
     {
 
@@ -167,26 +168,93 @@ public class UserDAO
         return statement;
     }
 
-    public static String[] getArrayData(ResultSet resultSet)
+    public static void closeConnection(Connection connection)
     {
-        String[] array = null;
-
         try
         {
-            String discoverArray[] = new String[resultSet.getRow()];
+            if (!connection.isClosed() && connection != null)
+            {
+                connection.close();
+            }
         }
         catch (Exception exception)
         {
-
+            _logger.warn("connection is still not closed!");
         }
-        return array;
     }
 
-    public static ResultSet getDiscoverTB()
+    public static void closePreparedStatement(PreparedStatement preparedStatement)
+    {
+        try
+        {
+            if (!preparedStatement.isClosed() && preparedStatement != null)
+            {
+                preparedStatement.close();
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("prepared statement is still not closed!");
+        }
+    }
+
+    public static void closeStatement(Statement statement)
+    {
+        try
+        {
+            if (!statement.isClosed() && statement != null)
+            {
+                statement.close();
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("prepared statement is still not closed!");
+        }
+    }
+
+    public static List<List<String>> getDiscoveryArrayData(ResultSet resultSet)
+    {
+
+        List<List<String>> discoverList = new ArrayList<>();
+
+        List<String> list;
+
+        try
+        {
+            while (resultSet.next())
+            {
+                list = new ArrayList<>();
+
+                list.add(resultSet.getString(1));
+
+                list.add(resultSet.getString(2));
+
+                list.add(resultSet.getString(3));
+
+                list.add(resultSet.getString(4));
+
+                list.add(resultSet.getString(5));
+
+                discoverList.add(list);
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("not get array for monitor data!");
+        }
+
+        return discoverList;
+    }
+
+    public static List<List<String>> getDiscoverTB()
     {
         Statement statement = null;
 
         ResultSet resultSet = null;
+
+        List<List<String>> discoverList = new ArrayList<>();
 
         try
         {
@@ -194,16 +262,22 @@ public class UserDAO
 
             resultSet = statement.executeQuery(selectColumnDiscover);
 
-//            getArrayData(resultSet);
+            discoverList = getDiscoveryArrayData(resultSet);
 
-            return resultSet;
         }
         catch (Exception exception)
         {
             _logger.error("not find discover table data!!", exception);
         }
+        finally
+        {
+            closeConnection(connection);
 
-        return resultSet;
+            closeStatement(statement);
+
+        }
+
+        return discoverList;
     }
 
     public static ResultSet getMonitorTB()

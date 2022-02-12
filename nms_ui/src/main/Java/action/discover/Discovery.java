@@ -91,6 +91,8 @@ public class Discovery extends ActionSupport
 
     ResultSet resultSet = null;
 
+    List<List<String>> discoverList;
+
     DiscoverBean bean = null;
 
     List<DiscoverBean> beanList = null;
@@ -109,21 +111,21 @@ public class Discovery extends ActionSupport
         {
             beanList = new ArrayList<DiscoverBean>();
 
-            resultSet = UserDAO.getDiscoverTB();
+            discoverList = UserDAO.getDiscoverTB();
 
-            if (resultSet != null)
+            if (discoverList != null)
             {
-                while (resultSet.next())
+                for (int i = 0; i < discoverList.size(); i++)
                 {
                     bean = new DiscoverBean();
 
-                    bean.setId(resultSet.getInt(1));
+                    bean.setId(Integer.parseInt(discoverList.get(i).get(0)));
 
-                    bean.setName(resultSet.getString(2));
+                    bean.setName(discoverList.get(i).get(1));
 
-                    bean.setIP(resultSet.getString(3));
+                    bean.setIP(discoverList.get(i).get(2));
 
-                    bean.setDevice(resultSet.getString(4));
+                    bean.setDevice(discoverList.get(i).get(3));
 
                     beanList.add(bean);
                 }
