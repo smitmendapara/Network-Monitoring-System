@@ -62,6 +62,8 @@ public class Dashboard extends ActionSupport
 
     ResultSet resultSet = null;
 
+    List<List<String>> dashboardList = new ArrayList<>();
+
     DashboardBean bean = null;
 
     List<DashboardBean> beanList = null;
@@ -118,21 +120,21 @@ public class Dashboard extends ActionSupport
         {
             beanList = new ArrayList<DashboardBean>();
 
-            resultSet = UserDAO.getDashboardData();
+            dashboardList = UserDAO.getDashboardData();
 
-            if (resultSet != null)
+            if (!dashboardList.isEmpty())
             {
-                while (resultSet.next())
+                for (int k = 0; k < dashboardList.size(); k++)
                 {
                     bean = new DashboardBean();
 
-                    bean.setId(resultSet.getInt(1));
+                    bean.setId(Integer.parseInt(dashboardList.get(k).get(0)));
 
-                    bean.setName(resultSet.getString(2));
+                    bean.setName(dashboardList.get(k).get(1));
 
-                    bean.setIP(resultSet.getString(3));
+                    bean.setIP(dashboardList.get(k).get(2));
 
-                    if (resultSet.getString(4) == null)
+                    if (dashboardList.get(k).get(3) == null)
                     {
                         profile = "null";
 
@@ -140,21 +142,21 @@ public class Dashboard extends ActionSupport
                     }
                     else
                     {
-                        bean.setUsername(resultSet.getString(4));
+                        bean.setUsername(dashboardList.get(k).get(3));
                     }
 
-                    bean.setDevice(resultSet.getString(6));
+                    bean.setDevice(dashboardList.get(k).get(5));
 
-                    if (resultSet.getString(6).equals("Linux") && resultSet.getString(8).equals("Down"))
+                    if (dashboardList.get(k).get(5).equals("Linux") && dashboardList.get(k).get(7).equals("Down"))
                     {
                         bean.setResponse("");
                     }
                     else
                     {
-                        bean.setResponse(resultSet.getString(7));
+                        bean.setResponse(dashboardList.get(k).get(6));
                     }
 
-                    bean.setStatus(resultSet.getString(8));
+                    bean.setStatus(dashboardList.get(k).get(7));
 
                     String dateTime[] = ServiceProvider.getDateTime();
 
@@ -162,11 +164,11 @@ public class Dashboard extends ActionSupport
 
                     String memoryStorage[] = new String[dateTime.length];
 
-                    if (resultSet.getString(6).equals("Ping"))
+                    if (dashboardList.get(k).get(5).equals("Ping"))
                     {
                         for (int i = 0; i < dateTime.length; i++)
                         {
-                            receivedPacket[i] = UserDAO.getUpdatedPacket(resultSet.getInt(1), resultSet.getString(2), dateTime[i]);
+                            receivedPacket[i] = UserDAO.getUpdatedPacket(Integer.parseInt(dashboardList.get(k).get(0)), dashboardList.get(k).get(1), dateTime[i]);
                         }
 
                         bean.setPacket(receivedPacket);
@@ -175,7 +177,7 @@ public class Dashboard extends ActionSupport
                     {
                         for (int i = 0; i < dateTime.length; i++)
                         {
-                            memoryStorage[i] = String.valueOf(UserDAO.getUpdatedMemory(resultSet.getInt(1), resultSet.getString(2), dateTime[i]));
+                            memoryStorage[i] = String.valueOf(UserDAO.getUpdatedMemory(Integer.parseInt(dashboardList.get(k).get(0)), dashboardList.get(k).get(1), dateTime[i]));
                         }
 
                         bean.setMemory(memoryStorage);

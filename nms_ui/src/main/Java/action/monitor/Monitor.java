@@ -30,7 +30,7 @@ public class Monitor extends ActionSupport
 
     private String deviceType;
 
-    private boolean flag = true;
+    private boolean flag;
 
     public boolean isFlag() {
         return flag;
@@ -92,7 +92,7 @@ public class Monitor extends ActionSupport
 
     private static final Logger _logger = new Logger();
 
-    ResultSet resultSet = null;
+    List<List<String>> monitorList;
 
     MonitorBean bean = null;
 
@@ -114,21 +114,21 @@ public class Monitor extends ActionSupport
         {
             beanList = new ArrayList<MonitorBean>();
 
-            resultSet = UserDAO.getMonitorTable();
+            monitorList = UserDAO.getMonitorTable();
 
-            if (resultSet != null)
+            if (monitorList != null)
             {
-                while (resultSet.next())
+                for (int i = 0; i < monitorList.size(); i++)
                 {
                     bean = new MonitorBean();
 
-                    bean.setId(resultSet.getInt(1));
+                    bean.setId(Integer.parseInt(monitorList.get(i).get(0)));
 
-                    bean.setName(resultSet.getString(2));
+                    bean.setName(monitorList.get(i).get(1));
 
-                    bean.setIP(resultSet.getString(3));
+                    bean.setIP(monitorList.get(i).get(2));
 
-                    bean.setDevice(resultSet.getString(6));
+                    bean.setDevice(monitorList.get(i).get(5));
 
                     beanList.add(bean);
                 }
@@ -136,7 +136,7 @@ public class Monitor extends ActionSupport
         }
         catch (Exception exception)
         {
-
+            _logger.warn("monitor data not set into the bean!");
         }
 
         return "success";
@@ -150,29 +150,29 @@ public class Monitor extends ActionSupport
         {
             beanList = new ArrayList<MonitorBean>();
 
-            resultSet = UserDAO.getMonitorTB();
+            monitorList = UserDAO.getMonitorTB();
 
-            if (resultSet != null)
+            if (monitorList != null)
             {
-                while (resultSet.next())
+                for (int i = 0; i < monitorList.size(); i++)
                 {
                     bean = new MonitorBean();
 
-                    bean.setId(resultSet.getInt(1));
+                    bean.setId(Integer.parseInt(monitorList.get(i).get(0)));
 
-                    bean.setIP(resultSet.getString(3));
+                    bean.setIP(monitorList.get(i).get(2));
 
-                    if (resultSet.getString(4) == null)
+                    if (monitorList.get(i).get(3) == null)
                     {
                         bean.setUsername("");
                     }
                     else
                     {
-                        bean.setUsername(resultSet.getString(4));
+                        bean.setUsername(monitorList.get(i).get(3));
                     }
 
 
-                    bean.setDevice(resultSet.getString(6));
+                    bean.setDevice(monitorList.get(i).get(5));
 
                     beanList.add(bean);
                 }
@@ -180,7 +180,7 @@ public class Monitor extends ActionSupport
         }
         catch (Exception exception)
         {
-
+            _logger.warn("monitor data not set into the bean!");
         }
 
         return "success";
@@ -208,19 +208,22 @@ public class Monitor extends ActionSupport
 
         try
         {
-            resultSet = UserDAO.getDashboardData();
+            monitorList = UserDAO.getDashboardData();
 
-            while (resultSet.next())
+            if (!monitorList.isEmpty())
             {
-                name = resultSet.getString(2);
+                for (int i = 0; i < monitorList.size(); i++)
+                {
+                    name = monitorList.get(i).get(1);
 
-                ip = resultSet.getString(3);
+                    ip = monitorList.get(i).get(2);
 
-                discoveryUsername = resultSet.getString(4);
+                    discoveryUsername = monitorList.get(i).get(3);
 
-                discoveryPassword = resultSet.getString(5);
+                    discoveryPassword = monitorList.get(i).get(4);
 
-                deviceType = resultSet.getString(6);
+                    deviceType = monitorList.get(i).get(5);
+                }
             }
 
             ServiceProvider serviceProvider = new ServiceProvider(name, ip, discoveryUsername, discoveryPassword, deviceType);

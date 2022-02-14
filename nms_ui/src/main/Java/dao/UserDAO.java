@@ -5,7 +5,9 @@ import util.CommonConstantUI;
 import util.Logger;
 
 import java.sql.*;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class UserDAO
@@ -43,13 +45,9 @@ public class UserDAO
 
     private static String selectColumnDiscover = "SELECT ID, NAME, IP, DEVICE, USERNAME FROM TB_DISCOVER";
 
-    private static String selectDiscoverTable = "SELECT ID, NAME, IP, DEVICE, USERNAME FROM TB_DISCOVER WHERE ID = ?";
-
     private static String selectIdDiscover = "SELECT ID FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?";
 
     private static String selectDiscover = "SELECT * FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?";
-
-    private static String selectColumnResult = "SELECT ID, IP, PROFILE, DEVICETYPE FROM TB_RESULT";
 
     private static String selectColumnMonitor = "SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?";
 
@@ -68,7 +66,7 @@ public class UserDAO
 
     private static String insertMonitor = "INSERT INTO TB_MONITOR(ID, NAME, IP, PROFILE, PASSWORD, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
 
     private static String updateDiscover = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
@@ -242,10 +240,52 @@ public class UserDAO
         }
         catch (Exception exception)
         {
-            _logger.warn("not get array for monitor data!");
+            _logger.warn("not get array for discovery data!");
         }
 
         return discoverList;
+    }
+
+    public static List<List<String>> getArrayData(ResultSet resultSet)
+    {
+        List<List<String>> parentList = new ArrayList<>();
+
+        List<String> list;
+
+        try
+        {
+            while (resultSet.next())
+            {
+                list = new ArrayList<>();
+
+                list.add(resultSet.getString(1));
+
+                list.add(resultSet.getString(2));
+
+                list.add(resultSet.getString(3));
+
+                list.add(resultSet.getString(4));
+
+                list.add(resultSet.getString(5));
+
+                list.add(resultSet.getString(6));
+
+                list.add(resultSet.getString(7));
+
+                list.add(resultSet.getString(8));
+
+                list.add(resultSet.getString(9));
+
+                parentList.add(list);
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("not get array for monitor data!");
+        }
+
+        return parentList;
     }
 
     public static List<List<String>> getDiscoverTB()
@@ -269,22 +309,24 @@ public class UserDAO
         {
             _logger.error("not find discover table data!!", exception);
         }
+
         finally
         {
-            closeConnection(connection);
-
             closeStatement(statement);
 
+            closeConnection(connection);
         }
 
         return discoverList;
     }
 
-    public static ResultSet getMonitorTB()
+    public static List<List<String>> getMonitorTB()
     {
         ResultSet resultSet = null;
 
         PreparedStatement preparedStatement = null;
+
+        List<List<String>> monitorList = new ArrayList<>();
 
         try
         {
@@ -294,21 +336,30 @@ public class UserDAO
 
             resultSet = preparedStatement.executeQuery();
 
-            return resultSet;
+            monitorList = getArrayData(resultSet);
         }
         catch (Exception exception)
         {
             _logger.error("not find monitor table data where id is given!", exception);
         }
 
-        return resultSet;
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
+        return monitorList;
     }
 
-    public static ResultSet getMonitorTable()
+    public static List<List<String>> getMonitorTable()
     {
         ResultSet resultSet = null;
 
         PreparedStatement preparedStatement = null;
+
+        List<List<String>> monitorList = new ArrayList<>();
 
         try
         {
@@ -316,14 +367,21 @@ public class UserDAO
 
             resultSet = preparedStatement.executeQuery();
 
-            return resultSet;
+            monitorList = getArrayData(resultSet);
         }
         catch (Exception exception)
         {
             _logger.warn("not find monitor table data!");
         }
 
-        return resultSet;
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
+        return monitorList;
     }
 
     public static boolean checkCredential(String username, String password)
@@ -354,6 +412,13 @@ public class UserDAO
             _logger.error("data not get properly!", exception);
         }
 
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
         return status;
     }
 
@@ -376,14 +441,19 @@ public class UserDAO
                 return true;
             }
 
-            preparedStatement.close();
-
         }
         catch (Exception exception)
         {
             _logger.error("signUp data not inserted properly!", exception);
 
             status = false;
+        }
+
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
         }
 
         return status;
@@ -399,7 +469,7 @@ public class UserDAO
         {
             preparedStatement = getPreparedStatement(insertDiscover);
 
-            if (deviceType.equals(CommonConstantUI.STRING_ZERO))
+            if (deviceType.equals(CommonConstantUI.STRING_ZERO) || deviceType.equals(CommonConstantUI.PING_DEVICE))
             {
                 preparedStatement.setString(1, name);
 
@@ -418,7 +488,7 @@ public class UserDAO
                 preparedStatement.setString(8, timestamp.substring(0, 16));
 
             }
-            if (deviceType.equals(CommonConstantUI.STRING_ONE))
+            if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
             {
                 preparedStatement.setString(1, name);
 
@@ -442,9 +512,6 @@ public class UserDAO
                 return true;
             }
 
-            preparedStatement.close();
-
-
             //kernel message for ping
         }
         catch (Exception exception)
@@ -452,6 +519,13 @@ public class UserDAO
             _logger.error("discovery data not inserted properly!", exception);
 
             status = false;
+        }
+
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
         }
 
         return status;
@@ -499,6 +573,13 @@ public class UserDAO
             result = false;
         }
 
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
         return result;
     }
 
@@ -525,6 +606,13 @@ public class UserDAO
             _logger.error("discovery data not updated properly!", exception);
 
             status = false;
+        }
+
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
         }
 
         return status;
@@ -610,6 +698,15 @@ public class UserDAO
             result = false;
         }
 
+        finally
+        {
+            closePreparedStatement(result_statement);
+
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
         return result;
     }
 
@@ -638,6 +735,13 @@ public class UserDAO
             result = false;
         }
 
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
         return result;
     }
 
@@ -653,9 +757,9 @@ public class UserDAO
 
         PreparedStatement preparedStatement2 = null;
 
-        ResultSet resultSet1 = null;
-
         ResultSet resultSet = null;
+
+        ResultSet resultSet1 = null;
 
         try
         {
@@ -716,6 +820,17 @@ public class UserDAO
             result = false;
         }
 
+        finally
+        {
+            closePreparedStatement(preparedStatement1);
+
+            closePreparedStatement(preparedStatement);
+
+            closePreparedStatement(preparedStatement2);
+
+            closeConnection(connection);
+        }
+
         return result;
     }
 
@@ -735,8 +850,6 @@ public class UserDAO
             {
                 return true;
             }
-
-            preparedStatement.close();
         }
         catch (Exception exception)
         {
@@ -745,87 +858,120 @@ public class UserDAO
             status = false;
         }
 
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
         return status;
     }
 
-    public static ResultSet getReDiscoveryData(String ip, String deviceType)
+    private static ResultSet setDataCondition(PreparedStatement preparedStatement, String ip, String deviceType)
     {
         ResultSet resultSet = null;
 
-        PreparedStatement preparedStatement = null;
-
         try
         {
-            preparedStatement = getPreparedStatement(selectDiscover);
-
             preparedStatement.setString(1, ip);
 
             preparedStatement.setString(2, deviceType);
 
             resultSet  = preparedStatement.executeQuery();
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("not get the result set!");
+        }
 
-            return resultSet;
+        return resultSet;
+    }
+
+    public static List<List<String>> getReDiscoveryData(String ip, String deviceType)
+    {
+        ResultSet resultSet = null;
+
+        PreparedStatement preparedStatement = null;
+
+        List<List<String>> rediscoveryList = new ArrayList<>();
+
+        try
+        {
+            preparedStatement = getPreparedStatement(selectDiscover);
+
+            resultSet = setDataCondition(preparedStatement, ip, deviceType);
+
+            rediscoveryList = getArrayData(resultSet);
         }
         catch (Exception exception)
         {
             _logger.error("not find re discover table data!!", exception);
         }
 
-        return resultSet;
+        return rediscoveryList;
     }
 
-    public static ResultSet getReMonitorData(String ip, String deviceType)
+    public static List<List<String>> getReMonitorData(String ip, String deviceType)
     {
         ResultSet resultSet = null;
 
         PreparedStatement preparedStatement = null;
 
+        List<List<String>> reMonitorList = new ArrayList<>();
+
         try
         {
             preparedStatement = getPreparedStatement(selectColumnMonitor);
 
-            preparedStatement.setString(1, ip);
+            resultSet = setDataCondition(preparedStatement, ip, deviceType);
 
-            preparedStatement.setString(2, deviceType);
-
-            resultSet  = preparedStatement.executeQuery();
-
-            return resultSet;
+            reMonitorList = getArrayData(resultSet);
         }
         catch (Exception exception)
         {
             _logger.error("not find re monitor table data!!", exception);
         }
 
-        return resultSet;
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
+        return reMonitorList;
     }
 
-    public static ResultSet getDashboardData()
+    public static List<List<String>> getDashboardData()
     {
         PreparedStatement preparedStatement = null;
 
         ResultSet resultSet = null;
 
+        List<List<String>> reMonitorList = new ArrayList<>();
+
         try
         {
             preparedStatement = getPreparedStatement(selectColumnMonitor);
 
-            preparedStatement.setString(1, ip);
+            resultSet = setDataCondition(preparedStatement, ip, deviceType);
 
-            preparedStatement.setString(2, deviceType);
-
-            resultSet = preparedStatement.executeQuery();
-
-            return resultSet;
+            reMonitorList = getArrayData(resultSet);
         }
         catch (Exception exception)
         {
             _logger.error("not find dashboard data!!", exception);
-
-            resultSet = null;
         }
 
-        return resultSet;
+        finally
+        {
+            closePreparedStatement(preparedStatement);
+
+            closeConnection(connection);
+        }
+
+        return reMonitorList;
     }
 
     public static String getUpdatedPacket(int id, String ip, String time)

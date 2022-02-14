@@ -9,11 +9,17 @@
     <package name="abc" extends="struts-default">
 
         <result-types>
+
             <result-type name="json" class="org.apache.struts2.json.JSONResult">
+
                 <param name="noCache">true</param>
+
                 <param name="excludeNullProperties">true</param>
+
                 <param name="enableGZIP">true</param>
+
             </result-type>
+
         </result-types>
 
         <!-- LOGIN ACTION -->

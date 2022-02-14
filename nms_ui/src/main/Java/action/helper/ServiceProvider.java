@@ -12,16 +12,19 @@ import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
 
-import java.sql.ResultSet;
-
 import java.sql.Timestamp;
 
 import java.text.DecimalFormat;
 
 import java.text.SimpleDateFormat;
+
 import java.util.Arrays;
+
 import java.util.Calendar;
+
 import java.util.Date;
+
+import java.util.List;
 
 public class ServiceProvider
 {
@@ -100,6 +103,8 @@ public class ServiceProvider
 
     }
 
+    private static List<List<String>> dataList;
+
     private static final Logger _logger = new Logger();
 
     public static boolean checkDiscovery()
@@ -121,8 +126,6 @@ public class ServiceProvider
                 Timestamp timestamp = null;
 
                 BufferedReader bufferedInput = null;
-
-                ResultSet resultSet = null;
 
                 try
                 {
@@ -149,13 +152,11 @@ public class ServiceProvider
 
                     ipStatus = checkPingIpStatus(response, ip);
 
-                    resultSet = UserDAO.getReDiscoveryData(ip, deviceType);
+                    dataList = UserDAO.getReDiscoveryData(ip, deviceType);
 
-                    boolean next = resultSet.next();
-
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
-                        setRediscoverProperties(resultSet);
+                        setRediscoverProperties(dataList);
 
                         if (UserDAO.enterReDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                         {
@@ -208,21 +209,17 @@ public class ServiceProvider
 
             if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
             {
-                ResultSet resultSet = null;
-
                 Timestamp timestamp = null;
 
                 SSHConnectionUtil sshConnectionUtil = null;
 
                 try
                 {
-                    resultSet = UserDAO.getReDiscoveryData(ip, deviceType);
+                    dataList = UserDAO.getReDiscoveryData(ip, deviceType);
 
-                    boolean next = resultSet.next();
-
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
-                        setRediscoverProperties(resultSet);
+                        setRediscoverProperties(dataList);
                     }
 
                     sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, CommonConstantUI.SSH_PORT, discoveryUsername, discoveryPassword, CommonConstantUI.SSH_TIMEOUT);
@@ -256,7 +253,7 @@ public class ServiceProvider
                         timestamp = new Timestamp(System.currentTimeMillis());
                     }
 
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
                         if (UserDAO.enterReDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
@@ -277,7 +274,7 @@ public class ServiceProvider
                             _logger.warn("data not inserted into tb_discover and tb_result table!");
                         }
                     }
-                    else if (!next)
+                    else if (!dataList.isEmpty())
                     {
                         if (UserDAO.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
@@ -354,8 +351,6 @@ public class ServiceProvider
 
                 BufferedReader bufferedInput = null;
 
-                ResultSet resultSet = null;
-
                 try
                 {
                     runtime = Runtime.getRuntime();
@@ -381,13 +376,11 @@ public class ServiceProvider
 
                     ipStatus = checkPingIpStatus(response, ip);
 
-                    resultSet = UserDAO.getReMonitorData(ip, deviceType);
+                    dataList = UserDAO.getReMonitorData(ip, deviceType);
 
-                    boolean next = resultSet.next();
-
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
-                        setRediscoverProperties(resultSet);
+                        setRediscoverProperties(dataList);
 
                         if (UserDAO.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                         {
@@ -431,21 +424,17 @@ public class ServiceProvider
 
             if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
             {
-                ResultSet resultSet = null;
-
                 Timestamp timestamp = null;
 
                 SSHConnectionUtil sshConnectionUtil = null;
 
                 try
                 {
-                    resultSet = UserDAO.getReMonitorData(ip, deviceType);
+                    dataList = UserDAO.getReMonitorData(ip, deviceType);
 
-                    boolean next = resultSet.next();
-
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
-                        setRediscoverProperties(resultSet);
+                        setRediscoverProperties(dataList);
                     }
 
                     sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, CommonConstantUI.SSH_PORT, discoveryUsername, discoveryPassword, CommonConstantUI.SSH_TIMEOUT);
@@ -480,7 +469,7 @@ public class ServiceProvider
 
                     }
 
-                    if (next)
+                    if (!dataList.isEmpty())
                     {
                         if (UserDAO.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
@@ -990,17 +979,17 @@ public class ServiceProvider
         return packet;
     }
 
-    private static void setRediscoverProperties(ResultSet resultSet)
+    private static void setRediscoverProperties(List<List<String>> dataList)
     {
         try
         {
-            name = resultSet.getString(2);
+            name = dataList.get(0).get(1);
 
-            discoveryUsername = resultSet.getString(4);
+            discoveryUsername = dataList.get(0).get(3);
 
-            discoveryPassword = resultSet.getString(5);
+            discoveryPassword = dataList.get(0).get(4);
 
-            deviceType = resultSet.getString(6);
+            deviceType = dataList.get(0).get(5);
 
         }
         catch (Exception exception)

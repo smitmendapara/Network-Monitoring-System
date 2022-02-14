@@ -1,6 +1,7 @@
 package action.discover;
 
 import bean.DiscoverBean;
+
 import dao.UserDAO;
 
 import action.helper.ServiceProvider;
@@ -10,12 +11,14 @@ import util.Logger;
 import com.opensymphony.xwork2.ActionSupport;
 
 import java.sql.ResultSet;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class Discovery extends ActionSupport
 {
-    private int idAttribute;
+    private int id;
 
     private String name;
 
@@ -41,12 +44,12 @@ public class Discovery extends ActionSupport
         return ip;
     }
 
-    public int getIdAttribute() {
-        return idAttribute;
+    public int getId() {
+        return id;
     }
 
-    public void setIdAttribute(int idAttribute) {
-        this.idAttribute = idAttribute;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setIp(String ip) {
@@ -88,8 +91,6 @@ public class Discovery extends ActionSupport
     private static final Logger _logger = new Logger();
 
     private final UserDAO _dao = new UserDAO();
-
-    ResultSet resultSet = null;
 
     List<List<String>> discoverList;
 
@@ -167,9 +168,9 @@ public class Discovery extends ActionSupport
     {
         ServiceProvider serviceProvider = new ServiceProvider();
 
-        serviceProvider.setIp(ip);
+            serviceProvider.setIp(ip);
 
-        if (UserDAO.deleteDiscoverTableData(idAttribute))
+        if (UserDAO.deleteDiscoverTableData(id))
         {
             return "success";
         }
@@ -185,11 +186,14 @@ public class Discovery extends ActionSupport
 
         try
         {
-            resultSet = UserDAO.getReDiscoveryData(ip, deviceType);
+            discoverList = UserDAO.getReDiscoveryData(ip, deviceType);
 
-            while (resultSet.next())
+            if (discoverList != null)
             {
-                deviceType = resultSet.getString(6);
+                for (int i = 0; i < discoverList.size(); i++)
+                {
+                    deviceType = discoverList.get(i).get(5);
+                }
             }
 
             ServiceProvider serviceProvider = new ServiceProvider(ip, deviceType);
