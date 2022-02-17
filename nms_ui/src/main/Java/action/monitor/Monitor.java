@@ -10,8 +10,6 @@ import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-import java.sql.ResultSet;
-
 import java.util.ArrayList;
 
 import java.util.List;
@@ -88,47 +86,51 @@ public class Monitor extends ActionSupport
         this.deviceType = deviceType;
     }
 
+    private List<List<String>> monitorList;
+
+    private MonitorBean bean = null;
+
+    private List<MonitorBean> beanList = null;
+
+    public List<MonitorBean> getBeanList()
+    {
+        return beanList;
+    }
+
+    public void setBeanList(List<MonitorBean> beanList)
+    {
+        this.beanList = beanList;
+    }
+
+    private ServiceProvider serviceProvider = new ServiceProvider();
+
     private static final UserDAO _dao = new UserDAO();
 
     private static final Logger _logger = new Logger();
 
-    List<List<String>> monitorList;
-
-    MonitorBean bean = null;
-
-    List<MonitorBean> beanList = null;
-
-    public List<MonitorBean> getBeanList() {
-        return beanList;
-    }
-
-    public void setBeanList(List<MonitorBean> beanList) {
-        this.beanList = beanList;
-    }
-
-    public String executeMonitor()
+    public String getMonitorData()
     {
         _dao.setNewId(id);
 
         try
         {
-            beanList = new ArrayList<MonitorBean>();
+            beanList = new ArrayList<>();
 
-            monitorList = UserDAO.getMonitorTable();
+            monitorList = _dao.getMonitorTable();
 
             if (monitorList != null)
             {
-                for (int i = 0; i < monitorList.size(); i++)
+                for (List<String> subList : monitorList)
                 {
                     bean = new MonitorBean();
 
-                    bean.setId(Integer.parseInt(monitorList.get(i).get(0)));
+                    bean.setId(Integer.parseInt(subList.get(0)));
 
-                    bean.setName(monitorList.get(i).get(1));
+                    bean.setName(subList.get(1));
 
-                    bean.setIP(monitorList.get(i).get(2));
+                    bean.setIP(subList.get(2));
 
-                    bean.setDevice(monitorList.get(i).get(5));
+                    bean.setDevice(subList.get(5));
 
                     beanList.add(bean);
                 }
@@ -142,37 +144,36 @@ public class Monitor extends ActionSupport
         return "success";
     }
 
-    public String execute()
+    public String getMonitorForm()
     {
         _dao.setNewId(id);
 
         try
         {
-            beanList = new ArrayList<MonitorBean>();
+            beanList = new ArrayList<>();
 
-            monitorList = UserDAO.getMonitorTB();
+            monitorList = _dao.getMonitorTB();
 
             if (monitorList != null)
             {
-                for (int i = 0; i < monitorList.size(); i++)
+                for (List<String> subList : monitorList)
                 {
                     bean = new MonitorBean();
 
-                    bean.setId(Integer.parseInt(monitorList.get(i).get(0)));
+                    bean.setId(Integer.parseInt(subList.get(0)));
 
-                    bean.setIP(monitorList.get(i).get(2));
+                    bean.setIP(subList.get(2));
 
-                    if (monitorList.get(i).get(3) == null)
+                    if (subList.get(3) == null)
                     {
                         bean.setUsername("");
                     }
                     else
                     {
-                        bean.setUsername(monitorList.get(i).get(3));
+                        bean.setUsername(subList.get(3));
                     }
 
-
-                    bean.setDevice(monitorList.get(i).get(5));
+                    bean.setDevice(subList.get(5));
 
                     beanList.add(bean);
                 }
@@ -190,7 +191,7 @@ public class Monitor extends ActionSupport
     {
         _dao.setNewId(id);
 
-        if (UserDAO.enterMonitorTableData(id))
+        if (_dao.enterMonitorTableData(id))
         {
             return "success";
         }
@@ -202,35 +203,45 @@ public class Monitor extends ActionSupport
 
     public String getPolling()
     {
-        UserDAO _dao = new UserDAO(id, ip, deviceType);
+        _dao.setNewId(id);
 
-        ResultSet resultSet = null;
+        _dao.setIp(ip);
+
+        _dao.setDeviceType(deviceType);
 
         try
         {
-            monitorList = UserDAO.getDashboardData();
+            monitorList = _dao.getDashboardData();
 
             if (!monitorList.isEmpty())
             {
-                for (int i = 0; i < monitorList.size(); i++)
+                for (List<String> subList : monitorList)
                 {
-                    name = monitorList.get(i).get(1);
+                    name = subList.get(1);
 
-                    ip = monitorList.get(i).get(2);
+                    ip = subList.get(2);
 
-                    discoveryUsername = monitorList.get(i).get(3);
+                    discoveryUsername = subList.get(3);
 
-                    discoveryPassword = monitorList.get(i).get(4);
+                    discoveryPassword = subList.get(4);
 
-                    deviceType = monitorList.get(i).get(5);
+                    deviceType = subList.get(5);
                 }
             }
 
-            ServiceProvider serviceProvider = new ServiceProvider(name, ip, discoveryUsername, discoveryPassword, deviceType);
-
             serviceProvider.setId(id);
 
-            if (ServiceProvider.pollingDevice())
+            serviceProvider.setName(name);
+
+            serviceProvider.setIp(ip);
+
+            serviceProvider.setDiscoveryUsername(discoveryUsername);
+
+            serviceProvider.setDiscoveryPassword(discoveryPassword);
+
+            serviceProvider.setDeviceType(deviceType);
+
+            if (serviceProvider.pollingDevice())
             {
                 return "success";
             }

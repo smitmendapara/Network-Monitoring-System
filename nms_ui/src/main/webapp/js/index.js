@@ -1,22 +1,21 @@
 // refresh page
 
-function refreshPage() {
-
+function refreshPage()
+{
     location.reload(true);
 }
 
 // open discovery form
 
-function openForm(idName) {
-
+function openForm(idName)
+{
     document.getElementById(idName).style.display = 'block';
-
 }
 
 // close discovery form
 
-function closeForm(idName) {
-
+function closeForm(idName)
+{
     document.getElementById(idName).style.display = 'none';
 }
 
@@ -30,8 +29,6 @@ function getPostCall(request) {
 
         cache: false,
 
-        async: true,
-
         timeout: 180000,
 
         data: request.data,
@@ -40,9 +37,9 @@ function getPostCall(request) {
 
         success: function (data) {
 
-            var myCallback;
+            let myCallback;
 
-            if (request.callback != undefined)
+            if (request.callback !== undefined)
             {
                 myCallback = $.Callbacks();
 
@@ -72,8 +69,6 @@ function getGetCall(request) {
 
         cache : false,
 
-        async : true,
-
         timeout : 180000,
 
         data: request.data,
@@ -82,9 +77,9 @@ function getGetCall(request) {
 
         success : function (data) {
 
-            var myCallback;
+            let myCallback;
 
-            if (request.callback != undefined)
+            if (request.callback !== undefined)
             {
                myCallback = $.Callbacks();
 
@@ -106,19 +101,13 @@ function getGetCall(request) {
 
 // fetch discovery data from database
 
-function discoveryTable(result) {
+function discoveryTable(request)
+{
+    let tableData = "";
 
-    var tableData = "";
-
-    var data = result.data;
+    let data = request.data;
 
     $.each(data.beanList, function () {
-
-        var id = this.id;
-
-        var IP = this.IP;
-
-        var device = this.device;
 
         tableData += "<tr class='disc__data' id='"+this.id+"'>" +
 
@@ -128,7 +117,7 @@ function discoveryTable(result) {
 
             "<td>" +
 
-            "<i class='bi bi-play disc__discovery' title='Discovery' data-value='"+this.IP+", "+this.device+"'></i> &nbsp;" +
+            "<i class='bi bi-play disc__discovery' title='Discovery' data-value='"+this.id+", "+this.IP+", "+this.device+"'></i> &nbsp;" +
 
             "<i class='bi bi-eye disc__monitor' title='View Result' data-value='"+this.id+"'></i> &nbsp;" +
 
@@ -145,11 +134,11 @@ function discoveryTable(result) {
 
     $('.bi-play').on('click', function () {
 
-        var parameter = event.currentTarget.getAttribute('data-value');
+        let parameter = event.currentTarget.getAttribute('data-value');
 
-        var array = parameter.split(",");
+        let array = parameter.split(",");
 
-        reDiscoverData(array[0], array[1].trim());
+        reDiscoverData(array[0], array[1].trim(), array[2].trim());
 
         alert("your ip is successfully rediscover!");
 
@@ -157,7 +146,7 @@ function discoveryTable(result) {
 
     $('.bi-eye').on('click', function () {
 
-        var parameter = event.currentTarget.getAttribute('data-value');
+        let parameter = event.currentTarget.getAttribute('data-value');
 
         showForm(parameter);
 
@@ -165,40 +154,42 @@ function discoveryTable(result) {
 
     $('.bi-trash').on('click', function () {
 
-        var parameter = event.currentTarget.getAttribute('data-value');
+        let parameter = event.currentTarget.getAttribute('data-value');
 
         deleteRow(parameter);
 
     });
 }
 
-function getDiscoveryDetails() {
-
-    var provisionForm = "provisionForm";
+function getDiscoveryDetails()
+{
+    let provisionForm = "provisionForm";
 
     getGetCall({ url: "discoveryTable.action", callback: discoveryTable });
 }
 
 // manipulated discovery table data
 
-function displayLinuxProfile(idName, elementValue) {
+function displayLinuxProfile(id, elementValue)
+{
+    let value = elementValue.value;
 
-    document.getElementById(idName).style.display = elementValue.value == 1 ? 'block' : 'none';
+    document.getElementById(id).style.display = value === 1 ? 'block' : 'none';
 }
 
 // show discovery form
 
-function discoverData() {
+function discoverData()
+{
+    let name = $("#name").val();
 
-    var name = $("#name").val();
+    let ip = $("#IP").val();
 
-    var ip = $("#IP").val();
+    let discoveryUsername = $("#username").val();
 
-    var discoveryUsername = $("#username").val();
+    let discoveryPassword = $("#password").val();
 
-    var discoveryPassword = $("#password").val();
-
-    var deviceType = $("#device").val();
+    let deviceType = $("#device").val();
 
     getPostCall({ url: "discoveryProcess.action", data: { name: name, ip: ip, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword, deviceType: deviceType } });
 
@@ -207,18 +198,18 @@ function discoverData() {
 
 // for rediscovery
 
-function reDiscoverData(ip, deviceType) {
-
-    getPostCall({ url: "reDiscoveryProcess.action", data: { ip: ip, deviceType: deviceType } });
+function reDiscoverData(id, ip, deviceType)
+{
+    getPostCall({ url: "reDiscoveryProcess.action", data: { id: id, ip: ip, deviceType: deviceType } });
 
     refreshPage();
 }
 
 // manually polling
 
-function reloadPage(result) {
-
-    if (result.data.deviceType == "Ping")
+function reloadPage(result)
+{
+    if (result.data.deviceType === "Ping")
     {
         window.location.href = "dashboard.jsp";
     }
@@ -228,16 +219,17 @@ function reloadPage(result) {
     }
 }
 
-function getPolling(id, ip, deviceType) {
+function getPolling(id, ip, deviceType)
+{
 
     getPostCall({ url: "monitorPolling.action", data: {id: id, ip: ip, deviceType: deviceType }, callback: reloadPage });
 }
 
 // toggle discovery table
 
-function toggleTable() {
-
-    var table = document.getElementById("myTableDiv");
+function toggleTable()
+{
+    let table = document.getElementById("myTableDiv");
 
     if (table.style.display === "none")
     {
@@ -251,32 +243,32 @@ function toggleTable() {
 
 // delete discovery table row
 
-function deletedRow(result) {
-
+function deletedRow(result)
+{
     document.getElementById(result.data.id).remove();
 
     alert("successfully row deleted!");
 }
 
-function deleteRow(id) {
-
+function deleteRow(id)
+{
     getPostCall({ url: "discoveryDelete.action", data: { id: id }, callback: deletedRow });
 }
 
 // provision ip
 
-function provisionIP(request) {
-
+function provisionIP()
+{
     alert("successfully monitored!");
 }
 
-function monitorData(id) {
-
+function monitorData(id)
+{
     if (document.getElementById(id).checked)
     {
-        var id = $("input[name=key]").val();
+        let id = $("input[name=key]").val();
 
-        getPostCall({ url: "monitorData.action", data: { id: id }, callback: provisionIP });
+        getPostCall({ url: "monitorProcess.action", data: { id: id }, callback: provisionIP });
     }
     else
     {
@@ -286,11 +278,11 @@ function monitorData(id) {
 
 // show monitor form
 
-function monitorForm(request) {
+function getMonitorForm(request)
+{
+    let tableData = "";
 
-    var tableData = "";
-
-    var data = request.data;
+    let data = request.data;
 
     $.each(data.beanList, function () {
 
@@ -315,22 +307,22 @@ function monitorForm(request) {
     $('#resultTable').html(tableData);
 }
 
-function showForm(id) {
-
-    var monitorFormId = $('div.disc__popUp').attr('id');
+function showForm(id)
+{
+    let monitorFormId = $('div.disc__popUp').attr('id');
 
     document.getElementById(monitorFormId).style.display = 'block';
 
-    getGetCall({ url: "monitorForm.action", data: { id: id }, callback: monitorForm });
+    getGetCall({ url: "monitorForm.action", data: { id: id }, callback: getMonitorForm });
 }
 
 // monitor table data
 
-function getMonitorTable(result) {
+function getMonitorTable(result)
+{
+    let tableData = "";
 
-    var tableData = "";
-
-    var data = result.data;
+    let data = result.data;
 
     $.each(data.beanList, function () {
 
@@ -352,9 +344,9 @@ function getMonitorTable(result) {
 
     $('.bi-box-arrow-up-right').on('click', function() {
 
-        var parameter = event.currentTarget.getAttribute('data-value');
+        let parameter = event.currentTarget.getAttribute('data-value');
 
-        var array = parameter.split(",");
+        let array = parameter.split(",");
 
         showDashboard(array[0], array[1].trim(), array[2].trim());
 
@@ -363,86 +355,39 @@ function getMonitorTable(result) {
     });
 }
 
-function getMonitorDetails() {
-
-    getGetCall({ url: "monitorProcess.action", callback: getMonitorTable });
+function getMonitorDetails()
+{
+    getGetCall({ url: "monitorTable.action", callback: getMonitorTable });
 }
 
 // show dashboard
 
-function getDashboard(result) {
-
-    if (result.data.deviceType == "Ping")
+function getDashboard(result)
+{
+    if (result.data.deviceType === "Ping")
     {
-        window.open('dashboard.jsp', '_blank');
+        window.open('dashboard.jsp', '_self');
     }
     else
     {
-        window.open('linux_dashboard.jsp', '_blank');
+        window.open('linux_dashboard.jsp', '_self');
     }
 }
 
-function showDashboard(id, ip, deviceType) {
-
+function showDashboard(id, ip, deviceType)
+{
     getPostCall({ url: "dashboardProcess.action", data: { id: id, ip: ip, deviceType: deviceType }, callback: getDashboard });
-}
-
-// get all the basic details for ping device
-
-function getRTTTime(response) {
-
-    var rttTime = 0;
-
-    var rtt = response.indexOf("rtt");
-
-    if (rtt != -1)
-    {
-        rttTime = response.substring(response.indexOf("rtt") + 23, response.indexOf("rtt") + 24);
-    }
-
-    return rttTime;
-}
-
-function getPacketLoss(response) {
-
-    var packetLoss;
-
-    var receivedPacket = response.substring(response.indexOf("transmitted") + 13, response.indexOf("transmitted") + 14);
-
-    if (receivedPacket == "0")
-    {
-        packetLoss = "100";
-    }
-    if (receivedPacket == "1")
-    {
-        packetLoss = "75";
-    }
-    if (receivedPacket == "2")
-    {
-        packetLoss = "50";
-    }
-    if (receivedPacket == "3")
-    {
-        packetLoss = "25";
-    }
-    if (receivedPacket == "4")
-    {
-        packetLoss = "0";
-    }
-
-    return packetLoss;
-
 }
 
 // ping dashboard header
 
-function getDashboardHeaderData(request) {
+function getDashboardHeaderData(request)
+{
+    let tableData = "";
 
-    var tableData = "";
+    let tableTitle = "";
 
-    var tableTitle = "";
-
-    var data = request.data;
+    let data = request.data;
 
     $.each(data.beanList, function () {
 
@@ -476,11 +421,11 @@ function getDashboardHeaderData(request) {
 
     $('.bi-arrow-repeat').on('click', function () {
 
-        var parameter = event.currentTarget.getAttribute('data-value');
+        let parameter = event.currentTarget.getAttribute('data-value');
 
         console.log(parameter);
 
-        var array = parameter.split(",");
+        let array = parameter.split(",");
 
         getPolling(array[0], array[1].trim(), array[2].trim());
 
@@ -489,42 +434,32 @@ function getDashboardHeaderData(request) {
     });
 }
 
-function getDashboardHeader() {
-
+function getDashboardHeader()
+{
     getGetCall({ url: "dashboardTable.action", callback: getDashboardHeaderData });
 }
 
 // ping dashboard body
 
-function getDashboardBodyData(request) {
+function getDashboardBodyData(request)
+{
+    let tableData = "";
 
-    var tableData = "";
-
-    var data = request.data;
+    let data = request.data;
 
     $.each(data.beanList, function () {
-
-        var response = this.response;
-
-        var sentPacket = response.substring(response.indexOf("statistics") + 14, response.indexOf("statistics") + 15);
-
-        var packetLoss = getPacketLoss(response);
-
-        var receivedPacket = response.substring(response.indexOf("transmitted") + 13, response.indexOf("transmitted") + 14);
-
-        var rttTime = getRTTTime(response);
 
         tableData += "<tr>" +
 
             "<td class='dash__firstRow'>" + "<div id='dougnutChart' style='height: 270px'>" + "</div>" + "</td>" +
 
-            "<td class='dash__secondRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>Sent Packet</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + sentPacket + "</p>" + "</div>" + "</div>" + "</td>" +
+            "<td class='dash__secondRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>Sent Packet</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + this.response[0] + "</p>" + "</div>" + "</div>" + "</td>" +
 
-            "<td class='dash__thirdRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>Packet Loss (%)</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + packetLoss + "</p>" + "</div>" + "</div>" + "</td>" +
+            "<td class='dash__thirdRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>Packet Loss (%)</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + this.response[1] + "</p>" + "</div>" + "</div>" + "</td>" +
 
-            "<td class='dash__fourthRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>Received Packet</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + receivedPacket + "</p>" + "</div>" + "</div>" + "</td>" +
+            "<td class='dash__fourthRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>Received Packet</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + this.response[2] + "</p>" + "</div>" + "</div>" + "</td>" +
 
-            "<td class='dash__fifthRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>RTT (ms)</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + rttTime + "</p>" + "</div>" + "</div>" + "</td>" +
+            "<td class='dash__fifthRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>RTT (ms)</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + this.response[3] + "</p>" + "</div>" + "</div>" + "</td>" +
 
 
             + "</tr>";
@@ -538,170 +473,20 @@ function getDashboardBodyData(request) {
     getColumnChartDetails();
 }
 
-function getDashboardBody() {
-
+function getDashboardBody()
+{
     getGetCall({ url: "dashboardTable.action", callback: getDashboardBodyData });
-}
-
-// get all the basic details for linux device
-
-function getDiskPercent(response) {
-
-    var diskPercent;
-
-    var array = response.split(",");
-
-    diskPercent = array[11].trim();
-
-    return Math.round(diskPercent);
-}
-
-function getSwapFreePercent(response) {
-
-    var swapFree;
-
-    var array = response.split(",");
-
-    swapFree = (array[10] / array[8]) * 100;
-
-    return Math.round(swapFree);
-}
-
-function getSwapUsedPercent(response) {
-
-    var swapUsed;
-
-    var array = response.split(",");
-
-    swapUsed = (array[9] / array[8]) * 100;
-
-    return Math.round(swapUsed);
-}
-
-function getCPUSystemPercent(response) {
-
-    var cpuSystem;
-
-    var array = response.split(",");
-
-    cpuSystem = array[12].trim();
-
-    return Math.round(cpuSystem);
-}
-
-function getCPUUserPercent(response) {
-
-    var cpuUser;
-
-    var array = response.split(",");
-
-    cpuUser = array[12].trim();
-
-    return Math.round(cpuUser);
-}
-
-function getRTT(response) {
-
-    var rtt = 0;
-
-    if (response == null)
-    {
-        rtt = "";
-    }
-
-    return rtt;
-}
-
-function getFreeMemoryPercent(response) {
-
-    var array = response.split(",");
-
-    var freeMemory = array[3].trim() - array[4].trim() - array[14].trim() - array[15].substring(0, array[15].length - 1).trim();
-
-    var totalMemory = array[3].trim();
-
-    var free = (freeMemory / totalMemory) * 100;
-
-    return Math.round(free);
-}
-
-function getUsedMemoryPercent(response) {
-
-    var array = response.split(",");
-
-    var usedMemory = array[3].trim() - array[5].trim() - array[14].trim() - array[15].substring(0, array[15].length - 1).trim();
-
-    var totalMemory = array[3].trim();
-
-    var used = (usedMemory / totalMemory) * 100;
-
-    return Math.round(used);
-}
-
-function getOSName(response) {
-
-    var OSName;
-
-    var array = response.split(",");
-
-    OSName = array[7].trim();
-
-    return OSName;
-}
-
-function getOSVersion(response) {
-
-    var OSVersion;
-
-    var array = response.split(",");
-
-    OSVersion = array[6].trim();
-
-    return OSVersion;
-}
-
-function getCPUType(response) {
-
-    var CPUType;
-
-    var array = response.split(",");
-
-    CPUType = array[2].trim();
-
-    return CPUType;
-}
-
-function getSystemName(response) {
-
-    var systemName;
-
-    var array = response.split(",");
-
-    systemName = array[1].trim();
-
-    return systemName;
-}
-
-function getDeviceName(response) {
-
-    var deviceType;
-
-    var array = response.substring(1).split(",");
-
-    deviceType = array[0].trim();
-
-    return deviceType;
 }
 
 // linux dashboard header
 
-function getLinuxDashboardHeaderData(request) {
+function getLinuxDashboardHeaderData(request)
+{
+    let data = request.data;
 
-    var data = request.data;
+    let tableData = "";
 
-    var tableData = "";
-
-    var tableTitle = "";
+    let tableTitle = "";
 
     $.each(data.beanList, function () {
 
@@ -735,11 +520,11 @@ function getLinuxDashboardHeaderData(request) {
 
     $('.bi-arrow-repeat').on('click', function () {
 
-        var parameter = event.currentTarget.getAttribute('data-value');
+        let parameter = event.currentTarget.getAttribute('data-value');
 
         console.log(parameter);
 
-        var array = parameter.split(",");
+        let array = parameter.split(",");
 
         getPolling(array[0], array[1].trim(), array[2].trim());
 
@@ -755,50 +540,13 @@ function getLinuxDashboardHeader() {
 
 // linux dashboard body
 
-function getLinuxDashboardBodyData(request) {
+function getLinuxDashboardBodyData(request)
+{
+    let data = request.data;
 
-    var data = request.data;
-
-    var tableData = "";
-
-    var deviceName, systemName, CPUType, OSVersion, OSName, UsedMemory, FreeMemory, RTT, CPUUserPercent, CPUSystemPercent, SwapUsed, SwapFree, Disk;
+    let tableData = "";
 
     $.each(data.beanList, function () {
-
-        var response = this.response;
-
-        if (response == "")
-        {
-            deviceName = systemName = CPUType = OSVersion = OSName = UsedMemory = FreeMemory = RTT = CPUUserPercent = CPUSystemPercent = SwapFree = SwapUsed = Disk = "";
-        }
-        else
-        {
-            deviceName = getDeviceName(response);
-
-            systemName = getSystemName(response);
-
-            CPUType = getCPUType(response);
-
-            OSVersion = getOSVersion(response);
-
-            OSName = getOSName(response);
-
-            UsedMemory = getUsedMemoryPercent(response) + '%';
-
-            FreeMemory = getFreeMemoryPercent(response) + '%';
-
-            RTT = getRTT(response);
-
-            CPUUserPercent = getCPUUserPercent(response) + '%';
-
-            CPUSystemPercent = getCPUSystemPercent(response) + '%';
-
-            SwapUsed = getSwapUsedPercent(response) + '%';
-
-            SwapFree = getSwapFreePercent(response) + '%';
-
-            Disk = getDiskPercent(response) + '%';
-        }
 
         tableData += "<tr style='height: 300px'>" +
 
@@ -808,37 +556,37 @@ function getLinuxDashboardBodyData(request) {
 
             "<tr>" + "<td><b>Monitor</b>" + "<td>" + this.IP + "</td>" + "</td>" + "</tr>" +
 
-            "<tr>" + "<td><b>Type</b>" + "<td>" + deviceName + "</td>" + "</td>" + "</tr>" +
+            "<tr>" + "<td><b>Type</b>" + "<td>" + this.response[0] + "</td>" + "</td>" + "</tr>" +
 
-            "<tr>" + "<td><b>System Name</b>" + "<td>" + systemName + "</td>" + "</td>" + "</tr>" +
+            "<tr>" + "<td><b>System Name</b>" + "<td>" + this.response[1] + "</td>" + "</td>" + "</tr>" +
 
-            "<tr>" + "<td><b>CPU Type</b>" + "<td>" + CPUType + "</td>" + "</td>" + "</tr>" +
+            "<tr>" + "<td><b>CPU Type</b>" + "<td>" + this.response[2] + "</td>" + "</td>" + "</tr>" +
 
-            "<tr>" + "<td><b>OS Version</b>" + "<td>" + OSVersion + "</td>" + "</td>" + "</tr>" +
+            "<tr>" + "<td><b>OS Version</b>" + "<td>" + this.response[3] + "</td>" + "</td>" + "</tr>" +
 
-            "<tr>" + "<td><b>OS Name</b>" + "<td>" + OSName + "</td>" + "</td>" + "</tr>" + "</tbody>" + "</table>" + "</div>" +
+            "<tr>" + "<td><b>OS Name</b>" + "<td>" + this.response[4] + "</td>" + "</td>" + "</tr>" + "</tbody>" + "</table>" + "</div>" +
 
             "</td>" +
 
-            "<td class='linux__Widget'>" + "<div class='dash__widget'>" + "<div><p>Memory Used (%)</p></div>" + "<div><b><p>" + UsedMemory + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__Widget'>" + "<div class='dash__widget'>" + "<div><p>Memory Used (%)</p></div>" + "<div><b><p>" + this.response[5] + "</p></b></div>" + "</div>" + "</td>" +
 
-            "<td class='linux__Widget'>" + "<div class='dash__widget'>" + "<div><p>Memory Free (%)</p></div>" + "<div><b><p>" + FreeMemory + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__Widget'>" + "<div class='dash__widget'>" + "<div><p>Memory Free (%)</p></div>" + "<div><b><p>" + this.response[6] + "</p></b></div>" + "</div>" + "</td>" +
 
-            "<td class='linux__Widget'>" + "<div class='dash__widget'>" + "<div><p>RTT (ms)</p></div>" + "<div><b><p>" + RTT + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__Widget'>" + "<div class='dash__widget'>" + "<div><p>RTT (ms)</p></div>" + "<div><b><p>" + this.response[7] + "</p></b></div>" + "</div>" + "</td>" +
 
             + "</tr>" +
 
             "<tr style='height: 300px'>" +
 
-            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>CPU User (%)</p></div>" + "<div><b><p>" + CPUUserPercent + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>CPU User (%)</p></div>" + "<div><b><p>" + this.response[8] + "</p></b></div>" + "</div>" + "</td>" +
 
-            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>CPU System (%)</p></div>" + "<div><b><p>" + CPUSystemPercent + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>CPU System (%)</p></div>" + "<div><b><p>" + this.response[9] + "</p></b></div>" + "</div>" + "</td>" +
 
-            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>Swap Used Memory (%)</p></div>" + "<div><b><p>" + SwapUsed + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>Swap Used Memory (%)</p></div>" + "<div><b><p>" + this.response[10] + "</p></b></div>" + "</div>" + "</td>" +
 
-            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>Swap Free Memory (%)</p></div>" + "<div><b><p>" + SwapFree + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>Swap Free Memory (%)</p></div>" + "<div><b><p>" + this.response[11] + "</p></b></div>" + "</div>" + "</td>" +
 
-            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>Disk (%)</p></div>" + "<div><b><p>" + Disk + "</p></b></div>" + "</div>" + "</td>" +
+            "<td class='linux__initial'>" + "<div class='dash__widget'>" + "<div><p>Disk (%)</p></div>" + "<div><b><p>" + this.response[12] + "</p></b></div>" + "</div>" + "</td>" +
 
             + "</tr>";
     });
@@ -850,36 +598,34 @@ function getLinuxDashboardBodyData(request) {
     getColumnChartDetails();
 }
 
-function getLinuxDashboardBody() {
-
+function getLinuxDashboardBody()
+{
     getGetCall({ url: "dashboardTable.action", callback: getLinuxDashboardBodyData });
 }
 
 // column chart
 
-function getColumnChartData(request) {
-
-    var data = request.data;
+function getColumnChartData(request)
+{
+    let data = request.data;
 
     alert("loading charts...");
 
     $.each(data.beanList, function () {
 
-        var secondChart;
+        let secondChart;
 
-        var Status = this.status;
+        let status = this.status;
 
-        var DeviceType = this.device;
+        let deviceType = this.device;
 
-        var response = this.response;
+        let receivedPacket = this.packet;
 
-        var receivedPacket = this.packet;
+        let memoryPercent = this.memory;
 
-        var memoryPercent = this.memory;
+        let timeArray = this.currentTime;
 
-        var timeArray = this.currentTime;
-
-        if (Status == "Down" && DeviceType == "Ping")
+        if (status === "Down" && deviceType === "Ping")
         {
             secondChart = new CanvasJS.Chart("areaChart",
                 {
@@ -922,7 +668,7 @@ function getColumnChartData(request) {
 
                 });
         }
-        else if (Status == "Up" && DeviceType == "Ping")
+        else if (status === "Up" && deviceType === "Ping")
         {
             secondChart = new CanvasJS.Chart("areaChart",
                 {
@@ -964,7 +710,7 @@ function getColumnChartData(request) {
                     ]
                 });
         }
-        else if (Status == "Up" && DeviceType == "Linux")
+        else if (status === "Up" && deviceType === "Linux")
         {
             secondChart = new CanvasJS.Chart("areaChart",
                 {
@@ -1056,33 +802,33 @@ function getColumnChartData(request) {
 
 }
 
-function getColumnChartDetails() {
-
+function getColumnChartDetails()
+{
     getGetCall({ url: "dashboardTable.action", callback: getColumnChartData });
 }
 
 // pie chart
 
-function getPieChartData(request) {
-
-    var data = request.data;
+function getPieChartData(request)
+{
+    let data = request.data;
 
     $.each(data.beanList, function () {
 
-        var firstChart;
+        let firstChart;
 
-        var IP = this.IP;
+        let ip = this.IP;
 
-        var Status = this.status;
+        let status = this.status;
 
-        if (Status == "Down")
+        if (status === "Down")
         {
             firstChart = new CanvasJS.Chart("dougnutChart",
                 {
                     width : 340,
 
                     title:{
-                        text: IP
+                        text: ip
                     },
 
                     data: [
@@ -1098,7 +844,7 @@ function getPieChartData(request) {
                             color: "#A21919",
 
                             dataPoints: [
-                                {  x: 0, y: 1.0, indexLabel: IP },
+                                {  x: 0, y: 1.0, indexLabel: ip },
                             ]
 
                         }
@@ -1114,7 +860,7 @@ function getPieChartData(request) {
                     width : 340,
 
                     title:{
-                        text: IP
+                        text: ip
                     },
 
                     data: [
@@ -1130,7 +876,7 @@ function getPieChartData(request) {
                             color: "#008000",
 
                             dataPoints: [
-                                {  x: 0, y: 1.0, indexLabel: IP },
+                                {  x: 0, y: 1.0, indexLabel: ip },
                             ]
 
                         }
@@ -1145,7 +891,7 @@ function getPieChartData(request) {
 
 }
 
-function getPieChartDetails() {
-
+function getPieChartDetails()
+{
     getGetCall({ url: "dashboardTable.action", callback: getPieChartData });
 }

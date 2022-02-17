@@ -88,15 +88,7 @@ public class Discovery extends ActionSupport
         this.deviceType = deviceType;
     }
 
-    private static final Logger _logger = new Logger();
-
-    private final UserDAO _dao = new UserDAO();
-
-    List<List<String>> discoverList;
-
-    DiscoverBean bean = null;
-
-    List<DiscoverBean> beanList = null;
+    private List<DiscoverBean> beanList = null;
 
     public List<DiscoverBean> getBeanList() {
         return beanList;
@@ -106,27 +98,37 @@ public class Discovery extends ActionSupport
         this.beanList = beanList;
     }
 
-    public String execute()
+    private ServiceProvider serviceProvider = new ServiceProvider();
+
+    private static final UserDAO _dao = new UserDAO();
+
+    private static final Logger _logger = new Logger();
+
+    public String getDiscoverData()
     {
+        List<List<String>> discoverList;
+
+        DiscoverBean bean;
+
         try
         {
-            beanList = new ArrayList<DiscoverBean>();
+            beanList = new ArrayList<>();
 
-            discoverList = UserDAO.getDiscoverTB();
+            discoverList = _dao.getDiscoverTB();
 
             if (discoverList != null)
             {
-                for (int i = 0; i < discoverList.size(); i++)
+                for (List<String> subList : discoverList)
                 {
                     bean = new DiscoverBean();
 
-                    bean.setId(Integer.parseInt(discoverList.get(i).get(0)));
+                    bean.setId(Integer.parseInt(subList.get(0)));
 
-                    bean.setName(discoverList.get(i).get(1));
+                    bean.setName(subList.get(1));
 
-                    bean.setIP(discoverList.get(i).get(2));
+                    bean.setIP(subList.get(2));
 
-                    bean.setDevice(discoverList.get(i).get(3));
+                    bean.setDevice(subList.get(3));
 
                     beanList.add(bean);
                 }
@@ -142,11 +144,21 @@ public class Discovery extends ActionSupport
 
     public String executeDiscovery()
     {
-        ServiceProvider serviceProvider = new ServiceProvider(name, ip, discoveryUsername, discoveryPassword, deviceType);
+        serviceProvider.setId(id);
+
+        serviceProvider.setName(name);
+
+        serviceProvider.setIp(ip);
+
+        serviceProvider.setDiscoveryUsername(discoveryUsername);
+
+        serviceProvider.setDiscoveryPassword(discoveryPassword);
+
+        serviceProvider.setDeviceType(deviceType);
 
         try
         {
-            if (ServiceProvider.checkDiscovery())
+            if (serviceProvider.checkDiscovery())
             {
                 return "success";
             }
@@ -164,11 +176,9 @@ public class Discovery extends ActionSupport
         return null;
     }
 
-    public String deleteData()
+    public String deleteDiscoverData()
     {
-        ServiceProvider serviceProvider = new ServiceProvider();
-
-            serviceProvider.setIp(ip);
+        serviceProvider.setIp(ip);
 
         if (UserDAO.deleteDiscoverTableData(id))
         {
@@ -180,25 +190,17 @@ public class Discovery extends ActionSupport
         }
     }
 
-    public String reDiscovery()
+    public String executeReDiscovery()
     {
-        ResultSet resultSet = null;
-
         try
         {
-            discoverList = UserDAO.getReDiscoveryData(ip, deviceType);
+            serviceProvider.setId(id);
 
-            if (discoverList != null)
-            {
-                for (int i = 0; i < discoverList.size(); i++)
-                {
-                    deviceType = discoverList.get(i).get(5);
-                }
-            }
+            serviceProvider.setIp(ip);
 
-            ServiceProvider serviceProvider = new ServiceProvider(ip, deviceType);
+            serviceProvider.setDeviceType(deviceType);
 
-            if (ServiceProvider.checkDiscovery())
+            if (serviceProvider.checkDiscovery())
             {
                 return "success";
             }

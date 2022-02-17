@@ -14,7 +14,7 @@ public class DashboardBean
 
     private String Device;
 
-    private String Response;
+    private String[] Response;
 
     private String Status;
 
@@ -88,11 +88,11 @@ public class DashboardBean
         CurrentTime = currentTime;
     }
 
-    public String getResponse() {
+    public String[] getResponse() {
         return Response;
     }
 
-    public void setResponse(String response) {
+    public void setResponse(String[] response) {
         Response = response;
     }
 

@@ -208,13 +208,14 @@ public class SSHConnectionUtil
 
                 channel.setCommand(command);
 
-                channel.setInputStream(null);
-
                 inputStream = channel.getInputStream();
 
                 channel.connect();
 
-                _logger.debug(hostIp + " - checking channel connection...");
+//                while (channel.isConnected()) // instead of wait parameter
+//                {
+//                    Thread.sleep(100);
+//                }
 
                 if (channel.isConnected())
                 {

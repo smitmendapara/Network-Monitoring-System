@@ -1,5 +1,3 @@
-<%@ page import="org.apache.struts2.ServletActionContext" %>
-
 <%--
   Created by IntelliJ IDEA.
   User: smit
@@ -33,7 +31,7 @@
 
                 <a href="monitor" class="lg__monitor"><i class="bi bi-tv"></i>&nbsp;Monitor</a>
 
-                <a href="dashboard" class="lg__dashboard"><i class="bi bi-grid"></i></i>&nbsp;Dashboard</a>
+                <a href="" class="lg__dashboard"><i class="bi bi-grid"></i>&nbsp;Dashboard</a>
 
             </nav>
 

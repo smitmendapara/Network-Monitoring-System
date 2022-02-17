@@ -20,7 +20,7 @@ public class CommonConstantUI
 
     public static final String DATABASE_PASSWORD = "motadata";
 
-    public static final Double DOUBLE_ZERO = 0.0;
+    public static final double DOUBLE_ZERO = 0.0;
 
     public static final int SSH_PORT = 22;
 

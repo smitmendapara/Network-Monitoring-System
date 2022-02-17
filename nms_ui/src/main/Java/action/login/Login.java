@@ -2,20 +2,18 @@ package action.login;
 
 import dao.UserDAO;
 
+import org.apache.struts2.dispatcher.SessionMap;
+
+import org.apache.struts2.interceptor.SessionAware;
+
 import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-import org.apache.struts2.ServletActionContext;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import javax.servlet.http.HttpSession;
-
-public class Login extends ActionSupport
+public class Login extends ActionSupport implements SessionAware
 {
-    private int id;
-
     private String username;
 
     private String password;
@@ -36,11 +34,9 @@ public class Login extends ActionSupport
         this.password = password;
     }
 
+    private SessionMap<String,Object> sessionMap;
+
     private static final Logger _logger = new Logger();
-
-    HttpServletRequest request = ServletActionContext.getRequest();
-
-    HttpSession session = request.getSession();
 
     public String executeLogin()
     {
@@ -48,9 +44,9 @@ public class Login extends ActionSupport
         {
             if(UserDAO.checkCredential(username, password))
             {
-                session.setAttribute("login", "true");
+                sessionMap.put("login", true);
 
-                session.setAttribute("username", username);
+                sessionMap.put("username", username);
 
                 return "success";
             }
@@ -65,5 +61,11 @@ public class Login extends ActionSupport
         }
 
         return null;
+    }
+
+    @Override
+    public void setSession(Map<String, Object> map)
+    {
+        sessionMap = (SessionMap) map;
     }
 }

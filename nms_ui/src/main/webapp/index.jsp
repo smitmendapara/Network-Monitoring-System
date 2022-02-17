@@ -38,9 +38,9 @@
 
                 <a href="login" class="index__login"><i class="bi bi-box-arrow-in-right"></i>&nbsp;login</a>
 
-                <a href="logout" class="index__logout"><i class="bi bi-box-arrow-left"></i>&nbsp;logout</a>
+                <a href="logoutProcess" class="index__logout"><i class="bi bi-box-arrow-left"></i>&nbsp;logout</a>
 
-                <a href="signup" class="index__signup"><i class="bi bi-person"></i>&nbsp;signUp</a>
+                <a href="signUpProcess" class="index__signup"><i class="bi bi-person"></i>&nbsp;signUp</a>
 
                 <a href="profile" class="index__profile"><i class="bi bi-check2-circle"></i>&nbsp;profile</a>
 

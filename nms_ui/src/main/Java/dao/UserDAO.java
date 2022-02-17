@@ -12,26 +12,26 @@ import java.util.List;
 
 public class UserDAO
 {
-    private static int id;
+    private int id;
 
-    private static String ip;
+    private String ip;
 
-    private static String deviceType;
+    private String deviceType;
 
-    public static String getDeviceType() {
+    public String getDeviceType() {
         return deviceType;
     }
 
-    public static void setDeviceType(String deviceType) {
-        UserDAO.deviceType = deviceType;
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
-    public static String getIp() {
+    public String getIp() {
         return ip;
     }
 
-    public static void setIp(String ip) {
-        UserDAO.ip = ip;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     private static String DATABASE_URL = CommonConstantUI.DATABASE_URL;
@@ -55,7 +55,7 @@ public class UserDAO
 
     private static String selectMonitorTable = "SELECT * FROM TB_MONITOR";
 
-    private static String selectDataDump = "SELECT * FROM TB_DATADUMP WHERE ID = ? AND CURRENTTIME = ?";
+    private static String selectDataDump = "SELECT * FROM TB_DATADUMP WHERE ID = ? AND IP = ? AND DEVICE = ? AND CURRENTTIME = ?";
 
 
     private static String insertUser = "INSERT INTO TB_USER(USER, PASSWORD) VALUES(?, ?)";
@@ -69,11 +69,11 @@ public class UserDAO
     private static String insertDataDump = "INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
 
-    private static String updateDiscover = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+    private static String updateDiscover = "UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?";
 
-    private static String updateMonitor = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+    private static String updateMonitor = "UPDATE TB_MONITOR SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICETYPE = ?";
 
-    private static String updateResult = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ?";
+    private static String updateResult = "UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICETYPE = ?";
 
 
     private static String deleteDiscover = "DELETE FROM TB_DISCOVER WHERE ID = ?";
@@ -97,15 +97,6 @@ public class UserDAO
     public UserDAO()
     {
 
-    }
-
-    public UserDAO(int id, String ip, String deviceType)
-    {
-        this.id = id;
-
-        this.ip = ip;
-
-        this.deviceType = deviceType;
     }
 
     private static final Logger _logger = new Logger();
@@ -148,25 +139,7 @@ public class UserDAO
         return preparedStatement;
     }
 
-    private static Statement getStatement()
-    {
-        Statement statement = null;
-
-        try
-        {
-            connection = _dao.getConnection();
-
-            statement = connection.createStatement();
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("statement is not ready!");
-        }
-
-        return statement;
-    }
-
-    public static void closeConnection(Connection connection)
+    private static void closeConnection(Connection connection)
     {
         try
         {
@@ -181,7 +154,7 @@ public class UserDAO
         }
     }
 
-    public static void closePreparedStatement(PreparedStatement preparedStatement)
+    private static void closePreparedStatement(PreparedStatement preparedStatement)
     {
         try
         {
@@ -196,22 +169,7 @@ public class UserDAO
         }
     }
 
-    public static void closeStatement(Statement statement)
-    {
-        try
-        {
-            if (!statement.isClosed() && statement != null)
-            {
-                statement.close();
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("prepared statement is still not closed!");
-        }
-    }
-
-    public static List<List<String>> getDiscoveryArrayData(ResultSet resultSet)
+    private static List<List<String>> getDiscoveryArrayData(ResultSet resultSet)
     {
 
         List<List<String>> discoverList = new ArrayList<>();
@@ -246,7 +204,7 @@ public class UserDAO
         return discoverList;
     }
 
-    public static List<List<String>> getArrayData(ResultSet resultSet)
+    private static List<List<String>> getArrayData(ResultSet resultSet)
     {
         List<List<String>> parentList = new ArrayList<>();
 
@@ -288,9 +246,9 @@ public class UserDAO
         return parentList;
     }
 
-    public static List<List<String>> getDiscoverTB()
+    public List<List<String>> getDiscoverTB()
     {
-        Statement statement = null;
+        PreparedStatement preparedStatement = null;
 
         ResultSet resultSet = null;
 
@@ -298,9 +256,9 @@ public class UserDAO
 
         try
         {
-            statement = getStatement();
+            preparedStatement = getPreparedStatement(selectColumnDiscover);
 
-            resultSet = statement.executeQuery(selectColumnDiscover);
+            resultSet = preparedStatement.executeQuery();
 
             discoverList = getDiscoveryArrayData(resultSet);
 
@@ -312,7 +270,7 @@ public class UserDAO
 
         finally
         {
-            closeStatement(statement);
+            closePreparedStatement(preparedStatement);
 
             closeConnection(connection);
         }
@@ -320,9 +278,9 @@ public class UserDAO
         return discoverList;
     }
 
-    public static List<List<String>> getMonitorTB()
+    public List<List<String>> getMonitorTB()
     {
-        ResultSet resultSet = null;
+        ResultSet resultSet;
 
         PreparedStatement preparedStatement = null;
 
@@ -353,7 +311,7 @@ public class UserDAO
         return monitorList;
     }
 
-    public static List<List<String>> getMonitorTable()
+    public List<List<String>> getMonitorTable()
     {
         ResultSet resultSet = null;
 
@@ -531,7 +489,7 @@ public class UserDAO
         return status;
     }
 
-    private static void updateData(PreparedStatement preparedStatement, String response, String ipStatus, String timestamp, String ip)
+    private static void updateData(PreparedStatement preparedStatement, String response, String ipStatus, String timestamp, String ip, String deviceType)
     {
         try
         {
@@ -542,6 +500,8 @@ public class UserDAO
             preparedStatement.setString(3, timestamp.substring(0, 16));
 
             preparedStatement.setString(4, ip);
+
+            preparedStatement.setString(5, deviceType);
         }
         catch (Exception exception)
         {
@@ -549,7 +509,7 @@ public class UserDAO
         }
     }
 
-    public static boolean enterReMonitorData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+    public static boolean enterReMonitorData(String ip, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 
@@ -559,7 +519,7 @@ public class UserDAO
         {
             preparedStatement = getPreparedStatement(updateMonitor);
 
-            updateData(preparedStatement, response, ipStatus, timestamp, ip);
+            updateData(preparedStatement, response, ipStatus, timestamp, ip, deviceType);
 
             if (preparedStatement.execute())
             {
@@ -583,7 +543,7 @@ public class UserDAO
         return result;
     }
 
-    public static boolean enterReDiscoveryData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+    public static boolean enterReDiscoveryData(String ip, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean status = true;
 
@@ -593,7 +553,7 @@ public class UserDAO
         {
             preparedStatement = getPreparedStatement(updateDiscover);
 
-            updateData(preparedStatement, response, ipStatus, timestamp, ip);
+            updateData(preparedStatement, response, ipStatus, timestamp, ip, deviceType);
 
             if (preparedStatement.execute())
             {
@@ -618,7 +578,7 @@ public class UserDAO
         return status;
     }
 
-    public static boolean enterResultTableData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+    public static boolean enterResultTableData(String ip, String discoveryUsername, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 
@@ -710,7 +670,7 @@ public class UserDAO
         return result;
     }
 
-    public static boolean enterReResultTableData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+    public static boolean enterReResultTableData(String ip, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 
@@ -720,7 +680,7 @@ public class UserDAO
         {
             preparedStatement = getPreparedStatement(updateResult);
 
-            updateData(preparedStatement, response, ipStatus, timestamp, ip);
+            updateData(preparedStatement, response, ipStatus, timestamp, ip, deviceType);
 
             if (preparedStatement.execute())
             {
@@ -745,7 +705,7 @@ public class UserDAO
         return result;
     }
 
-    public static boolean enterMonitorTableData(int id)
+    public boolean enterMonitorTableData(int id)
     {
         boolean result = true;
 
@@ -834,7 +794,7 @@ public class UserDAO
         return result;
     }
 
-    public static boolean deleteDiscoverTableData(int idAttribute)
+    public static boolean deleteDiscoverTableData(int id)
     {
         boolean status = true;
 
@@ -844,7 +804,7 @@ public class UserDAO
         {
             preparedStatement = getPreparedStatement(deleteDiscover);
 
-            preparedStatement.setInt(1, idAttribute);
+            preparedStatement.setInt(1, id);
 
             if (preparedStatement.execute())
             {
@@ -943,7 +903,7 @@ public class UserDAO
         return reMonitorList;
     }
 
-    public static List<List<String>> getDashboardData()
+    public List<List<String>> getDashboardData()
     {
         PreparedStatement preparedStatement = null;
 
@@ -974,7 +934,7 @@ public class UserDAO
         return reMonitorList;
     }
 
-    public static String getUpdatedPacket(int id, String ip, String time)
+    public String getUpdatedPacket(int id, String ip, String time, String deviceType)
     {
         String packet = null;
 
@@ -988,7 +948,11 @@ public class UserDAO
 
             preparedStatement.setInt(1, id);
 
-            preparedStatement.setString(2, time);
+            preparedStatement.setString(2, ip);
+
+            preparedStatement.setString(3, deviceType);
+
+            preparedStatement.setString(4, time);
 
             resultSet = preparedStatement.executeQuery();
 
@@ -1006,7 +970,7 @@ public class UserDAO
         return packet;
     }
 
-    public static Double getUpdatedMemory(int id, String ip, String time)
+    public Double getUpdatedMemory(int id, String ip, String time, String deviceType)
     {
         Double memoryPercent = null;
 
@@ -1020,7 +984,11 @@ public class UserDAO
 
             preparedStatement.setInt(1, id);
 
-            preparedStatement.setString(2, time);
+            preparedStatement.setString(2, ip);
+
+            preparedStatement.setString(3, deviceType);
+
+            preparedStatement.setString(4, time);
 
             resultSet = preparedStatement.executeQuery();
 

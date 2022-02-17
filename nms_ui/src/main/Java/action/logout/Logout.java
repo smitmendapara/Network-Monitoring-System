@@ -1,30 +1,29 @@
 package action.logout;
 
+import org.apache.struts2.dispatcher.SessionMap;
+
+import org.apache.struts2.interceptor.SessionAware;
+
 import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-import org.apache.struts2.ServletActionContext;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import javax.servlet.http.HttpSession;
-
-public class Logout extends ActionSupport
+public class Logout extends ActionSupport implements SessionAware
 {
+    private SessionMap<String,Object> sessionMap;
+
     private static final Logger _logger = new Logger();
 
     public String executeLogout()
     {
         try
         {
-            HttpServletRequest request = ServletActionContext.getRequest();
-
-            HttpSession session = request.getSession();
-
-            session.removeAttribute("user");
-
-            session.invalidate();
+            if (sessionMap != null)
+            {
+                sessionMap.invalidate();
+            }
 
             return "success";
         }
@@ -34,5 +33,11 @@ public class Logout extends ActionSupport
         }
 
         return "error";
+    }
+
+    @Override
+    public void setSession(Map<String, Object> map)
+    {
+        sessionMap = (SessionMap) map;
     }
 }

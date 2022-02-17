@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class Logger
 {
-    private static String dateFormat;
+    private String dateFormat;
 
     private File file = new File(CommonConstantUI.CURRENT_DIR + CommonConstantUI.PATH_SEPARATOR + "log");
 
@@ -48,7 +48,10 @@ public class Logger
         {
             try
             {
-                writer.close();
+                if (writer != null)
+                {
+                    writer.close();
+                }
             }
             catch (IOException ignore)
             {
@@ -87,7 +90,10 @@ public class Logger
         {
             try
             {
-                writer.close();
+                if (writer != null)
+                {
+                    writer.close();
+                }
             }
             catch (IOException ignore)
             {
@@ -118,7 +124,10 @@ public class Logger
         {
             try
             {
-                writer.close();
+                if (writer != null)
+                {
+                    writer.close();
+                }
             }
             catch (IOException ignore)
             {
@@ -149,7 +158,10 @@ public class Logger
         {
             try
             {
-                writer.close();
+                if (writer != null)
+                {
+                    writer.close();
+                }
             }
             catch (IOException ignore)
             {

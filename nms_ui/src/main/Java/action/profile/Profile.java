@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import javax.servlet.http.HttpSession;
 
+
 public class Profile
 {
     private static final Logger _logger = new Logger();
@@ -24,7 +25,6 @@ public class Profile
 
             if(string != null && !string.equals(""))
             {
-
                 return "success";
             }
             else

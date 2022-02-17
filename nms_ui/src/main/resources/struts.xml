@@ -42,7 +42,7 @@
 
         <!-- LOGOUT ACTION -->
 
-        <action name="logout" class="action.logout.Logout" method="executeLogout">
+        <action name="logoutProcess" class="action.logout.Logout" method="executeLogout">
 
             <result name="success">logout_success.jsp</result>
 
@@ -50,19 +50,19 @@
 
         <!-- SIGN UP ACTION -->
 
-        <action name="signup">
+        <action name="signUp">
 
-            <result>signup.jsp</result>
+            <result>signUp.jsp</result>
 
         </action>
 
         <!-- enter data into user table -->
 
-        <action name="signupProcess" class="action.signup.SignUp" method="executeSignUp">
+        <action name="signUpProcess" class="action.signup.SignUp" method="executeSignUp">
 
-            <result name="success">signup_success.jsp</result>
+            <result name="success">signUp_success.jsp</result>
 
-            <result name="error">signup_error.jsp</result>
+            <result name="error">signUp_error.jsp</result>
 
         </action>
 
@@ -84,13 +84,13 @@
 
         </action>
 
-        <action name="discoveryTable" class="action.discover.Discovery" method="execute">
+        <action name="discoveryTable" class="action.discover.Discovery" method="getDiscoverData">
 
             <result name="success" type="json" />
 
         </action>
 
-        <action name="reDiscoveryProcess" class="action.discover.Discovery" method="reDiscovery">
+        <action name="reDiscoveryProcess" class="action.discover.Discovery" method="executeReDiscovery">
 
             <result name="success">discovery.jsp</result>
 
@@ -100,7 +100,7 @@
 
         <!-- discover delete action -->
 
-        <action name="discoveryDelete" class="action.discover.Discovery" method="deleteData">
+        <action name="discoveryDelete" class="action.discover.Discovery" method="deleteDiscoverData">
 
             <result name="success">discovery.jsp</result>
 
@@ -118,19 +118,19 @@
 
         <!-- monitor button action -->
 
-        <action name="monitorProcess" class="action.monitor.Monitor" method="executeMonitor">
+        <action name="monitorTable" class="action.monitor.Monitor" method="getMonitorData">
 
             <result name="success" type="json" />
 
         </action>
 
-        <action name="monitorForm" class="action.monitor.Monitor" method="execute">
+        <action name="monitorForm" class="action.monitor.Monitor" method="getMonitorForm">
 
             <result name="success" type="json" />
 
         </action>
 
-        <action name="monitorData" class="action.monitor.Monitor" method="provisionMonitor">
+        <action name="monitorProcess" class="action.monitor.Monitor" method="provisionMonitor">
 
             <result name="success">discovery.jsp</result>
 
@@ -156,7 +156,7 @@
 
         </action>
 
-        <action name="dashboardProcess" class="action.dashboard.Dashboard" method="showDashboardData">
+        <action name="dashboardProcess" class="action.dashboard.Dashboard" method="executeDashboard">
 
             <result name="success">dashboard.jsp</result>
 
@@ -164,7 +164,7 @@
 
         </action>
 
-        <action name="dashboardTable" class="action.dashboard.Dashboard" method="execute">
+        <action name="dashboardTable" class="action.dashboard.Dashboard" method="getDashboardData">
 
             <result name="success" type="json" />
 
