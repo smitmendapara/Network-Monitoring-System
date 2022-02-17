@@ -24,16 +24,6 @@ public class CommonConstant
 
     public static final String WEB_OPTION = "-webAllowOthers";
 
-    public static final String JETTY_NAME = "jetty-distribution-9.4.44.v20210927/";
-
-    public static final String JETTY_JAR = "start.jar";
-
-    public static final String NSQ_NAME = "nsq-1.2.1.linux-amd64.go1.16.6/bin/";
-
-    public static final String NSQ_LOOKUP_COMMAND = "./nsqlookupd";
-
-    public static final String NSQ_D_COMMAND = "./nsqd --lookupd-tcp-address=127.0.0.1:4160";
-
     public static final Double DOUBLE_ZERO = 0.0;
 
     public static final int SSH_PORT = 22;

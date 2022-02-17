@@ -5,7 +5,9 @@ import com.motadata.kernel.util.CommonConstant;
 import com.motadata.kernel.util.Logger;
 
 import java.sql.*;
+
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class DataAccess
@@ -60,24 +62,6 @@ public class DataAccess
         }
 
         return preparedStatement;
-    }
-
-    private static Statement getStatement()
-    {
-        Statement statement = null;
-
-        try
-        {
-            connection = _dao.getConnection();
-
-            statement = connection.createStatement();
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("statement is not ready!");
-        }
-
-        return statement;
     }
 
     public static void closeConnection(Connection connection)
@@ -191,7 +175,7 @@ public class DataAccess
         }
     }
 
-    public static boolean enterReMonitorData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+    public static boolean enterReMonitorData(String ip, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 
@@ -224,7 +208,7 @@ public class DataAccess
         return result;
     }
 
-    public static boolean enterReResultTableData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+    public static boolean enterReResultTableData(String ip, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 

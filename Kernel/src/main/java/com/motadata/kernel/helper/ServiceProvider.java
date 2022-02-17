@@ -136,14 +136,12 @@ public class ServiceProvider
 
                     while ((inputLine = bufferedInput.readLine()) != null)
                     {
-                        pingResult += inputLine;
+                        pingResult = pingResult.concat(inputLine);
                     }
 
                     bufferedInput.close();
 
-                    String string = pingResult.toString();
-
-                    response = string.substring(string.indexOf("-"));
+                    response = pingResult.substring(pingResult.indexOf("-"));
 
                     ipStatus = checkPingIpStatus(response, ip);
 
@@ -153,9 +151,9 @@ public class ServiceProvider
                     {
                         setRediscoverProperties(dataList);
 
-                        if (DataAccess.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                        if (DataAccess.enterReMonitorData(ip, deviceType, response, ipStatus, timestamp.toString()))
                         {
-                            if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                            if (DataAccess.enterReResultTableData(ip, deviceType, response, ipStatus, timestamp.toString()))
                             {
                                 packet = getReceivedPacket(response);
 
@@ -242,9 +240,9 @@ public class ServiceProvider
 
                     if (!dataList.isEmpty())
                     {
-                        if (DataAccess.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                        if (DataAccess.enterReMonitorData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
-                            if (DataAccess.enterReResultTableData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                            if (DataAccess.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
                             {
                                 packet = CommonConstant.STRING_ZERO;
 
@@ -421,9 +419,13 @@ public class ServiceProvider
 
             double totalMemory = Double.parseDouble(responseData[3].trim());
 
-            double freeMemory = Double.parseDouble(responseData[5].trim());
+            double usedMemory = Double.parseDouble(responseData[4].trim());
 
-            free = (freeMemory / totalMemory) * 100;
+            double sharedMemory = Double.parseDouble(responseData[14].trim());
+
+            double cacheMemory = Double.parseDouble(responseData[15].substring(0, responseData[15].length() - 1).trim());
+
+            free = (totalMemory - usedMemory - sharedMemory - cacheMemory) / totalMemory * 100;
 
             free = Double.parseDouble(new DecimalFormat("##.##").format(free));
         }

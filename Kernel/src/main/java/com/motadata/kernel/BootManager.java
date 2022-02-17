@@ -2,8 +2,6 @@ package com.motadata.kernel;
 
 import com.motadata.kernel.dao.DataAccess;
 
-import com.motadata.kernel.discovery.HandlerThread;
-
 import com.motadata.kernel.util.CommonConstant;
 
 import com.motadata.kernel.util.Logger;
@@ -12,15 +10,9 @@ import com.motadata.kernel.discovery.Scheduler;
 
 import org.h2.tools.Server;
 
-import java.io.BufferedReader;
-
-import java.io.InputStreamReader;
-
 import java.sql.*;
 
 import java.util.Timer;
-
-import java.util.concurrent.CountDownLatch;
 
 public class BootManager
 {
@@ -64,33 +56,13 @@ public class BootManager
 
                     _logger.info("Starting Jetty server...");
 
-                    if (startJettyServer()) // start jetty server
+                    if (startScheduler()) // start scheduler
                     {
-                        _logger.info("Jetty server started!");
-
-                        _logger.info("Load h2 database configuration...");
-
-                        if (startNSQServer()) // start nsq
-                        {
-                            _logger.info("NSQ server started!");
-
-                            if (startScheduler()) // start scheduler
-                            {
-                                _logger.info("scheduler started!");
-                            }
-                            else
-                            {
-                                _logger.warn("still not start scheduler...");
-                            }
-                        }
-                        else
-                        {
-                            _logger.warn("still not started NSQ server...");
-                        }
+                        _logger.info("scheduler started!");
                     }
                     else
                     {
-                        _logger.warn("still not started jetty server...");
+                        _logger.warn("still not start scheduler...");
                     }
                 }
                 else
@@ -110,32 +82,6 @@ public class BootManager
             _logger.error("something went wrong to be start kernel!", exception);
         }
 
-    }
-
-    private static boolean startScheduler()
-    {
-        boolean result = true;
-
-        try
-        {
-            Scheduler scheduler = new Scheduler();
-
-            Timer timer = new Timer();
-
-            timer.scheduleAtFixedRate(scheduler, 60 * 1000, 60 * 1000);
-
-            Thread schedulerThread = new Thread(scheduler);
-
-            schedulerThread.start();
-        }
-        catch (Exception exception)
-        {
-            _logger.error("something went wrong to be start scheduler", exception);
-
-            result = false;
-        }
-
-        return result;
     }
 
     public static boolean startH2Database()
@@ -204,115 +150,29 @@ public class BootManager
         return result;
     }
 
-    public static boolean startJettyServer()
+    private static boolean startScheduler()
     {
-        String jettyPATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + CommonConstant.JETTY_NAME;
-
-        String jettyCommand = "java -jar " + jettyPATH + CommonConstant.JETTY_JAR;
-
         boolean result = true;
 
         try
         {
-            Process process = executeCommand(jettyCommand);
+            Scheduler scheduler = new Scheduler();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            Timer timer = new Timer();
 
-            String input = "";
+            timer.scheduleAtFixedRate(scheduler, 60 * 1000, 60 * 1000);
 
-            while ((input = reader.readLine()) != null)
-            {
+            Thread schedulerThread = new Thread(scheduler);
 
-            }
-
-            reader.close();
-
-            System.out.println();
-
-            System.out.println("----------------------------------- Jetty ----------------------------------");
-
-            System.out.println();
-
-            System.out.println("Jetty server started!");
+            schedulerThread.start();
         }
         catch (Exception exception)
         {
-            _logger.error("something went wrong on the starting jetty server side!", exception);
+            _logger.error("something went wrong to be start scheduler", exception);
 
             result = false;
         }
 
         return result;
-    }
-
-    public static boolean startNSQServer()
-    {
-        String nsq_PATH = CommonConstant.CURRENT_DIR + CommonConstant.PATH_SEPARATOR + CommonConstant.NSQ_NAME;
-
-        String nsqLookUpCommand = nsq_PATH + CommonConstant.NSQ_LOOKUP_COMMAND;
-
-        String nsqDCommand = nsq_PATH + CommonConstant.NSQ_D_COMMAND;
-
-        boolean result = true;
-
-        boolean flag = false;
-
-        try
-        {
-            if (result)
-            {
-                CountDownLatch latch = new CountDownLatch(1);
-
-                new HandlerThread(latch, nsqLookUpCommand).start();
-
-                latch.await();
-
-                flag = true;
-
-                System.out.println("----------------------------------- NSQ ----------------------------------");
-
-                System.out.println();
-
-                System.out.println("nsqlookupd started!");
-            }
-            if (flag)
-            {
-                CountDownLatch latch = new CountDownLatch(1);
-
-                new HandlerThread(latch, nsqDCommand).start();
-
-                latch.await();
-
-                System.out.println("nsqd started!");
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.error("something went wrong on the starting NSQ server!", exception);
-
-            result = false;
-        }
-
-        return result;
-    }
-
-    public static Process executeCommand(String command)
-    {
-        Runtime runtime;
-
-        Process process = null;
-
-        try
-        {
-            runtime = Runtime.getRuntime();
-
-            process = runtime.exec(command);
-        }
-        catch (Exception exception)
-        {
-            _logger.error("not execute command properly!", exception);
-        }
-
-        return process;
     }
 }
