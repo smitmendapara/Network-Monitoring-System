@@ -64,6 +64,14 @@ public class CommonConstantUI
 
     public static final String DEVICE_DOWN = "Down";
 
+    public static final String DB_SELECT = "SELECT";
+
+    public static final String DB_INSERT = "INSERT";
+
+    public static final String DB_UPDATE = "UPDATE";
+
+    public static final String DB_DELETE = "DELETE";
+
     public static final String DATABASE_URL = "jdbc:h2:tcp://localhost/configdb;" +
                                               "DATABASE_TO_UPPER=false;IGNORECASE=TRUE;" +
                                               "MODE=PostgreSQL;AUTO_RECONNECT=TRUE;" +

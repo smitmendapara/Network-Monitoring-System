@@ -134,7 +134,7 @@
 
             <result name="success">discovery.jsp</result>
 
-            <result name="error">discovery_error.jsp</result>
+            <result name="error" type="json" />
 
         </action>
 

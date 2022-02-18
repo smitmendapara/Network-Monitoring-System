@@ -20,7 +20,7 @@ public class Logger
 
     private File file = new File(CommonConstantUI.CURRENT_DIR + CommonConstantUI.PATH_SEPARATOR + "log");
 
-    private static final String PATH = "/home/smit/Downloads/nms_ui" + CommonConstantUI.PATH_SEPARATOR + CommonConstantUI.DIRECTORY_NAME + CommonConstantUI.PATH_SEPARATOR;
+    private final String PATH = CommonConstantUI.CURRENT_DIR + CommonConstantUI.PATH_SEPARATOR + CommonConstantUI.DIRECTORY_NAME + CommonConstantUI.PATH_SEPARATOR;
 
     private static final DateTimeFormatter formatter = DateTimeFormat.forPattern(CommonConstantUI.LOGGER_DATE_FORMAT);
 

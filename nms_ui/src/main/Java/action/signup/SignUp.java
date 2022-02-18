@@ -12,8 +12,6 @@ public class SignUp extends ActionSupport
 
     private String password;
 
-    private static final Logger _logger = new Logger();
-
     public String getUsername() {
         return username;
     }
@@ -30,11 +28,15 @@ public class SignUp extends ActionSupport
         this.password = password;
     }
 
+    private static final Logger _logger = new Logger();
+
+    private static final UserDAO _dao = new UserDAO();
+
     public String executeSignUp()
     {
         try
         {
-            if (UserDAO.enterSignUpData(username, password))
+            if (_dao.enterSignUpData(username, password))
             {
                 return "success";
             }

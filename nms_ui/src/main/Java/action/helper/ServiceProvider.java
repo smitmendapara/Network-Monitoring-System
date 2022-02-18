@@ -120,6 +120,8 @@ public class ServiceProvider
 
     private static final Logger _logger = new Logger();
 
+    private static final UserDAO _dao = new UserDAO();
+
     public boolean checkDiscovery()
     {
         boolean status = true;
@@ -165,15 +167,15 @@ public class ServiceProvider
 
                         ipStatus = checkPingIpStatus(response);
 
-                        dataList = UserDAO.getReDiscoveryData(ip, deviceType);
+                        dataList = _dao.getReDiscoveryData(ip, deviceType);
 
                         if (!dataList.isEmpty())
                         {
                             setRediscoverProperties(dataList);
 
-                            if (UserDAO.enterReDiscoveryData(ip, deviceType, response, ipStatus, timestamp.toString()))
+                            if (_dao.enterReDiscoveryData(ip, deviceType, response, ipStatus, timestamp.toString()))
                             {
-                                if (UserDAO.enterReResultTableData(ip, deviceType, response, ipStatus, timestamp.toString()))
+                                if (_dao.enterReResultTableData(ip, deviceType, response, ipStatus, timestamp.toString()))
                                 {
                                     _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
                                 }
@@ -190,9 +192,9 @@ public class ServiceProvider
                         }
                         else
                         {
-                            if (UserDAO.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                            if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                             {
-                                if (UserDAO.enterResultTableData(ip, discoveryUsername, deviceType, response, ipStatus, timestamp.toString()))
+                                if (_dao.enterResultTableData(ip, discoveryUsername, deviceType, response, ipStatus, timestamp.toString()))
                                 {
                                     _logger.debug("successfully data inserted into tb_discovery & tb_result table!");
                                 }
@@ -228,7 +230,7 @@ public class ServiceProvider
 
                     try
                     {
-                        dataList = UserDAO.getReDiscoveryData(ip, deviceType);
+                        dataList = _dao.getReDiscoveryData(ip, deviceType);
 
                         if (!dataList.isEmpty())
                         {
@@ -268,9 +270,9 @@ public class ServiceProvider
 
                         if (!dataList.isEmpty())
                         {
-                            if (UserDAO.enterReDiscoveryData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
+                            if (_dao.enterReDiscoveryData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
                             {
-                                if (UserDAO.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
+                                if (_dao.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
                                 {
                                     _logger.debug("successfully re-inserted into tb_discovery & tb_result table!");
                                 }
@@ -289,9 +291,9 @@ public class ServiceProvider
                         }
                         else if (!dataList.isEmpty())
                         {
-                            if (UserDAO.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                            if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                             {
-                                if (UserDAO.enterResultTableData(ip, discoveryUsername, deviceType, specificData, ipStatus, timestamp.toString()))
+                                if (_dao.enterResultTableData(ip, discoveryUsername, deviceType, specificData, ipStatus, timestamp.toString()))
                                 {
                                     _logger.debug("successfully data inserted into tb_discovery & tb_result table!");
                                 }
@@ -349,8 +351,6 @@ public class ServiceProvider
     {
         boolean status = true;
 
-        UserDAO _dao = new UserDAO();
-
         try
         {
             List<List<String>> discoverTB = _dao.getDiscoverTB();
@@ -364,9 +364,9 @@ public class ServiceProvider
                 deviceType = "Linux";
             }
 
-            for (int i = 0; i < discoverTB.size(); i++)
+            for (List<String> subList : discoverTB)
             {
-                if (Integer.parseInt(discoverTB.get(i).get(0)) != id && discoverTB.get(i).get(2).equals(ip) && discoverTB.get(i).get(3).equals(deviceType))
+                if (Integer.parseInt(subList.get(0)) != id && subList.get(2).equals(ip) && subList.get(3).equals(deviceType))
                 {
                     status = false;
                 }
@@ -392,13 +392,13 @@ public class ServiceProvider
 
                 String pingCmd = CommonConstantUI.PING_COMMAND + ip;
 
-                Runtime runtime = null;
+                Runtime runtime;
 
-                Process process = null;
+                Process process;
 
-                Timestamp timestamp = null;
+                Timestamp timestamp;
 
-                BufferedReader bufferedInput = null;
+                BufferedReader bufferedInput;
 
                 try
                 {
@@ -423,21 +423,21 @@ public class ServiceProvider
 
                     ipStatus = checkPingIpStatus(response);
 
-                    dataList = UserDAO.getReMonitorData(ip, deviceType);
+                    dataList = _dao.getReMonitorData(ip, deviceType);
 
                     if (!dataList.isEmpty())
                     {
                         setRediscoverProperties(dataList);
 
-                        if (UserDAO.enterReMonitorData(ip, deviceType, response, ipStatus, timestamp.toString()))
+                        if (_dao.enterReMonitorData(ip, deviceType, response, ipStatus, timestamp.toString()))
                         {
-                            if (UserDAO.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
+                            if (_dao.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
                             {
                                 String packet = getReceivedPacket(response);
 
                                 double memory = CommonConstantUI.DOUBLE_ZERO;
 
-                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
+                                if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
                                 {
                                     _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                                 }
@@ -471,13 +471,13 @@ public class ServiceProvider
 
             if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
             {
-                Timestamp timestamp = null;
+                Timestamp timestamp;
 
                 SSHConnectionUtil sshConnectionUtil = null;
 
                 try
                 {
-                    dataList = UserDAO.getReMonitorData(ip, deviceType);
+                    dataList = _dao.getReMonitorData(ip, deviceType);
 
                     if (!dataList.isEmpty())
                     {
@@ -518,9 +518,9 @@ public class ServiceProvider
 
                     if (!dataList.isEmpty())
                     {
-                        if (UserDAO.enterReMonitorData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
+                        if (_dao.enterReMonitorData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
-                            if (UserDAO.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
+                            if (_dao.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
                             {
                                 String packet = CommonConstantUI.STRING_NULL; // for manually polling -> set null instead of 0
 
@@ -531,7 +531,7 @@ public class ServiceProvider
                                     memory = Double.parseDouble(getFreeMemoryPercent(specificData));
                                 }
 
-                                if (UserDAO.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
+                                if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
                                 {
                                     _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                                 }
@@ -1162,7 +1162,7 @@ public class ServiceProvider
         return pingResponse;
     }
 
-    public String[] getLinuxData(String response)
+    public String[] getLinuxData(String response, String ipStatus)
     {
         String deviceName, systemName, cpuType, osVersion, osName, rtt_Time, diskPercent, systemCPUPercent, userCPUPercent;
 
@@ -1172,7 +1172,7 @@ public class ServiceProvider
 
         try
         {
-            if (response != null)
+            if (response != null && ipStatus.equals("Up"))
             {
                 deviceName = getDeviceType(response);
 

@@ -1,4 +1,6 @@
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by smit on 18/1/22.
@@ -7,12 +9,22 @@ public class Test
 {
     public static void main(String[] args) throws ParseException {
 
-        String str = " 2599004]";
+        String s = "0";
 
-        System.out.println(str.substring(0, str.length()-1).trim());
+//        int i = Integer.parseInt(s);
+//
+//        boolean digit = ;
+//
+//        System.out.println(digit);
 
 
+        List<Object> list = new ArrayList<>();
 
+        list.add("hey");
+
+        list.add(12);
+
+        System.out.println(list.get(0) instanceof Integer);
 
 
 

@@ -38,11 +38,13 @@ public class Login extends ActionSupport implements SessionAware
 
     private static final Logger _logger = new Logger();
 
+    private static final UserDAO _dao = new UserDAO();
+
     public String executeLogin()
     {
         try
         {
-            if(UserDAO.checkCredential(username, password))
+            if(_dao.checkCredential(username, password))
             {
                 sessionMap.put("login", true);
 

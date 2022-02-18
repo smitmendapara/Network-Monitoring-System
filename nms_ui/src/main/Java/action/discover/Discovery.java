@@ -180,7 +180,7 @@ public class Discovery extends ActionSupport
     {
         serviceProvider.setIp(ip);
 
-        if (UserDAO.deleteDiscoverTableData(id))
+        if (_dao.deleteDiscoverTableData(id))
         {
             return "success";
         }

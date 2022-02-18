@@ -138,13 +138,13 @@ public class Dashboard extends ActionSupport
 
                     if (subList.get(5).equals("Linux") && subList.get(7).equals("Down"))
                     {
-                        String linuxResponse[] = serviceProvider.getLinuxData(subList.get(6));
+                        String linuxResponse[] = serviceProvider.getLinuxData(subList.get(6), subList.get(7));
 
                         bean.setResponse(linuxResponse);
                     }
                     else if (subList.get(5).equals("Linux") && subList.get(7).equals("Up"))
                     {
-                        String linuxResponse[] = serviceProvider.getLinuxData(subList.get(6));
+                        String linuxResponse[] = serviceProvider.getLinuxData(subList.get(6), subList.get(7));
 
                         bean.setResponse(linuxResponse);
                     }

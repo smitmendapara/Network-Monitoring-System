@@ -191,12 +191,29 @@ public class Monitor extends ActionSupport
     {
         _dao.setNewId(id);
 
-        if (_dao.enterMonitorTableData(id))
+        beanList = new ArrayList<>();
+
+        bean = new MonitorBean();
+
+        if (_dao.checkIpMonitor(id))
         {
+            if (_dao.enterMonitorTableData(id))
+            {
+                bean.setFlag(true);
+
+                beanList.add(bean);
+
+                return "success";
+            }
+
             return "success";
         }
         else
         {
+            bean.setFlag(false);
+
+            beanList.add(bean);
+
             return "error";
         }
     }

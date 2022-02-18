@@ -193,6 +193,8 @@ function discoverData()
 
     getPostCall({ url: "discoveryProcess.action", data: { name: name, ip: ip, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword, deviceType: deviceType } });
 
+    alert("successfully device discovered!");
+
     refreshPage();
 }
 
@@ -257,9 +259,27 @@ function deleteRow(id)
 
 // provision ip
 
-function provisionIP()
+function provisionIP(request)
 {
-    alert("successfully monitored!");
+    let flag = true;
+
+    let data = request.data;
+
+    $.each(data.beanList, function () {
+
+        flag = this.flag;
+
+    });
+
+    if (flag)
+    {
+        alert("successfully monitored!");
+    }
+    else
+    {
+        alert("device already added!");
+    }
+
 }
 
 function monitorData(id)
@@ -268,7 +288,7 @@ function monitorData(id)
     {
         let id = $("input[name=key]").val();
 
-        getPostCall({ url: "monitorProcess.action", data: { id: id }, callback: provisionIP });
+        getGetCall({ url: "monitorProcess.action", data: { id: id }, callback: provisionIP });
     }
     else
     {
