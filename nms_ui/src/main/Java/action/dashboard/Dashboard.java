@@ -24,6 +24,8 @@ public class Dashboard extends ActionSupport
 
     private String[] response;
 
+    private int[] percent;
+
     public int getId() {
         return id;
     }
@@ -54,6 +56,14 @@ public class Dashboard extends ActionSupport
 
     public void setResponse(String[] response) {
         this.response = response;
+    }
+
+    public int[] getPercent() {
+        return percent;
+    }
+
+    public void setPercent(int[] percent) {
+        this.percent = percent;
     }
 
     private List<DashboardBean> beanList = null;
@@ -156,6 +166,17 @@ public class Dashboard extends ActionSupport
                     }
 
                     bean.setStatus(subList.get(7));
+
+                    List<Integer> statusPercent = _dao.getStatusPercent(subList.get(2), subList.get(5));
+
+                    int statusArray[] = new int[statusPercent.size()];
+
+                    for (int i = 0; i < statusPercent.size(); i++)
+                    {
+                        statusArray[i] = statusPercent.get(i);
+                    }
+
+                    bean.setPercent(statusArray);
 
                     String dateTime[] = serviceProvider.getDateTime();
 

@@ -36,9 +36,16 @@ public class SignUp extends ActionSupport
     {
         try
         {
-            if (_dao.enterSignUpData(username, password))
+            if (!username.equals("") && !password.equals(""))
             {
-                return "success";
+                if (_dao.enterSignUpData(username, password))
+                {
+                    return "success";
+                }
+                else
+                {
+                    return "error";
+                }
             }
             else
             {

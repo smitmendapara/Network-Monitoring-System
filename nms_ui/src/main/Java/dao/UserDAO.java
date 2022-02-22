@@ -1,14 +1,13 @@
 package dao;
 
+import action.helper.ServiceProvider;
 import util.CommonConstantUI;
 
 import util.Logger;
 
 import java.sql.*;
 
-import java.util.ArrayList;
-
-import java.util.List;
+import java.util.*;
 
 public class UserDAO
 {
@@ -53,6 +52,8 @@ public class UserDAO
     private List<List<String>> resultTableData;
 
     private List<List<String>> discoverTableData;
+
+    private ServiceProvider serviceProvider = new ServiceProvider();
 
     private static final Logger _logger = new Logger();
 
@@ -125,7 +126,7 @@ public class UserDAO
 
         try
         {
-            if (resultSet != null && !tableName.equals("TB_DATADUMP"))
+            if (resultSet != null && !tableName.equals(CommonConstantUI.DB_TB_DATADUMP))
             {
                 while (resultSet.next())
                 {
@@ -286,7 +287,12 @@ public class UserDAO
                     preparedStatement.setString(i + 1, (String) condition.get(i));
                 }
 
-                verifyCredential = preparedStatement.execute();
+                resultSet = preparedStatement.executeQuery();
+
+                if (resultSet.next())
+                {
+                    verifyCredential = true;
+                }
             }
 
             if (operation.equals(CommonConstantUI.DB_INSERT) && tableName.equals(CommonConstantUI.DB_TB_USER))
@@ -417,42 +423,63 @@ public class UserDAO
             {
                 if (operation.equals(CommonConstantUI.DB_SELECT))
                 {
-                    for (int i = 0; i < condition.size(); i++)
+                    if (condition.size() != 0)
                     {
-                        if (i == 0)
+                        for (int i = 0; i < condition.size(); i++)
                         {
-                            preparedStatement.setInt(i + 1, (Integer) condition.get(i));
+                            if (condition.get(i) instanceof Integer)
+                            {
+                                preparedStatement.setInt(i + 1, (Integer) condition.get(i));
+                            }
+                            else
+                            {
+                                preparedStatement.setString(i + 1, (String) condition.get(i));
+                            }
+                        }
+
+                        resultSet = preparedStatement.executeQuery();
+
+                        if (condition.get(0) instanceof Integer)
+                        {
+                            dataList = getArrayData(resultSet, tableName);
                         }
                         else
                         {
-                            preparedStatement.setString(i + 1, (String) condition.get(i));
+                            dataList = getPiePercent(resultSet);
                         }
                     }
-
-                    resultSet = preparedStatement.executeQuery();
-
-                    dataList = getArrayData(resultSet, tableName);
+                    else
+                    {
+                        _logger.warn("condition size is zero!");
+                    }
                 }
 
                 if (operation.equals(CommonConstantUI.DB_INSERT))
                 {
-                    for (int i = 0; i < condition.size(); i++)
+                    if (condition.size() != 0)
                     {
-                        if (i == 0)
+                        for (int i = 0; i < condition.size(); i++)
                         {
-                            preparedStatement.setInt(i + 1, (Integer) condition.get(i));
+                            if (i == 0)
+                            {
+                                preparedStatement.setInt(i + 1, (Integer) condition.get(i));
+                            }
+                            else if (i == 3)
+                            {
+                                preparedStatement.setDouble(i + 1, (Double) condition.get(i));
+                            }
+                            else
+                            {
+                                preparedStatement.setString(i + 1, (String) condition.get(i));
+                            }
                         }
-                        else if (i == 3)
-                        {
-                            preparedStatement.setDouble(i + 1, (Double) condition.get(i));
-                        }
-                        else
-                        {
-                            preparedStatement.setString(i + 1, (String) condition.get(i));
-                        }
-                    }
 
-                    databaseAffected = affectedRow(preparedStatement);
+                        databaseAffected = affectedRow(preparedStatement);
+                    }
+                    else
+                    {
+                        _logger.warn("condition size is zero!");
+                    }
                 }
             }
 
@@ -484,10 +511,37 @@ public class UserDAO
             catch (Exception exception)
             {
                 _logger.warn("connection is not closed!");
-            }
+                }
         }
 
         return dataList;
+    }
+
+    private List<List<String>> getPiePercent(ResultSet resultSet)
+    {
+        List<List<String>> parentList = new ArrayList<>();
+
+        List<String> list;
+
+        try
+        {
+            while (resultSet.next())
+            {
+                list = new ArrayList<>();
+
+                list.add(resultSet.getString(1));
+
+                list.add(resultSet.getString(2));
+
+                parentList.add(list);
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("some thing went wrong on pie percent function!");
+        }
+
+        return parentList;
     }
 
     private boolean affectedRow(PreparedStatement preparedStatement)
@@ -517,7 +571,7 @@ public class UserDAO
 
         try
         {
-            discoverList = getData("SELECT ID, NAME, IP, DEVICE, USERNAME FROM TB_DISCOVER", "SELECT", "TB_DISCOVER", null);
+            discoverList = getData("SELECT ID, NAME, IP, DEVICE, USERNAME FROM TB_DISCOVER", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DISCOVER, null);
 
         }
         catch (Exception exception)
@@ -536,11 +590,9 @@ public class UserDAO
 
         try
         {
-            String tableName = "TB_MONITOR";
-
             conditionList.add(id);
 
-            monitorList = getData("SELECT * FROM TB_DISCOVER WHERE ID = ?", "SELECT", tableName, conditionList);
+            monitorList = getData("SELECT * FROM TB_DISCOVER WHERE ID = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_MONITOR, conditionList);
         }
         catch (Exception exception)
         {
@@ -556,7 +608,7 @@ public class UserDAO
 
         try
         {
-            monitorList = getData("SELECT * FROM TB_MONITOR", "SELECT", "TB_MONITOR", null);
+            monitorList = getData("SELECT * FROM TB_MONITOR", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_MONITOR, null);
         }
         catch (Exception exception)
         {
@@ -578,7 +630,7 @@ public class UserDAO
 
             conditionList.add(password);
 
-            getData("SELECT * FROM TB_USER WHERE USER = ? AND PASSWORD = ?", "SELECT", "TB_USER", conditionList);
+            getData("SELECT * FROM TB_USER WHERE USER = ? AND PASSWORD = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_USER, conditionList);
 
             if (verifyCredential)
             {
@@ -605,7 +657,7 @@ public class UserDAO
 
             conditionList.add(password);
 
-            getData("INSERT INTO TB_USER(USER, PASSWORD) VALUES(?, ?)", "INSERT", "TB_USER", conditionList);
+            getData("INSERT INTO TB_USER(USER, PASSWORD) VALUES(?, ?)", CommonConstantUI.DB_INSERT, CommonConstantUI.DB_TB_USER, conditionList);
 
             if (databaseAffected)
             {
@@ -667,7 +719,7 @@ public class UserDAO
                 conditionList.add(timestamp.substring(0, 16));
             }
 
-            getData("INSERT INTO TB_DISCOVER(NAME, IP, USERNAME, PASSWORD, DEVICE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", "INSERT", "TB_DISCOVER", conditionList);
+            getData("INSERT INTO TB_DISCOVER(NAME, IP, USERNAME, PASSWORD, DEVICE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", CommonConstantUI.DB_INSERT, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
             if (databaseAffected)
             {
@@ -725,7 +777,7 @@ public class UserDAO
 
             conditionList.add(deviceType);
 
-            getData("UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?", "UPDATE", "TB_DISCOVER", conditionList);
+            getData("UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_UPDATE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
             if (databaseAffected)
             {
@@ -763,7 +815,14 @@ public class UserDAO
 
             conditionList.add(CommonConstantUI.NULL);
 
-            conditionList.add(CommonConstantUI.PING_DEVICE);
+            if (deviceType.equals(CommonConstantUI.PING_DEVICE))
+            {
+                conditionList.add(CommonConstantUI.PING_DEVICE);
+            }
+            else
+            {
+                conditionList.add(CommonConstantUI.LINUX_DEVICE);
+            }
 
             conditionList.add(response);
 
@@ -773,9 +832,9 @@ public class UserDAO
 
             conditionList.add(true);
 
-            getData("SELECT * FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?", "SELECT", "TB_DISCOVER", conditionList);
+            getData("SELECT * FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
-            getData("INSERT INTO TB_RESULT(ID, IP, PROFILE, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?)", "INSERT", "TB_RESULT", null);
+            getData("INSERT INTO TB_RESULT(ID, IP, PROFILE, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?)", CommonConstantUI.DB_INSERT, CommonConstantUI.DB_TB_RESULT, null);
 
             if (databaseAffected)
             {
@@ -808,7 +867,7 @@ public class UserDAO
 
             conditionList.add(deviceType);
 
-            getData("UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?", "UPDATE", "TB_DISCOVER", conditionList);
+            getData("UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_UPDATE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
             if (databaseAffected)
             {
@@ -835,7 +894,7 @@ public class UserDAO
         {
             conditionList.add(id);
 
-            ipList = getData("SELECT * FROM TB_MONITOR WHERE ID = ?", "SELECT", "TB_MONITOR", conditionList);
+            ipList = getData("SELECT * FROM TB_MONITOR WHERE ID = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_MONITOR, conditionList);
 
             if (ipList.size() == 0)
             {
@@ -860,9 +919,9 @@ public class UserDAO
         {
             conditionList.add(id);
 
-            getData("SELECT * FROM TB_DISCOVER WHERE ID = ?", "SELECT", "TB_DISCOVER", conditionList);
+            getData("SELECT * FROM TB_DISCOVER WHERE ID = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
-            getData("INSERT INTO TB_MONITOR(ID, NAME, IP, PROFILE, PASSWORD, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", "INSERT", "TB_MONITOR", null);
+            getData("INSERT INTO TB_MONITOR(ID, NAME, IP, PROFILE, PASSWORD, DEVICETYPE, RESPONSE, STATUS, CURRENTTIME) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)", CommonConstantUI.DB_INSERT, CommonConstantUI.DB_TB_MONITOR, null);
 
             if (databaseAffected)
             {
@@ -888,9 +947,9 @@ public class UserDAO
         {
             conditionList.add(id);
 
-            getData("DELETE FROM TB_DISCOVER WHERE ID = ?", "DELETE", "TB_DISCOVER", conditionList);
+            getData("DELETE FROM TB_DISCOVER WHERE ID = ?", CommonConstantUI.DB_DELETE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
-            getData("DELETE FROM TB_RESULT WHERE ID = ?", "DELETE", "TB_DISCOVER", conditionList);
+            getData("DELETE FROM TB_RESULT WHERE ID = ?", CommonConstantUI.DB_DELETE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
             if (databaseAffected)
             {
@@ -917,7 +976,7 @@ public class UserDAO
 
             conditionList.add(deviceType);
 
-            rediscoveryList = getData("SELECT * FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?", "SELECT", "TB_DISCOVER", conditionList);
+            rediscoveryList = getData("SELECT * FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DISCOVER, conditionList);
         }
         catch (Exception exception)
         {
@@ -939,7 +998,7 @@ public class UserDAO
 
             conditionList.add(deviceType);
 
-            reMonitorList = getData("SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?", "SELECT", "TB_MONITOR", conditionList);
+            reMonitorList = getData("SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_MONITOR, conditionList);
         }
         catch (Exception exception)
         {
@@ -961,7 +1020,7 @@ public class UserDAO
 
             conditionList.add(deviceType);
 
-            reMonitorList = getData("SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?", "SELECT", "TB_MONITOR", conditionList);
+            reMonitorList = getData("SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_MONITOR, conditionList);
         }
         catch (Exception exception)
         {
@@ -989,7 +1048,7 @@ public class UserDAO
 
             conditionList.add(time);
 
-            packetList = getData("SELECT * FROM TB_DATADUMP WHERE ID = ? AND IP = ? AND DEVICE = ? AND CURRENTTIME = ?", "SELECT", "TB_DATADUMP", conditionList);
+            packetList = getData("SELECT * FROM TB_DATADUMP WHERE ID = ? AND IP = ? AND DEVICE = ? AND CURRENTTIME = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DATADUMP, conditionList);
 
             if (packetList.size() != 0)
             {
@@ -1023,7 +1082,7 @@ public class UserDAO
 
             conditionList.add(time);
 
-            memoryList = getData("SELECT * FROM TB_DATADUMP WHERE ID = ? AND IP = ? AND DEVICE = ? AND CURRENTTIME = ?", "SELECT", "TB_DATADUMP", conditionList);
+            memoryList = getData("SELECT * FROM TB_DATADUMP WHERE ID = ? AND IP = ? AND DEVICE = ? AND CURRENTTIME = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DATADUMP, conditionList);
 
             if (memoryList.size() != 0)
             {
@@ -1039,7 +1098,7 @@ public class UserDAO
         return memoryPercent;
     }
 
-    public boolean  enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time, String ipStatus)
+    public boolean enterDataDump(int id, String ip, String packet, String memory, String deviceType, String time, String ipStatus)
     {
         boolean status = false;
 
@@ -1061,7 +1120,7 @@ public class UserDAO
 
             conditionList.add(ipStatus);
 
-            getData("INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?)", "INSERT", "TB_DATADUMP", conditionList);
+            getData("INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?)", CommonConstantUI.DB_INSERT, CommonConstantUI.DB_TB_DATADUMP, conditionList);
 
             if (databaseAffected)
             {
@@ -1074,6 +1133,63 @@ public class UserDAO
         }
 
         return status;
+    }
+
+    public List<Integer> getStatusPercent(String ip, String deviceType)
+    {
+        double up = 0, down = 0, total;
+
+        List<Integer> statusPercent = new ArrayList<>();
+
+        List<List<String>> totalFrequency;
+
+        List<Object> conditionList = new ArrayList<>();
+
+        try
+        {
+            List<String> currentTime = serviceProvider.getCurrentTime();
+
+            conditionList.add(ip);
+
+            conditionList.add(deviceType);
+
+            String query = "SELECT STATUS, COUNT(IP) FROM TB_DATADUMP WHERE IP = ? AND DEVICE = ? AND CURRENTTIME BETWEEN " + "'" + currentTime.get(1) + "'" + " AND " + "'" + currentTime.get(0) + "'" + " GROUP BY STATUS ORDER BY STATUS DESC";
+
+            totalFrequency = getData(query, CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DATADUMP, conditionList);
+
+            if (totalFrequency != null)
+            {
+                if (totalFrequency.size() == 2)
+                {
+                    up = Double.parseDouble(totalFrequency.get(0).get(1));
+
+                    down = Double.parseDouble(totalFrequency.get(1).get(1));
+                }
+                if (totalFrequency.size() == 1)
+                {
+                    if (totalFrequency.get(0).get(0).equals("Up"))
+                    {
+                        up = Double.parseDouble(totalFrequency.get(0).get(1));
+                    }
+                    else
+                    {
+                        down = Double.parseDouble(totalFrequency.get(0).get(1));
+                    }
+                }
+            }
+
+            total = up + down;
+
+            statusPercent.add((int) Math.round((up / total) * 100));
+
+            statusPercent.add((int) Math.round((down / total) * 100));
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("some thing went wrong on status percent function!");
+        }
+
+        return statusPercent;
     }
 }
 

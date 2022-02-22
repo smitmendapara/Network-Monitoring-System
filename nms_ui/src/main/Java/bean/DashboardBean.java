@@ -24,6 +24,8 @@ public class DashboardBean
 
     private String[] Memory;
 
+    private int[] percent;
+
     public int getId() {
         return Id;
     }
@@ -110,5 +112,13 @@ public class DashboardBean
 
     public void setMemory(String[] memory) {
         Memory = memory;
+    }
+
+    public int[] getPercent() {
+        return percent;
+    }
+
+    public void setPercent(int[] percent) {
+        this.percent = percent;
     }
 }

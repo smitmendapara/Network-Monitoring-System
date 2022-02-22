@@ -15,4 +15,4 @@
 
     %>
 
-    <h4 class="denied middle">Sorry something went wrong in signup!</h4>
+    <h4 class="denied middle">Sorry something went wrong in signUp!</h4>

@@ -16,13 +16,7 @@ import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
 
-import java.util.Arrays;
-
-import java.util.Calendar;
-
-import java.util.Date;
-
-import java.util.List;
+import java.util.*;
 
 public class ServiceProvider
 {
@@ -41,6 +35,12 @@ public class ServiceProvider
     private String ipStatus;
 
     private String response;
+
+    private String uName_M = null;
+
+    private String uName_R = null;
+
+    private String hostName = null;
 
     private String uName_Output = null;
 
@@ -224,7 +224,9 @@ public class ServiceProvider
 
                 if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
                 {
-                    Timestamp timestamp;
+                    String uName;
+
+                    Timestamp timestamp = null;
 
                     SSHConnectionUtil sshConnectionUtil = null;
 
@@ -241,21 +243,36 @@ public class ServiceProvider
 
                         if(sshConnectionUtil != null)
                         {
-                            uName_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_U_NAME_COMMAND, true);
+                            uName = sshConnectionUtil.executeCommand(CommonConstantUI.U_NAME_COMMAND, true);
 
-                            free_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_FREE_COMMAND, true);
+                            if (uName.trim().equals("Linux"))
+                            {
+                                uName_M = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_M_COMMAND, true);
 
-                            df_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_DISK_COMMAND, true);
+                                uName_R = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_R_COMMAND, true);
 
-                            ioStat_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_CPU_COMMAND, true);
+                                hostName = sshConnectionUtil.executeCommand(CommonConstantUI.HOSTNAME_COMMAND, true);
 
-                            timestamp = new Timestamp(System.currentTimeMillis());
+                                uName_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_U_NAME_COMMAND, true);
 
-                            ipStatus = CommonConstantUI.DEVICE_UP;
+                                free_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_FREE_COMMAND, true);
 
-                            specificData = getSpecificData(uName_Output, free_Output, df_Output, ioStat_Output);
+                                df_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_DISK_COMMAND, true);
 
-                            _logger.info("Command output : " + specificData);
+                                ioStat_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_CPU_COMMAND, true);
+
+                                timestamp = new Timestamp(System.currentTimeMillis());
+
+                                ipStatus = CommonConstantUI.DEVICE_UP;
+
+                                specificData = getSpecificData(uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
+
+                                _logger.info("Command output : " + specificData);
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                         else
                         {
@@ -289,7 +306,7 @@ public class ServiceProvider
                                 _logger.warn("data not inserted into tb_discover and tb_result table!");
                             }
                         }
-                        else if (!dataList.isEmpty())
+                        else
                         {
                             if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                             {
@@ -429,31 +446,17 @@ public class ServiceProvider
                     {
                         setRediscoverProperties(dataList);
 
-                        if (_dao.enterReMonitorData(ip, deviceType, response, ipStatus, timestamp.toString()))
+                        String packet = getReceivedPacket(response);
+
+                        String memory = CommonConstantUI.STRING_ZERO;
+
+                        if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
                         {
-                            if (_dao.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
-                            {
-                                String packet = getReceivedPacket(response);
-
-                                double memory = CommonConstantUI.DOUBLE_ZERO;
-
-                                if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
-                                {
-                                    _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
-                                }
-                                else
-                                {
-                                    _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
-                                }
-                            }
-                            else
-                            {
-                                _logger.warn("still not re-inserted data into tb_result table!");
-                            }
+                            _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                         }
                         else
                         {
-                            _logger.warn("still not re-inserted into tb_monitor, tb_discover and tb_result table!");
+                            _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
                         }
                     }
 
@@ -488,6 +491,12 @@ public class ServiceProvider
 
                     if(sshConnectionUtil != null)
                     {
+                        uName_M = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_M_COMMAND, true);
+
+                        uName_R = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_R_COMMAND, true);
+
+                        hostName = sshConnectionUtil.executeCommand(CommonConstantUI.HOSTNAME_COMMAND, true);
+
                         uName_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_U_NAME_COMMAND, true);
 
                         free_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_FREE_COMMAND, true);
@@ -500,7 +509,7 @@ public class ServiceProvider
 
                         timestamp = new Timestamp(System.currentTimeMillis());
 
-                        specificData = getSpecificData(uName_Output, free_Output, df_Output, ioStat_Output);
+                        specificData = getSpecificData(uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
 
                         _logger.info("Command output : " + specificData);
                     }
@@ -518,39 +527,22 @@ public class ServiceProvider
 
                     if (!dataList.isEmpty())
                     {
-                        if (_dao.enterReMonitorData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
+                        String packet = CommonConstantUI.STRING_NULL; // for manually polling -> set null instead of 0
+
+                        String memory = CommonConstantUI.STRING_ZERO;
+
+                        if (specificData != null && !specificData.equals(CommonConstantUI.STRING_NULL))
                         {
-                            if (_dao.enterReResultTableData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
-                            {
-                                String packet = CommonConstantUI.STRING_NULL; // for manually polling -> set null instead of 0
+                            memory = getFreeMemoryPercent(specificData);
+                        }
 
-                                double memory = CommonConstantUI.DOUBLE_ZERO;
-
-                                if (specificData != null && !specificData.equals(CommonConstantUI.STRING_NULL))
-                                {
-                                    memory = Double.parseDouble(getFreeMemoryPercent(specificData));
-                                }
-
-                                if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
-                                {
-                                    _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
-                                }
-                                else
-                                {
-                                    _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
-                                }
-                            }
-
-                            else
-                            {
-                                _logger.debug("successfully data inserted into tb_discovery table!");
-
-                                _logger.warn("still not inserted data into tb_result table!");
-                            }
+                        if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
+                        {
+                            _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
                         }
                         else
                         {
-                            _logger.warn("still not inserted data into tb_monitor & tb_result table!");
+                            _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
                         }
                     }
 
@@ -592,7 +584,7 @@ public class ServiceProvider
 
     }
 
-    private String getSpecificData(String uName_output, String free_output, String df_Output, String ioStat_Output)
+    private String getSpecificData(String uName_M, String uName_R, String hostName, String uName_output, String free_output, String df_Output, String ioStat_Output)
     {
         String data = null;
 
@@ -600,9 +592,9 @@ public class ServiceProvider
         {
             String linux = uName_output.substring(uName_output.indexOf("Linux"), 5);
 
-            String ubuntu = uName_output.substring(uName_output.indexOf("ubuntu"), 12);
+            String ubuntu = hostName.trim();
 
-            String x86 = uName_output.substring(uName_output.indexOf("x86"), 82);
+            String x86 = uName_M.trim();
 
             String[] freeSplit = free_output.split("\n");
 
@@ -612,9 +604,9 @@ public class ServiceProvider
 
             String freeMemory = freeSplit[1].substring(31, 43).trim();
 
-            String osVersion = uName_output.substring(uName_output.indexOf("ubuntu") + 7, 30);
+            String osVersion = uName_R.trim();
 
-            String osName = uName_output.substring(uName_output.indexOf("GNU"), 106);
+            String osName = uName_output.substring(uName_output.indexOf("GNU"), uName_output.length()).trim();
 
             String totalSwap = freeSplit[2].substring(5, 19).trim();
 
@@ -1133,6 +1125,40 @@ public class ServiceProvider
         }
 
         return currentDate;
+    }
+
+    public List<String> getCurrentTime()
+    {
+        List<String> timeRange = new ArrayList<>();
+
+        try
+        {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            Date date = new Date();
+
+            Calendar currentTime = Calendar.getInstance();
+
+            currentTime.setTime(date);
+
+            String firstTime = dateFormat.format(date);
+
+            currentTime.add(Calendar.HOUR, -24);
+
+            Date date2 = currentTime.getTime();
+
+            String secondTime = dateFormat.format(date2);
+
+            timeRange.add(firstTime);
+
+            timeRange.add(secondTime);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("some thing went wrong on time range function!");
+        }
+
+        return timeRange;
     }
 
     public String[] getPingData(String response)

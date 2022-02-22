@@ -52,6 +52,14 @@ public class CommonConstantUI
 
     public static final String PING_COMMAND = "ping -c 4 ";
 
+    public static final String U_NAME_COMMAND = "uname";
+
+    public static final String NAME_M_COMMAND = "uname -m";
+
+    public static final String NAME_R_COMMAND = "uname -r";
+
+    public static final String HOSTNAME_COMMAND = "hostname";
+
     public static final String LINUX_U_NAME_COMMAND = "uname -a";
 
     public static final String LINUX_FREE_COMMAND = "free";
@@ -71,6 +79,16 @@ public class CommonConstantUI
     public static final String DB_UPDATE = "UPDATE";
 
     public static final String DB_DELETE = "DELETE";
+
+    public static final String DB_TB_DISCOVER = "TB_DISCOVER";
+
+    public static final String DB_TB_MONITOR = "TB_MONITOR";
+
+    public static final String DB_TB_RESULT = "TB_RESULT";
+
+    public static final String DB_TB_DATADUMP = "TB_DATADUMP";
+
+    public static final String DB_TB_USER = "TB_USER";
 
     public static final String DATABASE_URL = "jdbc:h2:tcp://localhost/configdb;" +
                                               "DATABASE_TO_UPPER=false;IGNORECASE=TRUE;" +

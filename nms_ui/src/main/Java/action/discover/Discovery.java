@@ -1,7 +1,9 @@
 package action.discover;
 
+import bean.DashboardBean;
 import bean.DiscoverBean;
 
+import bean.MonitorBean;
 import dao.UserDAO;
 
 import action.helper.ServiceProvider;
@@ -88,6 +90,8 @@ public class Discovery extends ActionSupport
         this.deviceType = deviceType;
     }
 
+    private DiscoverBean bean = null;
+
     private List<DiscoverBean> beanList = null;
 
     public List<DiscoverBean> getBeanList() {
@@ -107,8 +111,6 @@ public class Discovery extends ActionSupport
     public String getDiscoverData()
     {
         List<List<String>> discoverList;
-
-        DiscoverBean bean;
 
         try
         {
@@ -156,14 +158,26 @@ public class Discovery extends ActionSupport
 
         serviceProvider.setDeviceType(deviceType);
 
+        beanList = new ArrayList<>();
+
+        bean = new DiscoverBean();
+
         try
         {
             if (serviceProvider.checkDiscovery())
             {
+                bean.setFlag(true);
+
+                beanList.add(bean);
+
                 return "success";
             }
             else
             {
+                bean.setFlag(false);
+
+                beanList.add(bean);
+
                 return  "error";
             }
 

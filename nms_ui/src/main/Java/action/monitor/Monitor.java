@@ -132,6 +132,8 @@ public class Monitor extends ActionSupport
 
                     bean.setDevice(subList.get(5));
 
+                    bean.setStatus(subList.get(7));
+
                     beanList.add(bean);
                 }
             }

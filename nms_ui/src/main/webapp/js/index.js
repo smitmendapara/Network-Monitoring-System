@@ -174,7 +174,34 @@ function displayLinuxProfile(id, elementValue)
 {
     let value = elementValue.value;
 
-    document.getElementById(id).style.display = value === 1 ? 'block' : 'none';
+    document.getElementById(id).style.display = value === "1" ? 'block' : 'none';
+}
+
+function verifyDiscovery(request)
+{
+    let flag = true;
+
+    let data = request.data;
+
+    console.log(data);
+
+    $.each(data.beanList, function () {
+
+        flag = this.flag;
+
+    });
+
+    if (flag)
+    {
+        alert("device successfully discovered!");
+    }
+    else
+    {
+        alert("you don't try to discover linux or ping device!");
+    }
+
+    refreshPage();
+
 }
 
 // show discovery form
@@ -191,18 +218,14 @@ function discoverData()
 
     let deviceType = $("#device").val();
 
-    getPostCall({ url: "discoveryProcess.action", data: { name: name, ip: ip, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword, deviceType: deviceType } });
-
-    alert("successfully device discovered!");
-
-    refreshPage();
+    getGetCall({ url: "discoveryProcess", data: { name: name, ip: ip, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword, deviceType: deviceType }, callback: verifyDiscovery });
 }
 
 // for rediscovery
 
 function reDiscoverData(id, ip, deviceType)
 {
-    getPostCall({ url: "reDiscoveryProcess.action", data: { id: id, ip: ip, deviceType: deviceType } });
+    getPostCall({ url: "reDiscoveryProcess", data: { id: id, ip: ip, deviceType: deviceType } });
 
     refreshPage();
 }
@@ -224,7 +247,7 @@ function reloadPage(result)
 function getPolling(id, ip, deviceType)
 {
 
-    getPostCall({ url: "monitorPolling.action", data: {id: id, ip: ip, deviceType: deviceType }, callback: reloadPage });
+    getPostCall({ url: "monitorPolling", data: {id: id, ip: ip, deviceType: deviceType }, callback: reloadPage });
 }
 
 // toggle discovery table
@@ -254,7 +277,7 @@ function deletedRow(result)
 
 function deleteRow(id)
 {
-    getPostCall({ url: "discoveryDelete.action", data: { id: id }, callback: deletedRow });
+    getPostCall({ url: "discoveryDelete", data: { id: id }, callback: deletedRow });
 }
 
 // provision ip
@@ -273,7 +296,7 @@ function provisionIP(request)
 
     if (flag)
     {
-        alert("successfully monitored!");
+        alert("device successfully monitored!");
     }
     else
     {
@@ -288,7 +311,7 @@ function monitorData(id)
     {
         let id = $("input[name=key]").val();
 
-        getGetCall({ url: "monitorProcess.action", data: { id: id }, callback: provisionIP });
+        getGetCall({ url: "monitorProcess", data: { id: id }, callback: provisionIP });
     }
     else
     {
@@ -333,7 +356,7 @@ function showForm(id)
 
     document.getElementById(monitorFormId).style.display = 'block';
 
-    getGetCall({ url: "monitorForm.action", data: { id: id }, callback: getMonitorForm });
+    getGetCall({ url: "monitorForm", data: { id: id }, callback: getMonitorForm });
 }
 
 // monitor table data
@@ -356,6 +379,8 @@ function getMonitorTable(result)
 
             "<td>" + this.device + "</td>" +
 
+            "<td>" + this.status + "</td>" +
+
             "</tr>";
 
     });
@@ -377,7 +402,7 @@ function getMonitorTable(result)
 
 function getMonitorDetails()
 {
-    getGetCall({ url: "monitorTable.action", callback: getMonitorTable });
+    getGetCall({ url: "monitorTable", callback: getMonitorTable });
 }
 
 // show dashboard
@@ -386,17 +411,17 @@ function getDashboard(result)
 {
     if (result.data.deviceType === "Ping")
     {
-        window.open('dashboard.jsp', '_self');
+        window.open('dashboard.jsp', '_blank');
     }
     else
     {
-        window.open('linux_dashboard.jsp', '_self');
+        window.open('linux_dashboard.jsp', '_blank');
     }
 }
 
 function showDashboard(id, ip, deviceType)
 {
-    getPostCall({ url: "dashboardProcess.action", data: { id: id, ip: ip, deviceType: deviceType }, callback: getDashboard });
+    getPostCall({ url: "dashboardProcess", data: { id: id, ip: ip, deviceType: deviceType }, callback: getDashboard });
 }
 
 // ping dashboard header
@@ -456,7 +481,7 @@ function getDashboardHeaderData(request)
 
 function getDashboardHeader()
 {
-    getGetCall({ url: "dashboardTable.action", callback: getDashboardHeaderData });
+    getGetCall({ url: "dashboardTable", callback: getDashboardHeaderData });
 }
 
 // ping dashboard body
@@ -495,7 +520,7 @@ function getDashboardBodyData(request)
 
 function getDashboardBody()
 {
-    getGetCall({ url: "dashboardTable.action", callback: getDashboardBodyData });
+    getGetCall({ url: "dashboardTable", callback: getDashboardBodyData });
 }
 
 // linux dashboard header
@@ -555,7 +580,7 @@ function getLinuxDashboardHeaderData(request)
 
 function getLinuxDashboardHeader() {
 
-    getGetCall({ url: "dashboardTable.action", callback: getLinuxDashboardHeaderData });
+    getGetCall({ url: "dashboardTable", callback: getLinuxDashboardHeaderData });
 }
 
 // linux dashboard body
@@ -620,7 +645,7 @@ function getLinuxDashboardBodyData(request)
 
 function getLinuxDashboardBody()
 {
-    getGetCall({ url: "dashboardTable.action", callback: getLinuxDashboardBodyData });
+    getGetCall({ url: "dashboardTable", callback: getLinuxDashboardBodyData });
 }
 
 // column chart
@@ -837,73 +862,29 @@ function getPieChartData(request)
 
         let firstChart;
 
-        let ip = this.IP;
+        firstChart = new CanvasJS.Chart("dougnutChart",
+            {
+                width : 340,
 
-        let status = this.status;
+                title:{
+                    text: this.IP
+                },
 
-        if (status === "Down")
-        {
-            firstChart = new CanvasJS.Chart("dougnutChart",
-                {
-                    width : 340,
+                data: [
+                    {
+                        type: "doughnut",
 
-                    title:{
-                        text: ip
-                    },
+                        innerRadius: "50%",
 
-                    data: [
-                        {
-                            type: "doughnut",
+                        dataPoints: [
+                            {  x: 0, y: this.percent[0], indexLabel: "Up" },
+                            {  x: 0, y: this.percent[1], indexLabel: "Down" },
+                        ]
 
-                            innerRadius: "50%",
+                    }
+                ]
 
-                            xValueFormatString:"Up # %",
-
-                            yValueFormatString:"Down # %",
-
-                            color: "#A21919",
-
-                            dataPoints: [
-                                {  x: 0, y: 1.0, indexLabel: ip },
-                            ]
-
-                        }
-                    ]
-
-
-                });
-        }
-        else
-        {
-            firstChart = new CanvasJS.Chart("dougnutChart",
-                {
-                    width : 340,
-
-                    title:{
-                        text: ip
-                    },
-
-                    data: [
-                        {
-                            type: "doughnut",
-
-                            innerRadius: "50%",
-
-                            xValueFormatString:"Down # %",
-
-                            yValueFormatString:"Up # %",
-
-                            color: "#008000",
-
-                            dataPoints: [
-                                {  x: 0, y: 1.0, indexLabel: ip },
-                            ]
-
-                        }
-                    ]
-
-                });
-        }
+            });
 
         firstChart.render();
 
@@ -913,5 +894,5 @@ function getPieChartData(request)
 
 function getPieChartDetails()
 {
-    getGetCall({ url: "dashboardTable.action", callback: getPieChartData });
+    getGetCall({ url: "dashboardTable", callback: getPieChartData });
 }

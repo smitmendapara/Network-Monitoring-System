@@ -1,30 +1,33 @@
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
-/**
- * Created by smit on 18/1/22.
- */
 public class Test
 {
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException
+    {
+        String s = "Linux flotomate1130.localdomain 3.10.0-1062.el7.x86_64 #1 SMP Thu Jul 18 20:25:13 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux";
 
-        String s = "0";
 
-//        int i = Integer.parseInt(s);
+        System.out.println(s.substring(s.indexOf("GNU"), s.length()));
+
+//        String s = "0";
 //
-//        boolean digit = ;
+////        int i = Integer.parseInt(s);
+////
+////        boolean digit = ;
+////
+////        System.out.println(digit);
 //
-//        System.out.println(digit);
-
-
-        List<Object> list = new ArrayList<>();
-
-        list.add("hey");
-
-        list.add(12);
-
-        System.out.println(list.get(0) instanceof Integer);
+//
+//        List<Object> list = new ArrayList<>();
+//
+//        list.add("hey");
+//
+//        list.add(12);
+//
+//        System.out.println(list.get(0) instanceof Integer);
 
 
 

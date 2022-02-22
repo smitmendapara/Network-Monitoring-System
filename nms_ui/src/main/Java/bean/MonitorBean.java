@@ -14,6 +14,8 @@ public class MonitorBean
 
     private String Device;
 
+    private String Status;
+
     private boolean flag;
 
     public int getId() {
@@ -70,5 +72,13 @@ public class MonitorBean
 
     public void setFlag(boolean flag) {
         this.flag = flag;
+    }
+
+    public String getStatus() {
+        return Status;
+    }
+
+    public void setStatus(String status) {
+        Status = status;
     }
 }

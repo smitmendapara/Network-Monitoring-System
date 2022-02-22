@@ -40,7 +40,7 @@
 
                 <a href="logoutProcess" class="index__logout"><i class="bi bi-box-arrow-left"></i>&nbsp;logout</a>
 
-                <a href="signUpProcess" class="index__signup"><i class="bi bi-person"></i>&nbsp;signUp</a>
+                <a href="signUp" class="index__signup"><i class="bi bi-person"></i>&nbsp;signUp</a>
 
                 <a href="profile" class="index__profile"><i class="bi bi-check2-circle"></i>&nbsp;profile</a>
 

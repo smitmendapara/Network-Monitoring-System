@@ -69,6 +69,8 @@
 
                     <th scope="col">Type</th>
 
+                    <th scope="col">Status</th>
+
                 </tr>
 
                 </thead>

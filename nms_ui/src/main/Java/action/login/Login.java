@@ -44,13 +44,20 @@ public class Login extends ActionSupport implements SessionAware
     {
         try
         {
-            if(_dao.checkCredential(username, password))
+            if (!username.equals("") && !password.equals(""))
             {
-                sessionMap.put("login", true);
+                if(_dao.checkCredential(username, password))
+                {
+                    sessionMap.put("login", true);
 
-                sessionMap.put("username", username);
+                    sessionMap.put("username", username);
 
-                return "success";
+                    return "success";
+                }
+                else
+                {
+                    return "error";
+                }
             }
             else
             {
