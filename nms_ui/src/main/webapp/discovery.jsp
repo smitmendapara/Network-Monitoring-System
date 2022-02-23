@@ -22,6 +22,7 @@
 
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
+
             <%-- chart library --%>
 
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -58,7 +59,7 @@
 
                     <a href="monitor" class="lg__monitor"><i class="bi bi-tv"></i>&nbsp;Monitor</a>
 
-                    <a href="" class="lg__dashboard"><i class="bi bi-grid"></i></i>&nbsp;Dashboard</a>
+                    <a href="" class="lg__dashboard"><i class="bi bi-grid"></i>&nbsp;Dashboard</a>
 
                     <button type="button" class="disc__new middle" id="new" onclick="openForm('discoveryForm')" style="margin-left: 965px;cursor: pointer"><i class="bi bi-cloud-plus"></i>&nbsp;new</button>
 
@@ -254,7 +255,7 @@
 
                     <div class="popUp__footer" style="margin: 1px 3px 0 530px;">
 
-                        <button type="button" class="btn footer__provision" onclick="monitorData('check')" style="cursor: pointer">Provision Object</button>
+                        <button type="button" class="btn footer__provision" id="provision" onclick="monitorData('check')" style="cursor: pointer">Provision Object</button>
 
                         <button type="button" class="btn footer__cancel" onclick="closeForm('provisionForm')" style="cursor: pointer">Cancel</button>
 

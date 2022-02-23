@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
@@ -192,18 +193,9 @@ public class ServiceProvider
                         }
                         else
                         {
-                            if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
+                            if (_dao.enterMonitorTableData(id, response, ipStatus))
                             {
-                                if (_dao.enterResultTableData(ip, discoveryUsername, deviceType, response, ipStatus, timestamp.toString()))
-                                {
-                                    _logger.debug("successfully data inserted into tb_discovery & tb_result table!");
-                                }
-                                else
-                                {
-                                    _logger.debug("successfully data inserted into tb_discovery table!");
-
-                                    _logger.warn("still not inserted data into tb_result table!");
-                                }
+                                _logger.debug("successfully data inserted into tb_monitor table!");
                             }
                             else
                             {
@@ -226,7 +218,7 @@ public class ServiceProvider
                 {
                     String uName;
 
-                    Timestamp timestamp = null;
+                    Timestamp timestamp;
 
                     SSHConnectionUtil sshConnectionUtil = null;
 
@@ -265,7 +257,7 @@ public class ServiceProvider
 
                                 ipStatus = CommonConstantUI.DEVICE_UP;
 
-                                specificData = getSpecificData(uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
+                                specificData = getSpecificData(uName, uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
 
                                 _logger.info("Command output : " + specificData);
                             }
@@ -308,20 +300,13 @@ public class ServiceProvider
                         }
                         else
                         {
-                            if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
+                            if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, timestamp.toString()))
                             {
-                                if (_dao.enterResultTableData(ip, discoveryUsername, deviceType, specificData, ipStatus, timestamp.toString()))
-                                {
-                                    _logger.debug("successfully data inserted into tb_discovery & tb_result table!");
-                                }
-                                else
-                                {
-                                    _logger.warn("still not inserted data into tb_result table!");
-                                }
+                                _logger.debug("successfully data inserted into tb_discovery & tb_result table!");
                             }
                             else
                             {
-                                _logger.warn("data not inserted into tb_discover and tb_result table!");
+                                _logger.warn("still not inserted into tb_discover and tb_result table!");
                             }
                         }
 
@@ -364,6 +349,92 @@ public class ServiceProvider
 
     }
 
+    public boolean addDevice()
+    {
+        boolean status = true;
+
+        String uName;
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        SSHConnectionUtil sshConnectionUtil = null;
+
+        try
+        {
+            if (checkIpExist(id, ip, deviceType))
+            {
+                if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
+                {
+                    sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, CommonConstantUI.SSH_PORT, discoveryUsername, discoveryPassword, CommonConstantUI.SSH_TIMEOUT);
+
+                    if (sshConnectionUtil != null)
+                    {
+                        uName = sshConnectionUtil.executeCommand(CommonConstantUI.U_NAME_COMMAND, true);
+
+                        if (uName.trim().equals("Linux"))
+                        {
+                            insertData(timestamp);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        _logger.warn("ssh object is null!");
+
+                        ipStatus = CommonConstantUI.DEVICE_DOWN;
+                    }
+
+                    insertData(timestamp);
+                }
+                else
+                {
+                    insertData(timestamp);
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception exception)
+        {
+            status = false;
+        }
+
+        return status;
+    }
+
+    private void insertData(Timestamp timestamp)
+    {
+        try
+        {
+            if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, timestamp.toString()))
+            {
+                if (_dao.enterResultTableData(ip, name, discoveryUsername, deviceType, timestamp.toString()))
+                {
+                    _logger.debug("successfully data inserted into tb_discovery & tb_result table!");
+                }
+                else
+                {
+                    _logger.debug("successfully data inserted into tb_discovery table!");
+
+                    _logger.warn("still not inserted data into tb_result table!");
+                }
+            }
+            else
+            {
+                _logger.warn("still not inserted into tb_discover and tb_result table!");
+            }
+        }
+        catch (Exception exception)
+        {
+
+        }
+    }
+
     private boolean checkIpExist(int id, String ip, String deviceType)
     {
         boolean status = true;
@@ -400,6 +471,8 @@ public class ServiceProvider
     public boolean pollingDevice()
     {
         boolean status = true;
+
+        String packet, memory, uName;
 
         try
         {
@@ -446,17 +519,20 @@ public class ServiceProvider
                     {
                         setRediscoverProperties(dataList);
 
-                        String packet = getReceivedPacket(response);
-
-                        String memory = CommonConstantUI.STRING_ZERO;
-
-                        if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
+                        if (_dao.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, response, ipStatus, timestamp.toString()))
                         {
-                            _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
-                        }
-                        else
-                        {
-                            _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
+                            packet = getReceivedPacket(response);
+
+                            memory = CommonConstantUI.STRING_ZERO;
+
+                            if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus, response))
+                            {
+                                _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery & tb_dataDump table!");
+                            }
+                            else
+                            {
+                                _logger.debug("successfully data re-inserted into tb_discovery table!");
+                            }
                         }
                     }
 
@@ -491,6 +567,8 @@ public class ServiceProvider
 
                     if(sshConnectionUtil != null)
                     {
+                        uName = sshConnectionUtil.executeCommand(CommonConstantUI.U_NAME_COMMAND, true);
+
                         uName_M = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_M_COMMAND, true);
 
                         uName_R = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_R_COMMAND, true);
@@ -509,7 +587,7 @@ public class ServiceProvider
 
                         timestamp = new Timestamp(System.currentTimeMillis());
 
-                        specificData = getSpecificData(uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
+                        specificData = getSpecificData(uName, uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
 
                         _logger.info("Command output : " + specificData);
                     }
@@ -527,22 +605,29 @@ public class ServiceProvider
 
                     if (!dataList.isEmpty())
                     {
-                        String packet = CommonConstantUI.STRING_NULL; // for manually polling -> set null instead of 0
-
-                        String memory = CommonConstantUI.STRING_ZERO;
-
-                        if (specificData != null && !specificData.equals(CommonConstantUI.STRING_NULL))
+                        if (_dao.enterReMonitorData(name, ip, discoveryUsername, discoveryPassword, deviceType, specificData, ipStatus, timestamp.toString()))
                         {
-                            memory = getFreeMemoryPercent(specificData);
-                        }
+                            packet = CommonConstantUI.STRING_ZERO;
 
-                        if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
-                        {
-                            _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery, tb_result & tb_dataDump table!");
+                            memory = CommonConstantUI.STRING_ZERO;
+
+                            if (specificData != null && !specificData.equals(CommonConstantUI.STRING_NULL))
+                            {
+                                memory = getFreeMemoryPercent(specificData);
+                            }
+
+                            if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus, specificData))
+                            {
+                                _logger.debug("successfully data re-inserted into tb_monitor, tb_discover & tb_dataDump table!");
+                            }
+                            else
+                            {
+                                _logger.debug("successfully data re-inserted into tb_discovery table!");
+                            }
                         }
                         else
                         {
-                            _logger.debug("successfully data re-inserted into tb_discovery & tb_result table!");
+                            _logger.warn("still not inserted data into tb_monitor table!");
                         }
                     }
 
@@ -584,13 +669,13 @@ public class ServiceProvider
 
     }
 
-    private String getSpecificData(String uName_M, String uName_R, String hostName, String uName_output, String free_output, String df_Output, String ioStat_Output)
+    private String getSpecificData(String uName, String uName_M, String uName_R, String hostName, String uName_output, String free_output, String df_Output, String ioStat_Output)
     {
         String data = null;
 
         try
         {
-            String linux = uName_output.substring(uName_output.indexOf("Linux"), 5);
+            String linux = uName.trim();
 
             String ubuntu = hostName.trim();
 
@@ -697,7 +782,7 @@ public class ServiceProvider
 
             double freeMemory = ( (totalMemory - usedMemory - sharedMemory - bufferMemory) / totalMemory ) * 100;
 
-            free = String.valueOf(Math.round(freeMemory)) + " %";
+            free = String.valueOf(Math.round(freeMemory));
         }
         catch (Exception exception)
         {
@@ -1212,7 +1297,7 @@ public class ServiceProvider
 
                 usedMemoryPercent = getUsedMemoryPercent(response);
 
-                freeMemoryPercent = getFreeMemoryPercent(response);
+                freeMemoryPercent = getFreeMemoryPercent(response) + " %";
 
                 rtt_Time = getRTTTime(response);
 

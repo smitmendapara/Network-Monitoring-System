@@ -116,7 +116,7 @@ public class Discovery extends ActionSupport
         {
             beanList = new ArrayList<>();
 
-            discoverList = _dao.getDiscoverTB();
+            discoverList = _dao.getDiscoverData();
 
             if (discoverList != null)
             {
@@ -130,7 +130,7 @@ public class Discovery extends ActionSupport
 
                     bean.setIP(subList.get(2));
 
-                    bean.setDevice(subList.get(3));
+                    bean.setDevice(subList.get(5));
 
                     beanList.add(bean);
                 }
@@ -146,8 +146,6 @@ public class Discovery extends ActionSupport
 
     public String executeDiscovery()
     {
-        serviceProvider.setId(id);
-
         serviceProvider.setName(name);
 
         serviceProvider.setIp(ip);
@@ -164,7 +162,7 @@ public class Discovery extends ActionSupport
 
         try
         {
-            if (serviceProvider.checkDiscovery())
+            if (serviceProvider.addDevice())
             {
                 bean.setFlag(true);
 

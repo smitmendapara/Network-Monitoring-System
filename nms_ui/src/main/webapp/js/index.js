@@ -165,7 +165,7 @@ function getDiscoveryDetails()
 {
     let provisionForm = "provisionForm";
 
-    getGetCall({ url: "discoveryTable.action", callback: discoveryTable });
+    getGetCall({ url: "discoveryTable", callback: discoveryTable });
 }
 
 // manipulated discovery table data
@@ -395,8 +395,6 @@ function getMonitorTable(result)
 
         showDashboard(array[0], array[1].trim(), array[2].trim());
 
-        alert("loading dashboard data...");
-
     });
 }
 
@@ -505,7 +503,6 @@ function getDashboardBodyData(request)
             "<td class='dash__fourthRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>Received Packet</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + this.response[2] + "</p>" + "</div>" + "</div>" + "</td>" +
 
             "<td class='dash__fifthRow'>" + "<div class='dash__widget'>" + "<div>" + "<p>RTT (ms)</p>" + "</div>" + "<div>" + "<p class='dash__response'>" + this.response[3] + "</p>" + "</div>" + "</div>" + "</td>" +
-
 
             + "</tr>";
 
@@ -654,8 +651,6 @@ function getColumnChartData(request)
 {
     let data = request.data;
 
-    alert("loading charts...");
-
     $.each(data.beanList, function () {
 
         let secondChart;
@@ -668,9 +663,13 @@ function getColumnChartData(request)
 
         let memoryPercent = this.memory;
 
+        console.log(receivedPacket);
+
+        console.log(memoryPercent);
+
         let timeArray = this.currentTime;
 
-        if (status === "Down" && deviceType === "Ping")
+        if (status == "Down" && deviceType == "Ping")
         {
             secondChart = new CanvasJS.Chart("areaChart",
                 {
@@ -713,7 +712,7 @@ function getColumnChartData(request)
 
                 });
         }
-        else if (status === "Up" && deviceType === "Ping")
+        else if (status == "Up" && deviceType == "Ping")
         {
             secondChart = new CanvasJS.Chart("areaChart",
                 {
@@ -755,7 +754,7 @@ function getColumnChartData(request)
                     ]
                 });
         }
-        else if (status === "Up" && deviceType === "Linux")
+        else if (status == "Up" && deviceType == "Linux")
         {
             secondChart = new CanvasJS.Chart("areaChart",
                 {
@@ -849,7 +848,7 @@ function getColumnChartData(request)
 
 function getColumnChartDetails()
 {
-    getGetCall({ url: "dashboardTable.action", callback: getColumnChartData });
+    getGetCall({ url: "dashboardTable", callback: getColumnChartData });
 }
 
 // pie chart

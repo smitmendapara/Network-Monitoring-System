@@ -1,5 +1,6 @@
 package action.monitor;
 
+import bean.DiscoverBean;
 import bean.MonitorBean;
 
 import dao.UserDAO;
@@ -199,7 +200,7 @@ public class Monitor extends ActionSupport
 
         if (_dao.checkIpMonitor(id))
         {
-            if (_dao.enterMonitorTableData(id))
+            if (executeDiscovery())
             {
                 bean.setFlag(true);
 
@@ -218,6 +219,50 @@ public class Monitor extends ActionSupport
 
             return "error";
         }
+    }
+
+    private boolean executeDiscovery()
+    {
+        serviceProvider.setId(id);
+
+        _dao.setNewId(id);
+
+        List<List<String>> discoverList = _dao.getDiscoverTB();
+
+        if (discoverList != null)
+        {
+            for (List<String> subList : discoverList)
+            {
+                serviceProvider.setName(subList.get(1));;
+
+                serviceProvider.setIp(subList.get(2));
+
+                serviceProvider.setDiscoveryUsername(subList.get(3));
+
+                serviceProvider.setDiscoveryPassword(subList.get(4));
+
+                serviceProvider.setDeviceType(subList.get(5));
+            }
+        }
+
+        try
+        {
+            if (serviceProvider.checkDiscovery())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+        catch (Exception exception)
+        {
+            _logger.error("discovery failed!", exception);
+        }
+
+        return false;
     }
 
     public String getPolling()
