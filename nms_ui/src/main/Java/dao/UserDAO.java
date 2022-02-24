@@ -1,6 +1,7 @@
 package dao;
 
 import action.helper.ServiceProvider;
+
 import util.CommonConstantUI;
 
 import util.Logger;
@@ -17,7 +18,7 @@ public class UserDAO
 
     private String deviceType;
 
-    private boolean verifyCredential;
+    private boolean verifyCredential = false;
 
     private boolean databaseAffected;
 
@@ -83,43 +84,6 @@ public class UserDAO
         return connection;
     }
 
-    private List<List<String>> getDiscoveryArrayData(ResultSet resultSet)
-    {
-        List<List<String>> discoverList = new ArrayList<>();
-
-        List<String> list;
-
-        try
-        {
-            while (resultSet.next())
-            {
-                list = new ArrayList<>();
-
-                list.add(resultSet.getString(1));
-
-                list.add(resultSet.getString(2));
-
-                list.add(resultSet.getString(3));
-
-                list.add(resultSet.getString(4));
-
-                list.add(resultSet.getString(5));
-
-                list.add(resultSet.getString(6));
-
-                list.add(resultSet.getString(7));
-
-                discoverList.add(list);
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("not get array for discovery data!");
-        }
-
-        return discoverList;
-    }
-
     private List<List<String>> getArrayData(ResultSet resultSet, String tableName)
     {
         List<List<String>> parentList = new ArrayList<>();
@@ -128,7 +92,7 @@ public class UserDAO
 
         try
         {
-            if (resultSet != null && !tableName.equals(CommonConstantUI.DB_TB_DATADUMP))
+            if (resultSet != null)
             {
                 while (resultSet.next())
                 {
@@ -151,34 +115,6 @@ public class UserDAO
                     parentList.add(list);
                 }
             }
-            else
-            {
-                while (resultSet.next())
-                {
-                    list = new ArrayList<>();
-
-                    list.add(resultSet.getString(1));
-
-                    list.add(resultSet.getString(2));
-
-                    list.add(resultSet.getString(3));
-
-                    list.add(resultSet.getString(4));
-
-                    list.add(resultSet.getString(5));
-
-                    list.add(resultSet.getString(6));
-
-                    list.add(resultSet.getString(7));
-
-                    list.add(resultSet.getString(7));
-
-                    list.add(resultSet.getString(8));
-
-                    parentList.add(list);
-                }
-            }
-
         }
         catch (Exception exception)
         {
@@ -256,19 +192,17 @@ public class UserDAO
         }
         catch (Exception exception)
         {
-            _logger.warn("some thng went wrong on creating result table array list!");
+            _logger.warn("some thing went wrong on creating result table array list!");
         }
 
         return parentList;
     }
 
-    private List<List<String>> getDiscoverTableData(ResultSet resultSet, List<Object> condition)
+    private List<List<String>> getDiscoverTableArrayData(ResultSet resultSet, List<Object> condition)
     {
         List<List<String>> parentList = new ArrayList<>();
 
         List<String> list;
-
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         try
         {
@@ -307,6 +241,8 @@ public class UserDAO
 
     private List<List<String>> getData(String sqlQuery, String operation, String tableName, List<Object> condition)
     {
+        Connection connection = null;
+
         ResultSet resultSet;
 
         PreparedStatement preparedStatement;
@@ -361,13 +297,13 @@ public class UserDAO
 
                         resultSet = preparedStatement.executeQuery();
 
-                        discoverTableData = getDiscoverTableData(resultSet, condition);
+                        discoverTableData = getDiscoverTableArrayData(resultSet, condition);
                     }
                     else
                     {
                         preparedStatement.setString(1, (String) condition.get(0));
 
-                        preparedStatement.setString(2, (String) condition.get(3));
+                        preparedStatement.setString(2, (String) condition.get(1));
 
                         resultSet = preparedStatement.executeQuery();
 
@@ -391,7 +327,7 @@ public class UserDAO
 
                     resultSet = preparedStatement.executeQuery();
 
-                    dataList = getDiscoveryArrayData(resultSet);
+                    dataList = getArrayData(resultSet, tableName);
                 }
             }
 
@@ -452,9 +388,19 @@ public class UserDAO
 
             if (operation.equals(CommonConstantUI.DB_UPDATE))
             {
-                if (tableName.equals(CommonConstantUI.DB_TB_DISCOVER) || tableName.equals(CommonConstantUI.DB_TB_MONITOR) || tableName.equals(CommonConstantUI.DB_TB_RESULT))
+                if (tableName.equals(CommonConstantUI.DB_TB_MONITOR))
                 {
                     updateData(preparedStatement, condition.get(0).toString(), condition.get(1).toString(), condition.get(2).toString(), condition.get(3).toString(), condition.get(4).toString());
+
+                    databaseAffected = affectedRow(preparedStatement);
+                }
+                if (tableName.equals(CommonConstantUI.DB_TB_DISCOVER) || tableName.equals(CommonConstantUI.DB_TB_RESULT))
+                {
+                    preparedStatement.setString(1, (String) condition.get(0));
+
+                    preparedStatement.setString(2, (String) condition.get(1));
+
+                    preparedStatement.setString(3, (String) condition.get(2));
 
                     databaseAffected = affectedRow(preparedStatement);
                 }
@@ -825,25 +771,23 @@ public class UserDAO
         }
     }
 
-    public boolean enterReDiscoveryData(String ip, String deviceType, String response, String ipStatus, String timestamp)
+    public boolean enterReDiscoveryData(String ip, String deviceType)
     {
         boolean status = false;
 
         List<Object> conditionList = new ArrayList<>();
 
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
         try
         {
-            conditionList.add(response);
-
-            conditionList.add(ipStatus);
-
-            conditionList.add(timestamp.substring(0, 16));
+            conditionList.add(timestamp.toString().substring(0, 16));
 
             conditionList.add(ip);
 
             conditionList.add(deviceType);
 
-            getData("UPDATE TB_DISCOVER SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_UPDATE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
+            getData("UPDATE TB_DISCOVER SET CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_UPDATE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
             if (databaseAffected)
             {
@@ -877,11 +821,11 @@ public class UserDAO
 
             conditionList.add(ip);
 
+            conditionList.add(deviceType);
+
             conditionList.add(name);
 
             conditionList.add(discoveryUsername);
-
-            conditionList.add(deviceType);
 
             conditionList.add(CommonConstantUI.NULL);
 
@@ -906,25 +850,23 @@ public class UserDAO
         return result;
     }
 
-    public boolean enterReResultTableData(String ip, String deviceType, String response, String ipStatus, String timestamp)
+    public boolean enterReResultTableData(String ip, String deviceType)
     {
         boolean status = false;
 
         List<Object> conditionList = new ArrayList<>();
 
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
         try
         {
-            conditionList.add(response);
-
-            conditionList.add(ipStatus);
-
-            conditionList.add(timestamp.substring(0, 16));
+            conditionList.add(timestamp.toString().substring(0, 16));
 
             conditionList.add(ip);
 
             conditionList.add(deviceType);
 
-            getData("UPDATE TB_RESULT SET RESPONSE = ?, STATUS = ?, CURRENTTIME = ? WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_UPDATE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
+            getData("UPDATE TB_RESULT SET CURRENTTIME = ? WHERE IP = ? AND DEVICETYPE = ?", CommonConstantUI.DB_UPDATE, CommonConstantUI.DB_TB_DISCOVER, conditionList);
 
             if (databaseAffected)
             {
@@ -1025,50 +967,6 @@ public class UserDAO
         return status;
     }
 
-    public List<List<String>> getReDiscoveryData(String ip, String deviceType)
-    {
-        List<List<String>> rediscoveryList = new ArrayList<>();
-
-        List<Object> conditionList = new ArrayList<>();
-
-        try
-        {
-            conditionList.add(ip);
-
-            conditionList.add(deviceType);
-
-            rediscoveryList = getData("SELECT * FROM TB_DISCOVER WHERE IP = ? AND DEVICE = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_DISCOVER, conditionList);
-        }
-        catch (Exception exception)
-        {
-            _logger.error("not find re discover table data!!", exception);
-        }
-
-        return rediscoveryList;
-    }
-
-    public List<List<String>> getReMonitorData(String ip, String deviceType)
-    {
-        List<List<String>> reMonitorList = new ArrayList<>();
-
-        List<Object> conditionList = new ArrayList<>();
-
-        try
-        {
-            conditionList.add(ip);
-
-            conditionList.add(deviceType);
-
-            reMonitorList = getData("SELECT * FROM TB_MONITOR WHERE IP = ? AND DEVICETYPE = ?", CommonConstantUI.DB_SELECT, CommonConstantUI.DB_TB_MONITOR, conditionList);
-        }
-        catch (Exception exception)
-        {
-            _logger.error("not find re monitor table data!!", exception);
-        }
-
-        return reMonitorList;
-    }
-
     public List<List<String>> getDashboardData()
     {
         List<List<String>> reMonitorList = new ArrayList<>();
@@ -1158,7 +1056,8 @@ public class UserDAO
 
         return memoryPercent;
     }
-    public boolean enterReMonitorData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
+
+    public boolean enterReMonitorData(String ip, String deviceType, String response, String ipStatus, String timestamp)
     {
         boolean result = true;
 
@@ -1193,8 +1092,7 @@ public class UserDAO
         return result;
     }
 
-
-    public boolean enterDataDump(int id, String ip, String packet, String memory, String deviceType, String time, String ipStatus, String response)
+    public boolean enterDataDump(int id, String ip, String packet, String memory, String deviceType, String time, String ipStatus)
     {
         boolean status = false;
 
@@ -1216,9 +1114,7 @@ public class UserDAO
 
             conditionList.add(ipStatus);
 
-            conditionList.add(response);
-
-            getData("INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME, STATUS, RESPONSE) VALUES(?, ?, ?, ?, ?, ?, ?, ?)", CommonConstantUI.DB_INSERT, CommonConstantUI.DB_TB_DATADUMP, conditionList);
+            getData("INSERT INTO TB_DATADUMP(ID, IP, PACKET, MEMORY, DEVICE, CURRENTTIME, STATUS) VALUES(?, ?, ?, ?, ?, ?, ?)", CommonConstantUI.DB_INSERT, CommonConstantUI.DB_TB_DATADUMP, conditionList);
 
             if (databaseAffected)
             {

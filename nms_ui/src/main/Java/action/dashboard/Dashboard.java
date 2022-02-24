@@ -6,6 +6,8 @@ import bean.DashboardBean;
 
 import dao.UserDAO;
 
+import util.CommonConstantUI;
+
 import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -92,7 +94,7 @@ public class Dashboard extends ActionSupport
 
         try
         {
-            if (deviceType.equals("Ping"))
+            if (deviceType.equals(CommonConstantUI.PING_DEVICE))
             {
                 return "success";
             }
@@ -135,7 +137,7 @@ public class Dashboard extends ActionSupport
 
                     if (subList.get(3) == null)
                     {
-                        String profile = "null";
+                        String profile = CommonConstantUI.STRING_NULL;
 
                         bean.setUsername(profile);
                     }
@@ -146,13 +148,13 @@ public class Dashboard extends ActionSupport
 
                     bean.setDevice(subList.get(5));
 
-                    if (subList.get(5).equals("Linux") && subList.get(7).equals("Down"))
+                    if (subList.get(5).equals(CommonConstantUI.LINUX_DEVICE) && subList.get(7).equals(CommonConstantUI.DEVICE_DOWN))
                     {
                         String linuxResponse[] = serviceProvider.getLinuxData(subList.get(6), subList.get(7));
 
                         bean.setResponse(linuxResponse);
                     }
-                    else if (subList.get(5).equals("Linux") && subList.get(7).equals("Up"))
+                    else if (subList.get(5).equals(CommonConstantUI.LINUX_DEVICE) && subList.get(7).equals(CommonConstantUI.DEVICE_UP))
                     {
                         String linuxResponse[] = serviceProvider.getLinuxData(subList.get(6), subList.get(7));
 
@@ -186,7 +188,7 @@ public class Dashboard extends ActionSupport
 
                     String memoryStorage[] = new String[dateTime.length];
 
-                    if (subList.get(5).equals("Ping"))
+                    if (subList.get(5).equals(CommonConstantUI.PING_DEVICE))
                     {
                         for (int i = 0; i < dateTime.length; i++)
                         {

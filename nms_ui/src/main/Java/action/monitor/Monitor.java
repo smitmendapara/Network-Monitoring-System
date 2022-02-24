@@ -208,8 +208,14 @@ public class Monitor extends ActionSupport
 
                 return "success";
             }
+            else
+            {
+                bean.setFlag(false);
 
-            return "success";
+                beanList.add(bean);
+
+                return "error";
+            }
         }
         else
         {

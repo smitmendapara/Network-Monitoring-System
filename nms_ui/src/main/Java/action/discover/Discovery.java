@@ -212,7 +212,7 @@ public class Discovery extends ActionSupport
 
             serviceProvider.setDeviceType(deviceType);
 
-            if (serviceProvider.checkDiscovery())
+            if (serviceProvider.addDevice())
             {
                 return "success";
             }

@@ -140,7 +140,7 @@ function discoveryTable(request)
 
         reDiscoverData(array[0], array[1].trim(), array[2].trim());
 
-        alert("your ip is successfully rediscover!");
+        alert("your ip is successfully rediscovered!");
 
     });
 
@@ -197,7 +197,7 @@ function verifyDiscovery(request)
     }
     else
     {
-        alert("you don't try to discover linux or ping device!");
+        alert("some thing went wrong on discover device!");
     }
 
     refreshPage();
@@ -300,7 +300,7 @@ function provisionIP(request)
     }
     else
     {
-        alert("device already added!");
+        alert("device already added or ip is down!");
     }
 
 }
