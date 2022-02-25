@@ -157,6 +157,7 @@ tr:nth-child(even) {
 }
 
 .disc__popUp {
+    display: none;
     width: 50%;
     margin-left:25%;
     margin-top: 15px;

@@ -1,3 +1,7 @@
+let monitorFormId;
+
+let discoverFormId;
+
 // refresh page
 
 function refreshPage()
@@ -9,6 +13,15 @@ function refreshPage()
 
 function openForm(idName)
 {
+    discoverFormId = idName;
+
+    if ($('#' + monitorFormId).css({display: 'block'}))
+    {
+        $('#' + monitorFormId).css({display: 'none'});
+    }
+
+    $('#' + idName).css({display: "block"});
+
     document.getElementById(idName).style.display = 'block';
 }
 
@@ -352,9 +365,16 @@ function getMonitorForm(request)
 
 function showForm(id)
 {
-    let monitorFormId = $('div.disc__popUp').attr('id');
+    monitorFormId = $('div.disc__popUp').attr('id');
 
-    document.getElementById(monitorFormId).style.display = 'block';
+    if ($('#' + discoverFormId).css({display: 'block'}))
+    {
+        $('#' + discoverFormId).css({display: 'none'});
+    }
+
+    $('#' + monitorFormId).css({display: "block"});
+
+    // document.getElementById(monitorFormId).style.display = 'block';
 
     getGetCall({ url: "monitorForm", data: { id: id }, callback: getMonitorForm });
 }

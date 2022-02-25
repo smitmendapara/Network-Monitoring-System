@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 
 import java.text.SimpleDateFormat;
@@ -352,9 +351,8 @@ public class ServiceProvider
                         {
                             _logger.warn("ssh object is null!");
 
-                            ipStatus = CommonConstantUI.DEVICE_DOWN;
+                            return false;
 
-                            insertData(timestamp);
                         }
 
                     }

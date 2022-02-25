@@ -1,3 +1,6 @@
+import util.CommonConstantUI;
+import util.SSHConnectionUtil;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,10 +10,9 @@ public class Test
 {
     public static void main(String[] args) throws ParseException
     {
-        String s = "Linux flotomate1130.localdomain 3.10.0-1062.el7.x86_64 #1 SMP Thu Jul 18 20:25:13 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux";
+        SSHConnectionUtil sshConnectionUtil = SSHConnectionUtil.getSSHObject("172.16.8.68", 22, "root", "motadata", 30);
 
-
-        System.out.println(s.substring(s.indexOf("GNU"), s.length()));
+        sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_FREE_COMMAND, true);
 
 //        String s = "0";
 //

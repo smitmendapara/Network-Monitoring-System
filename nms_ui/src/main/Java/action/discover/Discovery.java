@@ -1,9 +1,7 @@
 package action.discover;
 
-import bean.DashboardBean;
 import bean.DiscoverBean;
 
-import bean.MonitorBean;
 import dao.UserDAO;
 
 import action.helper.ServiceProvider;
@@ -11,8 +9,6 @@ import action.helper.ServiceProvider;
 import util.Logger;
 
 import com.opensymphony.xwork2.ActionSupport;
-
-import java.sql.ResultSet;
 
 import java.util.ArrayList;
 

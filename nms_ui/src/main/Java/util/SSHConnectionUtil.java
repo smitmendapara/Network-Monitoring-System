@@ -8,6 +8,7 @@ import com.jcraft.jsch.Session;
 
 import org.apache.commons.io.IOUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import java.util.Properties;
@@ -96,7 +97,7 @@ public class SSHConnectionUtil
     {
         boolean connected = false;
 
-        Properties config = null;
+        Properties config;
 
         try
         {
@@ -138,7 +139,7 @@ public class SSHConnectionUtil
         return connected;
     }
 
-    public boolean createConnection()
+    private boolean createConnection()
     {
         boolean connect = false;
 
@@ -165,7 +166,7 @@ public class SSHConnectionUtil
 
     public static SSHConnectionUtil getSSHObject(String host, int port, String username, String password, int timeout)
     {
-        SSHConnectionUtil sshConnectionUtil = null;
+        SSHConnectionUtil sshConnectionUtil;
 
         try
         {
@@ -211,11 +212,6 @@ public class SSHConnectionUtil
                 inputStream = channel.getInputStream();
 
                 channel.connect();
-
-//                while (channel.isConnected()) // instead of wait parameter
-//                {
-//                    Thread.sleep(100);
-//                }
 
                 if (channel.isConnected())
                 {
