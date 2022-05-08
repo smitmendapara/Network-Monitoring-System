@@ -80,11 +80,11 @@ nav a:hover {
 }
 
 .disc__entry {
-    margin-left: 120px;
+    margin-left: 100px;
 }
 
 .name {
-    margin-left: 0px;
+    margin-left: -20px;
 }
 
 .ip {
@@ -166,7 +166,7 @@ tr:nth-child(even) {
 }
 
 .popUp__icon {
-    margin-left: 520px;
+    margin-left: 460px;
 }
 
 .monitor__search {
@@ -187,7 +187,6 @@ tr:nth-child(even) {
 }
 
 .dash__firstRow {
-    border-radius: 5px;
     width: 25%;
 }
 
@@ -213,15 +212,16 @@ tr:nth-child(even) {
 }
 
 .linux__initial {
-    border-radius: 5px;
     background-color: #23EB58;
     height: 270px;
 }
 
 .linux__Widget {
-    border-radius: 5px;
     background-color: #23EB58;
     width: 18.75%;
 }
 
-
+.index__logout:hover {
+    background-color: indianred;
+    text-decoration: none;
+}

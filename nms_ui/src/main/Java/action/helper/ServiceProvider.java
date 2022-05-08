@@ -1,6 +1,6 @@
 package action.helper;
 
-import dao.UserDAO;
+import dao.DAO;
 
 import util.CommonConstantUI;
 
@@ -35,22 +35,6 @@ public class ServiceProvider
     private String ipStatus;
 
     private String response;
-
-    private String uName_M = null;
-
-    private String uName_R = null;
-
-    private String hostName = null;
-
-    private String uName_Output = null;
-
-    private String free_Output = null;
-
-    private String df_Output = null;
-
-    private String ioStat_Output = null;
-
-    private String specificData = null;
 
     public int getId() {
         return id;
@@ -118,390 +102,31 @@ public class ServiceProvider
 
     private static final Logger _logger = new Logger();
 
-    private static final UserDAO _dao = new UserDAO();
-
-    public boolean checkDiscovery()
+    public boolean checkDiscovery(int id, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
     {
         boolean status = true;
 
-        try
-        {
-            if (checkIpExist(id, ip, deviceType))
-            {
-                if (deviceType.equals(CommonConstantUI.STRING_ZERO) || deviceType.equals(CommonConstantUI.PING_DEVICE))
-                {
-                    Runtime runtime;
-
-                    Process process;
-
-//                    Timestamp timestamp;
-
-                    BufferedReader bufferedInput;
-
-                    String pingResult = "";
-
-                    String pingCmd = CommonConstantUI.PING_COMMAND + ip;
-
-                    try
-                    {
-                        runtime = Runtime.getRuntime();
-
-                        process = runtime.exec(pingCmd);
-
-//                        timestamp = new Timestamp(System.currentTimeMillis());
-
-                        bufferedInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-                        String inputLine;
-
-                        while ((inputLine = bufferedInput.readLine()) != null)
-                        {
-                            pingResult = pingResult.concat(inputLine);
-                        }
-
-                        bufferedInput.close();
-
-                        response = pingResult.substring(pingResult.indexOf("-"));
-
-                        ipStatus = checkPingIpStatus(response);
-
-                        if (_dao.enterMonitorTableData(id, response, ipStatus))
-                        {
-                            _logger.debug("successfully data inserted into tb_monitor table!");
-                        }
-                        else
-                        {
-                            _logger.warn("still not inserted into tb_discover and tb_result table!");
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        _logger.error("something went wrong on ping discovery verify side!", exception);
-
-                        status = false;
-                    }
-
-                    return status;
-
-                }
-
-                if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
-                {
-                    String uName;
-
-//                    Timestamp timestamp;
-
-                    SSHConnectionUtil sshConnectionUtil = null;
-
-                    try
-                    {
-                        sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, CommonConstantUI.SSH_PORT, discoveryUsername, discoveryPassword, CommonConstantUI.SSH_TIMEOUT);
-
-                        if(sshConnectionUtil != null)
-                        {
-                            uName = sshConnectionUtil.executeCommand(CommonConstantUI.U_NAME_COMMAND, true);
-
-                            if (uName.trim().equals(CommonConstantUI.LINUX_DEVICE))
-                                {
-                                uName_M = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_M_COMMAND, true);
-
-                                uName_R = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_R_COMMAND, true);
-
-                                hostName = sshConnectionUtil.executeCommand(CommonConstantUI.HOSTNAME_COMMAND, true);
-
-                                uName_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_U_NAME_COMMAND, true);
-
-                                free_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_FREE_COMMAND, true);
-
-                                df_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_DISK_COMMAND, true);
-
-                                ioStat_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_CPU_COMMAND, true);
-
-//                                timestamp = new Timestamp(System.currentTimeMillis());
-
-                                ipStatus = CommonConstantUI.DEVICE_UP;
-
-                                specificData = getSpecificData(uName, uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
-
-                                _logger.info("Command output : " + specificData);
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            _logger.warn("ssh object is null!");
-                        }
-
-                        if (sshConnectionUtil != null)
-                        {
-                            if (_dao.enterMonitorTableData(id, response, ipStatus))
-                            {
-                                _logger.debug("successfully data inserted into tb_monitor table!");
-                            }
-                            else
-                            {
-                                _logger.warn("still not inserted into tb_discover and tb_result table!");
-                            }
-                        }
-                        else
-                        {
-                            return false;
-                        }
-
-                    }
-                    catch (Exception exception)
-                    {
-                        _logger.error("something went wrong on linux discovery verify side!", exception);
-
-                        status = false;
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            if (sshConnectionUtil != null)
-                            {
-                                sshConnectionUtil.destroy();
-                            }
-
-                        }
-                        catch (Exception exception)
-                        {
-                            _logger.warn("ssh connection is not closed!");
-                        }
-                    }
-
-                    return status;
-                }
-
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.error("something went wrong on discovery side!", exception);
-
-            status = false;
-        }
-
-        return status;
-
-    }
-
-    public boolean addDevice()
-    {
-        boolean status = true;
-
-        boolean flag = true;
-
-        String uName;
-
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-        SSHConnectionUtil sshConnectionUtil;
-
-        try
-        {
-            if (checkIp(id, ip, deviceType))
-            {
-                _dao.setNewId(id);
-
-                List<List<String>> discoverTB = _dao.getDiscoverTB();
-
-                for (List<String> subList : discoverTB)
-                {
-                    if (Integer.parseInt(subList.get(0)) == id)
-                    {
-                        if (_dao.enterReDiscoveryData(ip, deviceType))
-                        {
-                            if (_dao.enterReResultTableData(ip, deviceType))
-                            {
-                                _logger.info("successfully device rediscovered!");
-
-                                flag = false;
-
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (flag)
-                {
-                    if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
-                    {
-                        sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, CommonConstantUI.SSH_PORT, discoveryUsername, discoveryPassword, CommonConstantUI.SSH_TIMEOUT);
-
-                        if (sshConnectionUtil != null)
-                        {
-                            uName = sshConnectionUtil.executeCommand(CommonConstantUI.U_NAME_COMMAND, true);
-
-                            if (uName.trim().equals(CommonConstantUI.LINUX_DEVICE))
-                            {
-                                insertData(timestamp);
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            _logger.warn("ssh object is null!");
-
-                            return false;
-
-                        }
-
-                    }
-                    else if (deviceType.equals(CommonConstantUI.STRING_ZERO) || deviceType.equals(CommonConstantUI.PING_DEVICE))
-                    {
-                        insertData(timestamp);
-                    }
-                }
-            }
-
-            else
-            {
-                return false;
-            }
-        }
-        catch (Exception exception)
-        {
-            status = false;
-        }
-
-        return status;
-    }
-
-    private boolean checkIp(int id, String ip, String deviceType)
-    {
-        boolean status = true;
-
-        try
-        {
-            _dao.setNewId(id);
-
-            List<List<String>> discoverTB = _dao.getDiscoverTB();
-
-            if (deviceType.equals(CommonConstantUI.STRING_ZERO))
-            {
-                deviceType = CommonConstantUI.PING_DEVICE;
-            }
-            if (deviceType.equals(CommonConstantUI.STRING_ONE))
-            {
-                deviceType = CommonConstantUI.LINUX_DEVICE;
-            }
-
-            for (List<String> subList : discoverTB)
-            {
-                if (Integer.parseInt(subList.get(0)) != id && subList.get(2).equals(ip) && subList.get(3).equals(deviceType))
-                {
-                    status = false;
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("something went wrong on checking existing ip!");
-        }
-
-        return status;
-
-    }
-
-    private void insertData(Timestamp timestamp)
-    {
-        try
-        {
-            if (_dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, timestamp.toString()))
-            {
-                if (_dao.enterResultTableData(ip, name, discoveryUsername, deviceType, timestamp.toString()))
-                {
-                    _logger.debug("successfully data inserted into tb_discovery & tb_result table!");
-                }
-                else
-                {
-                    _logger.debug("successfully data inserted into tb_discovery table!");
-
-                    _logger.warn("still not inserted data into tb_result table!");
-                }
-            }
-            else
-            {
-                _logger.warn("still not inserted into tb_discover and tb_result table!");
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("data not inserted properly!");
-        }
-    }
-
-    private boolean checkIpExist(int id, String ip, String deviceType)
-    {
-        boolean status = true;
-
-        try
-        {
-            List<List<String>> monitorTB = _dao.getMonitorTable();
-
-            if (deviceType.equals(CommonConstantUI.STRING_ZERO))
-            {
-                deviceType = CommonConstantUI.PING_DEVICE;
-            }
-            if (deviceType.equals(CommonConstantUI.STRING_ONE))
-            {
-                deviceType = CommonConstantUI.LINUX_DEVICE;
-            }
-
-            for (List<String> subList : monitorTB)
-            {
-                if (Integer.parseInt(subList.get(0)) == id && subList.get(2).equals(ip) && subList.get(3).equals(deviceType))
-                {
-                    status = false;
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("something went wrong on checking existing ip!");
-        }
-
-        return status;
-    }
-
-    public boolean pollingDevice()
-    {
-        boolean status = true;
-
-        String packet, memory = null, uName;
+        DAO dao = new DAO();
 
         try
         {
             if (deviceType.equals(CommonConstantUI.STRING_ZERO) || deviceType.equals(CommonConstantUI.PING_DEVICE))
             {
-                String pingResult = "";
-
-                String pingCmd = CommonConstantUI.PING_COMMAND + ip;
-
                 Runtime runtime;
 
                 Process process;
 
-                Timestamp timestamp;
-
                 BufferedReader bufferedInput;
+
+                String pingResult = "";
+
+                String pingCmd = CommonConstantUI.PING_COMMAND + ip;
 
                 try
                 {
                     runtime = Runtime.getRuntime();
 
                     process = runtime.exec(pingCmd);
-
-                    timestamp = new Timestamp(System.currentTimeMillis());
 
                     bufferedInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
@@ -518,22 +143,14 @@ public class ServiceProvider
 
                     ipStatus = checkPingIpStatus(response);
 
-                    if (_dao.enterReMonitorData(ip, deviceType, response, ipStatus, timestamp.toString()))
+                    if (dao.enterMonitorTableData(id, response, ipStatus))
                     {
-                        packet = getReceivedPacket(response);
-
-                        memory = CommonConstantUI.STRING_ZERO;
-
-                        if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
-                        {
-                            _logger.debug("successfully data re-inserted into tb_monitor, tb_discovery & tb_dataDump table!");
-                        }
-                        else
-                        {
-                            _logger.debug("successfully data re-inserted into tb_discovery table!");
-                        }
+                        _logger.debug("successfully data inserted into tb_monitor table!");
                     }
-
+                    else
+                    {
+                        _logger.warn("still not inserted into tb_discover and tb_result table!");
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -548,7 +165,7 @@ public class ServiceProvider
 
             if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
             {
-                Timestamp timestamp;
+                String uName;
 
                 SSHConnectionUtil sshConnectionUtil = null;
 
@@ -560,61 +177,52 @@ public class ServiceProvider
                     {
                         uName = sshConnectionUtil.executeCommand(CommonConstantUI.U_NAME_COMMAND, true);
 
-                        uName_M = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_M_COMMAND, true);
+                        if (uName.trim().equals(CommonConstantUI.LINUX_DEVICE))
+                        {
+                            String uName_M = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_M_COMMAND, true);
 
-                        uName_R = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_R_COMMAND, true);
+                            String uName_R = sshConnectionUtil.executeCommand(CommonConstantUI.NAME_R_COMMAND, true);
 
-                        hostName = sshConnectionUtil.executeCommand(CommonConstantUI.HOSTNAME_COMMAND, true);
+                            String hostName = sshConnectionUtil.executeCommand(CommonConstantUI.HOSTNAME_COMMAND, true);
 
-                        uName_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_U_NAME_COMMAND, true);
+                            String uName_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_U_NAME_COMMAND, true);
 
-                        free_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_FREE_COMMAND, true);
+                            String free_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_FREE_COMMAND, true);
 
-                        df_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_DISK_COMMAND, true);
+                            String df_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_DISK_COMMAND, true);
 
-                        ioStat_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_CPU_COMMAND, true);
+                            String ioStat_Output = sshConnectionUtil.executeCommand(CommonConstantUI.LINUX_CPU_COMMAND, true);
 
-                        ipStatus = CommonConstantUI.DEVICE_UP;
+                            String ipStatus = CommonConstantUI.DEVICE_UP;
 
-                        timestamp = new Timestamp(System.currentTimeMillis());
+                            String specificData = getSpecificData(uName, uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
 
-                        specificData = getSpecificData(uName, uName_M, uName_R, hostName, uName_Output, free_Output, df_Output, ioStat_Output);
-
-                        _logger.info("Command output : " + specificData);
+                            _logger.info("Command output : " + specificData);
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     else
                     {
                         _logger.warn("ssh object is null!");
-
-                        ipStatus = CommonConstantUI.DEVICE_DOWN;
-
-                        specificData = CommonConstantUI.STRING_NULL;
-
-                        timestamp = new Timestamp(System.currentTimeMillis());
-
                     }
 
-                    if (_dao.enterReMonitorData(ip, deviceType, specificData, ipStatus, timestamp.toString()))
+                    if (sshConnectionUtil != null)
                     {
-                        packet = CommonConstantUI.STRING_ZERO;
-
-                        if (specificData != null && !specificData.equals(CommonConstantUI.STRING_NULL))
+                        if (dao.enterMonitorTableData(id, response, ipStatus))
                         {
-                            memory = getFreeMemoryPercent(specificData);
-                        }
-
-                        if (_dao.enterDataDump(id, ip, packet, memory, deviceType, timestamp.toString(), ipStatus))
-                        {
-                            _logger.debug("successfully data re-inserted into tb_monitor, tb_discover & tb_dataDump table!");
+                            _logger.debug("successfully data inserted into tb_monitor table!");
                         }
                         else
                         {
-                            _logger.debug("successfully data re-inserted into tb_discovery table!");
+                            _logger.warn("still not inserted into tb_discover and tb_result table!");
                         }
                     }
                     else
                     {
-                        _logger.warn("still not inserted data into tb_monitor table!");
+                        return false;
                     }
 
                 }
@@ -642,7 +250,6 @@ public class ServiceProvider
 
                 return status;
             }
-
         }
         catch (Exception exception)
         {
@@ -652,7 +259,111 @@ public class ServiceProvider
         }
 
         return status;
+    }
 
+    public boolean addDevice(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
+    {
+        boolean status = true;
+
+        String uName;
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        SSHConnectionUtil sshConnectionUtil;
+
+        try
+        {
+            if (checkIp(ip, deviceType))
+            {
+                if (deviceType.equals(CommonConstantUI.STRING_ONE) || deviceType.equals(CommonConstantUI.LINUX_DEVICE))
+                {
+                    sshConnectionUtil = SSHConnectionUtil.getSSHObject(ip, CommonConstantUI.SSH_PORT, discoveryUsername, discoveryPassword, CommonConstantUI.SSH_TIMEOUT);
+
+                    if (sshConnectionUtil != null)
+                    {
+                        uName = sshConnectionUtil.executeCommand(CommonConstantUI.U_NAME_COMMAND, true);
+
+                        if (uName.trim().equals(CommonConstantUI.LINUX_DEVICE))
+                        {
+                            insertData(name, ip, discoveryUsername, discoveryPassword, deviceType, timestamp);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        _logger.warn("ssh object is null!");
+
+                        return false;
+                    }
+                }
+                else if (deviceType.equals(CommonConstantUI.STRING_ZERO) || deviceType.equals(CommonConstantUI.PING_DEVICE))
+                {
+                    insertData(name, ip, discoveryUsername, discoveryPassword, deviceType, timestamp);
+                }
+            }
+
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception exception)
+        {
+            status = false;
+        }
+
+        return status;
+    }
+
+    private boolean checkIp(String ip, String deviceType)
+    {
+        boolean status = true;
+
+        DAO dao = new DAO();
+
+        try
+        {
+            if (deviceType.equals(CommonConstantUI.STRING_ZERO))
+            {
+                deviceType = CommonConstantUI.PING_DEVICE;
+            }
+            if (deviceType.equals(CommonConstantUI.STRING_ONE))
+            {
+                deviceType = CommonConstantUI.LINUX_DEVICE;
+            }
+
+            status = dao.getDiscoverTB(ip, deviceType);
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("something went wrong on checking existing ip!");
+        }
+
+        return status;
+    }
+
+    private void insertData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, Timestamp timestamp)
+    {
+        DAO dao = new DAO();
+
+        try
+        {
+            if (dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, timestamp.toString()))
+            {
+               _logger.debug("successfully data inserted into tb_discovery table!");
+            }
+            else
+            {
+                _logger.warn("still not inserted into tb_discover table!");
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("data not inserted properly!");
+        }
     }
 
     private String getSpecificData(String uName, String uName_M, String uName_R, String hostName, String uName_output, String free_output, String df_Output, String ioStat_Output)
@@ -1294,6 +1005,51 @@ public class ServiceProvider
         }
 
         return linuxResponse;
+    }
+
+    public List<List<String>> getFormData(List<HashMap<String, Object>> commonDataList)
+    {
+        List<String> list;
+
+        List<List<String>> commonList = new ArrayList<>();
+
+        try
+        {
+            for (HashMap<String, Object> map : commonDataList)
+            {
+                list = new ArrayList<>();
+
+                list.add(map.get("Id").toString());
+
+                list.add((String) map.get("Name"));
+
+                list.add((String) map.get("IP"));
+
+                list.add((String) map.get("Username"));
+
+                if (map.get("DeviceType") != null)
+                {
+                    list.add((String) map.get("DeviceType"));
+                }
+                else
+                {
+                    list.add((String) map.get("Device"));
+                }
+
+                if (map.get("Status") != null)
+                {
+                    list.add((String) map.get("Status"));
+                }
+
+                commonList.add(list);
+            }
+        }
+        catch (Exception exception)
+        {
+
+        }
+
+        return commonList;
     }
 
 }

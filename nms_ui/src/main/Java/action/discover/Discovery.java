@@ -2,7 +2,7 @@ package action.discover;
 
 import bean.DiscoverBean;
 
-import dao.UserDAO;
+import dao.DAO;
 
 import action.helper.ServiceProvider;
 
@@ -98,69 +98,21 @@ public class Discovery extends ActionSupport
         this.beanList = beanList;
     }
 
-    private ServiceProvider serviceProvider = new ServiceProvider();
-
-    private static final UserDAO _dao = new UserDAO();
-
     private static final Logger _logger = new Logger();
-
-    public String getDiscoverData()
-    {
-        List<List<String>> discoverList;
-
-        try
-        {
-            beanList = new ArrayList<>();
-
-            discoverList = _dao.getDiscoverData();
-
-            if (discoverList != null)
-            {
-                for (List<String> subList : discoverList)
-                {
-                    bean = new DiscoverBean();
-
-                    bean.setId(Integer.parseInt(subList.get(0)));
-
-                    bean.setName(subList.get(1));
-
-                    bean.setIP(subList.get(2));
-
-                    bean.setDevice(subList.get(5));
-
-                    beanList.add(bean);
-                }
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.warn("getting data error from DiscoverBean!");
-        }
-
-        return "success";
-    }
 
     public String executeDiscovery()
     {
-        serviceProvider.setName(name);
-
-        serviceProvider.setIp(ip);
-
-        serviceProvider.setDiscoveryUsername(discoveryUsername);
-
-        serviceProvider.setDiscoveryPassword(discoveryPassword);
-
-        serviceProvider.setDeviceType(deviceType);
-
         beanList = new ArrayList<>();
 
         bean = new DiscoverBean();
 
+        ServiceProvider serviceProvider = new ServiceProvider();
+
         try
         {
-            if (serviceProvider.addDevice())
+            if (serviceProvider.addDevice(name, ip, discoveryUsername, discoveryPassword, deviceType))
             {
-                bean.setFlag(true);
+                bean.setFlag(Boolean.TRUE);
 
                 beanList.add(bean);
 
@@ -168,7 +120,7 @@ public class Discovery extends ActionSupport
             }
             else
             {
-                bean.setFlag(false);
+                bean.setFlag(Boolean.FALSE);
 
                 beanList.add(bean);
 
@@ -186,43 +138,141 @@ public class Discovery extends ActionSupport
 
     public String deleteDiscoverData()
     {
-        serviceProvider.setIp(ip);
+        DAO dao = new DAO();
 
-        if (_dao.deleteDiscoverTableData(id))
-        {
-            return "success";
-        }
-        else
-        {
-            return "error";
-        }
-    }
-
-    public String executeReDiscovery()
-    {
         try
         {
-            serviceProvider.setId(id);
-
-            serviceProvider.setIp(ip);
-
-            serviceProvider.setDeviceType(deviceType);
-
-            if (serviceProvider.addDevice())
+            if (dao.deleteDiscoverTableData(id))
             {
                 return "success";
             }
-            else
-            {
-                return  "error";
-            }
-
         }
         catch (Exception exception)
         {
-            _logger.error("re-discovery failed!", exception);
+            _logger.error("discovery device not deleted...", exception);
         }
 
-        return null;
+        return "error";
     }
+
+    public String getDiscoverData()
+    {
+        List<List<String>> discoverList;
+
+        DAO dao = new DAO();
+
+        try
+        {
+            beanList = new ArrayList<>();
+
+            discoverList = dao.getDiscoverData();
+
+            if (discoverList != null)
+            {
+                for (List<String> subList : discoverList)
+                {
+                    bean = new DiscoverBean();
+
+                    setBeanData(subList, bean);
+
+                    beanList.add(bean);
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("getting data error from DiscoverBean!");
+        }
+
+        return "success";
+    }
+
+    public String editDevice()
+    {
+        List<String> editDataList;
+
+        DAO dao = new DAO();
+
+        try
+        {
+            beanList = new ArrayList<>();
+
+            editDataList = dao.getEditFieldsData(ip, deviceType);
+
+            if (editDataList != null)
+            {
+                bean = new DiscoverBean();
+
+                bean.setId(Integer.parseInt(editDataList.get(0)));
+
+                bean.setName(editDataList.get(1));
+
+                bean.setIP(editDataList.get(2));
+
+                bean.setUsername(editDataList.get(3));
+
+                bean.setPassword(editDataList.get(4));
+
+                bean.setDevice(editDataList.get(5));
+
+                beanList.add(bean);
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.error("edited data not set into the beanList...", exception);
+        }
+
+        return "success";
+    }
+
+    public String updateDeviceData()
+    {
+        beanList = new ArrayList<>();
+
+        bean = new DiscoverBean();
+
+        DAO dao = new DAO();
+
+        try
+        {
+            if (dao.insertUpdatedDeviceData(id, ip, deviceType, name, discoveryUsername, discoveryPassword))
+            {
+                bean.setFlag(Boolean.TRUE);
+
+                beanList.add(bean);
+
+                return "success";
+            }
+
+            bean.setFlag(Boolean.FALSE);
+
+            beanList.add(bean);
+        }
+        catch (Exception exception)
+        {
+            _logger.error("device not updated!", exception);
+        }
+
+        return "success";
+    }
+
+    private void setBeanData(List<String> beanDataList, DiscoverBean bean)
+    {
+        try
+        {
+            bean.setId(Integer.parseInt(beanDataList.get(0)));
+
+            bean.setName(beanDataList.get(1));
+
+            bean.setIP(beanDataList.get(2));
+
+            bean.setDevice(beanDataList.get(4));
+        }
+        catch (Exception exception)
+        {
+            _logger.warn("bean list not set...");
+        }
+    }
+
 }

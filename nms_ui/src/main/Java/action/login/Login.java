@@ -1,6 +1,6 @@
 package action.login;
 
-import dao.UserDAO;
+import dao.DAO;
 
 import org.apache.struts2.dispatcher.SessionMap;
 
@@ -38,15 +38,15 @@ public class Login extends ActionSupport implements SessionAware
 
     private static final Logger _logger = new Logger();
 
-    private static final UserDAO _dao = new UserDAO();
-
     public String executeLogin()
     {
+        DAO dao = new DAO();
+
         try
         {
             if (!username.equals("") && !password.equals(""))
             {
-                if(_dao.checkCredential(username, password))
+                if(dao.checkCredential(username, password))
                 {
                     sessionMap.put("login", true);
 

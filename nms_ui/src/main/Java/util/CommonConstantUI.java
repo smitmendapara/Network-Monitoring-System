@@ -20,8 +20,6 @@ public class CommonConstantUI
 
     public static final String DATABASE_PASSWORD = "motadata";
 
-    public static final double DOUBLE_ZERO = 0.0;
-
     public static final int SSH_PORT = 22;
 
     public static final int SSH_TIMEOUT = 30;
@@ -72,19 +70,9 @@ public class CommonConstantUI
 
     public static final String DEVICE_DOWN = "Down";
 
-    public static final String DB_SELECT = "SELECT";
-
-    public static final String DB_INSERT = "INSERT";
-
-    public static final String DB_UPDATE = "UPDATE";
-
-    public static final String DB_DELETE = "DELETE";
-
     public static final String DB_TB_DISCOVER = "TB_DISCOVER";
 
     public static final String DB_TB_MONITOR = "TB_MONITOR";
-
-    public static final String DB_TB_RESULT = "TB_RESULT";
 
     public static final String DB_TB_DATADUMP = "TB_DATADUMP";
 

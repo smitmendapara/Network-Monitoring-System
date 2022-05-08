@@ -6,9 +6,28 @@
   To change this template use File | Settings | File Templates.
 --%>
 
-<jsp:include page="index.jsp"></jsp:include>
+<html>
+    <head>
 
-<hr/>
+        <title>Home Page</title>
+
+        <%-- external css file  --%>
+        <link rel="stylesheet" href="css/style.css">
+
+        <%-- bootstrap icon --%>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+        <%-- jQuery --%>
+        <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+
+        <%-- jQuery library --%>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+    </head>
+
+</html>
 
     <%@ taglib uri="/struts-tags" prefix="s" %>
 
@@ -22,7 +41,7 @@
 
             <div class="demo">
 
-                <h3>Login Motadata</h3>
+                <h3 style="margin-top: 200px">Login Motadata</h3>
 
                 <div class="demo">
 

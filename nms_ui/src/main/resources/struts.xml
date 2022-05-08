@@ -22,21 +22,13 @@
 
         </result-types>
 
-        <!-- LOGIN ACTION -->
-
-        <action name="login">
-
-            <result>login.jsp</result>
-
-        </action>
-
         <!-- verify user login credentials -->
 
         <action name="loginProcess" class="action.login.Login" method="executeLogin">
 
-            <result name="success">login_success.jsp</result>
+            <result name="success">WEB-INF/index.jsp</result>
 
-            <result name="error">login_error.jsp</result>
+            <result name="error">login.jsp</result>
 
         </action>
 
@@ -44,25 +36,7 @@
 
         <action name="logoutProcess" class="action.logout.Logout" method="executeLogout">
 
-            <result name="success">logout_success.jsp</result>
-
-        </action>
-
-        <!-- SIGN UP ACTION -->
-
-        <action name="signUp">
-
-            <result>signUp.jsp</result>
-
-        </action>
-
-        <!-- enter data into user table -->
-
-        <action name="signUpProcess" class="action.signup.SignUp" method="executeSignUp">
-
-            <result name="success">signUp_success.jsp</result>
-
-            <result name="error">signUp_error.jsp</result>
+            <result name="success">login.jsp</result>
 
         </action>
 
@@ -70,7 +44,7 @@
 
         <action name="discover">
 
-            <result>discovery.jsp</result>
+            <result>WEB-INF/index.jsp</result>
 
         </action>
 
@@ -78,7 +52,7 @@
 
         <action name="discoveryProcess" class="action.discover.Discovery" method="executeDiscovery">
 
-            <result name="success" type="json">discovery.jsp</result>
+            <result name="success" type="json">WEB-INF/index.jsp</result>
 
             <result name="error" type="json">discovery_error.jsp</result>
 
@@ -90,21 +64,21 @@
 
         </action>
 
-        <action name="reDiscoveryProcess" class="action.discover.Discovery" method="executeReDiscovery">
+        <action name="fetchDeviceData" class="action.discover.Discovery" method="editDevice">
 
-            <result name="success">discovery.jsp</result>
-
-            <result name="error">discovery_error.jsp</result>
+            <result name="success" type="json">WEB-INF/index.jsp</result>
 
         </action>
 
-        <!-- discover delete action -->
+        <action name="updateDevice" class="action.discover.Discovery" method="updateDeviceData">
 
-        <action name="discoveryDelete" class="action.discover.Discovery" method="deleteDiscoverData">
+            <result name="success" type="json">WEB-INF/index.jsp</result>
 
-            <result name="success">discovery.jsp</result>
+        </action>
 
-            <result name="error">discovery_error.jsp</result>
+        <action name="discoverDelete" class="action.discover.Discovery" method="deleteDiscoverData">
+
+            <result name="success">WEB-INF/index.jsp</result>
 
         </action>
 
@@ -112,17 +86,11 @@
 
         <action name="monitor">
 
-            <result>monitor.jsp</result>
+            <result>WEB-INF/index.jsp</result>
 
         </action>
 
         <!-- monitor button action -->
-
-        <action name="monitorTable" class="action.monitor.Monitor" method="getMonitorData">
-
-            <result name="success" type="json" />
-
-        </action>
 
         <action name="monitorForm" class="action.monitor.Monitor" method="getMonitorForm">
 
@@ -132,51 +100,27 @@
 
         <action name="monitorProcess" class="action.monitor.Monitor" method="provisionMonitor">
 
-            <result name="success">discovery.jsp</result>
-
-            <result name="error" type="json" />
+            <result name="success" type="json" />
 
         </action>
 
-        <action name="monitorPolling" class="action.monitor.Monitor" method="getPolling">
-
-            <result name="success">dashboard.jsp</result>
-
-            <result name="error">linux_dashboard.jsp</result>
-
-        </action>
-
-        <!-- DASHBOARD ACTION -->
-
-        <action name="dashboard">
-
-            <result name="success">dashboard.jsp</result>
-
-            <result name="error">linux_dashboard.jsp</result>
-
-        </action>
-
-        <action name="dashboardProcess" class="action.dashboard.Dashboard" method="executeDashboard">
-
-            <result name="success">dashboard.jsp</result>
-
-            <result name="error">linux_dashboard.jsp</result>
-
-        </action>
-
-        <action name="dashboardTable" class="action.dashboard.Dashboard" method="getDashboardData">
+        <action name="monitorTable" class="action.monitor.Monitor" method="getMonitorData">
 
             <result name="success" type="json" />
 
         </action>
 
-        <!-- PROFILE ACTION -->
+        <action name="monitorDelete" class="action.monitor.Monitor" method="deleteMonitorData">
 
-        <action name="profile" class="action.profile.Profile" method="executeProfile">
+            <result name="success">WEB-INF/index.jsp</result>
 
-            <result name="success">profile_success.jsp</result>
+        </action>
 
-            <result name="error">profile_error.jsp</result>
+        <!-- DASHBOARD ACTION -->
+
+        <action name="dashboardTable" class="action.dashboard.Dashboard" method="getDashboardData">
+
+            <result name="success" type="json" />
 
         </action>
 

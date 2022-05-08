@@ -8,7 +8,6 @@ import com.jcraft.jsch.Session;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import java.util.Properties;
