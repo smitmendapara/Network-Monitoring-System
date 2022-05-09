@@ -1,6 +1,6 @@
 package dao;
 
-import action.helper.ServiceProvider;
+import service.ServiceProvider;
 import util.CommonConstantUI;
 import util.Logger;
 
@@ -13,39 +13,19 @@ public class DAO
 {
     private Connection connection = null;
 
+    private ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
+
     private static final Logger _logger = new Logger();
-
-    private Connection getConnection()
-    {
-        String DATABASE_URL = CommonConstantUI.DATABASE_URL;
-
-        String DATABASE_USERNAME = CommonConstantUI.DATABASE_USERNAME;
-
-        String DATABASE_PASSWORD = CommonConstantUI.DATABASE_PASSWORD;
-
-        try
-        {
-            Class.forName("org.h2.Driver");
-
-            connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD);
-
-            return connection;
-        }
-        catch (Exception exception)
-        {
-            _logger.error("not connection established!", exception);
-        }
-
-        return connection;
-    }
 
     public boolean checkCredential(String username, String password)
     {
         boolean status = false;
 
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
+
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> credentialsList = executeSELECT(connection, CommonConstantUI.DB_TB_USER, "*", "WHERE USER = '" + username + "' AND PASSWORD = '" + password + "'");
 
@@ -70,20 +50,11 @@ public class DAO
 
         try
         {
-            if (deviceType.equals("0"))
-            {
-                deviceType = CommonConstantUI.PING_DEVICE;
-            }
-            else
-            {
-                deviceType = CommonConstantUI.LINUX_DEVICE;
-            }
-
             data.add("'" + name + "', '" + ip + "', '" + discoveryUsername + "', '" + discoveryPassword + "', '" + deviceType + "', '" + timestamp.substring(0, 16) + "'");
 
             data.add("(NAME, IP, USERNAME, PASSWORD, DEVICE, CURRENTTIME)");
 
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             int affectedRows = executeINSERT(connection, CommonConstantUI.DB_TB_DISCOVER, data.get(0), data.get(1));
 
@@ -106,9 +77,11 @@ public class DAO
 
         ArrayList<String> data = new ArrayList<>();
 
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
+
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> discoverDataList = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "WHERE ID = " + id);
 
@@ -117,7 +90,7 @@ public class DAO
                 data.add(id + ", '" + map.get("Name") + "', '" + map.get("IP") + "', '" + map.get("Username") + "', '" + map.get("Password") + "', '" + map.get("Device") + "', '" + response + "', '" + ipStatus + "', '" + map.get("CurrentTime") + "'");
             }
 
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             int affectedRows = executeINSERT(connection, CommonConstantUI.DB_TB_MONITOR, data.get(0), "");
 
@@ -138,9 +111,11 @@ public class DAO
     {
         boolean status = false;
 
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
+
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> monitorIpList = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "*", "WHERE IP = '" + ip + "' AND DEVICETYPE = '" + deviceType + "'");
 
@@ -160,9 +135,11 @@ public class DAO
 
     public List<HashMap<String, Object>> getMonitorDetails(int id)
     {
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
+
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             return executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "WHERE ID = " + id);
         }
@@ -178,7 +155,7 @@ public class DAO
     {
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             return executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "*", "WHERE IP = '" + ip + "' AND DEVICETYPE = '" + deviceType + "'");
         }
@@ -200,7 +177,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<String> currentTime = serviceProvider.getCurrentTime();
 
@@ -241,19 +218,19 @@ public class DAO
         return statusPercent;
     }
 
-    public String getUpdatedPacket(int id, String ip, String time, String deviceType)
+    public int getUpdatedPacket(int id, String ip, String time, String deviceType)
     {
-        String packet = null;
+        int packet = 0;
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> updatedPacket = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "*", "WHERE ID = " + id + " AND IP = '" + ip + "' AND DEVICE = '" + deviceType + "' AND CURRENTTIME = '" + time + "'");
 
             if (updatedPacket != null)
             {
-                packet = (String) updatedPacket.get(0).get("Packet");
+                packet = Integer.parseInt(updatedPacket.get(0).get("Packet").toString());
             }
         }
         catch (Exception exception)
@@ -264,19 +241,19 @@ public class DAO
         return packet;
     }
 
-    public Double getUpdatedMemory(int id, String ip, String time, String deviceType)
+    public float getUpdatedMemory(int id, String ip, String time, String deviceType)
     {
-        Double memoryPercent = null;
+        float memoryPercent = 0;
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> memoryMap = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "*", "WHERE ID = " + id + " AND IP = '" + ip + "' AND DEVICE = '" + deviceType + "' AND CURRENTTIME = '" + time + "'");
 
             if (memoryMap != null)
             {
-                memoryPercent = (Double) memoryMap.get(0).get("Memory");
+                memoryPercent = Float.parseFloat(memoryMap.get(0).get("Memory").toString());
             }
         }
         catch (Exception exception)
@@ -293,7 +270,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> editMap = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "WHERE IP = '" + ip + "' AND DEVICE = '" + deviceType + "'");
 
@@ -301,15 +278,15 @@ public class DAO
             {
                 editData.add(editMap.get(0).get("Id").toString());
 
-                editData.add((String) editMap.get(0).get("Name"));
+                editData.add(editMap.get(0).get("Name").toString());
 
-                editData.add((String) editMap.get(0).get("IP"));
+                editData.add(editMap.get(0).get("IP").toString());
 
-                editData.add((String) editMap.get(0).get("Username"));
+                editData.add( editMap.get(0).get("Username").toString());
 
-                editData.add((String) editMap.get(0).get("Password"));
+                editData.add(editMap.get(0).get("Password").toString());
 
-                editData.add((String) editMap.get(0).get("Device"));
+                editData.add(editMap.get(0).get("Device").toString());
             }
         }
         catch (Exception exception)
@@ -325,7 +302,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> updateDataExist = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "WHERE ID != " + id + " AND IP = '" + ip + "' AND DEVICE = '" + deviceType + "'");
 
@@ -334,7 +311,7 @@ public class DAO
                 return Boolean.FALSE;
             }
 
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             String currentTime = new Timestamp(System.currentTimeMillis()).toString().substring(0, 16);
 
@@ -353,13 +330,36 @@ public class DAO
         return status;
     }
 
+    public boolean updateDiscoverData(String ip, String deviceType, String timestamp)
+    {
+        boolean status = false;
+
+        try
+        {
+            connection = connectionPoolIml.getConnection();
+
+            int affected = executeUPDATE(connection, CommonConstantUI.DB_TB_DISCOVER, "WHERE IP = '" + ip + "' AND DEVICE = '" + deviceType + "'", "CURRENTTIME = '" + timestamp.substring(0, 16) + "'");
+
+            if (affected != 0)
+            {
+                status = Boolean.TRUE;
+            }
+        }
+        catch (Exception exception)
+        {
+
+        }
+
+        return status;
+    }
+
     public boolean getDiscoverTB(String ip, String deviceType)
     {
         boolean status = false;
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> discoverList = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "WHERE IP = '" + ip + "' AND DEVICE = '" + deviceType + "'");
 
@@ -385,7 +385,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> discoverDataList = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "");
 
@@ -407,7 +407,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> monitorDataList = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "WHERE ID = " + id);
 
@@ -430,7 +430,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             List<HashMap<String, Object>> monitorDataList = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "*", "");
 
@@ -450,7 +450,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             int affected = executeDELETE(connection, CommonConstantUI.DB_TB_MONITOR, "WHERE ID = " + id);
 
@@ -473,7 +473,7 @@ public class DAO
 
         try
         {
-            connection = getConnection();
+            connection = connectionPoolIml.getConnection();
 
             int affected = executeDELETE(connection, CommonConstantUI.DB_TB_DISCOVER, "WHERE ID = " + id);
 
@@ -493,6 +493,8 @@ public class DAO
     private int executeDELETE(Connection connection, String tableName, String condition)
     {
         int affectedRow = 0;
+
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
 
         try
         {
@@ -518,7 +520,7 @@ public class DAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    connection.close();
+                    connectionPoolIml.releaseConnection(connection);
                 }
             }
             catch (Exception ignored)
@@ -533,6 +535,8 @@ public class DAO
     private int executeUPDATE(Connection connection, String tableName, String condition, String updateColumns)
     {
         int affectedRow = 0;
+
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
 
         try
         {
@@ -558,7 +562,7 @@ public class DAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    connection.close();
+                    connectionPoolIml.releaseConnection(connection);
                 }
             }
             catch (Exception ignored)
@@ -573,6 +577,8 @@ public class DAO
     private int executeINSERT(Connection connection, String tableName, String tableRow, String columns)
     {
         int affectedRow = 0;
+
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
 
         try
         {
@@ -598,7 +604,7 @@ public class DAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    connection.close();
+                    connectionPoolIml.releaseConnection(connection);
                 }
             }
             catch (Exception ignored)
@@ -617,6 +623,8 @@ public class DAO
         HashMap<String, Object> tableRow;
 
         ResultSetMetaData metaData;
+
+        ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
 
         try
         {
@@ -665,7 +673,7 @@ public class DAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    connection.close();
+                    connectionPoolIml.releaseConnection(connection);
                 }
 
             }

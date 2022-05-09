@@ -6,11 +6,9 @@ import org.apache.struts2.interceptor.SessionAware;
 
 import util.Logger;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import java.util.Map;
 
-public class Logout extends ActionSupport implements SessionAware
+public class Logout implements SessionAware
 {
     private SessionMap<String,Object> sessionMap;
 

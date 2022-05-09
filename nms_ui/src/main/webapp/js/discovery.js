@@ -34,26 +34,31 @@ function verifyDiscovery(request)
 
     let data = request.data;
 
-    $.each(data.beanList, function () {
-
+    $.each(data.beanList, function ()
+    {
         flag = this.flag;
 
     });
 
     if (flag)
     {
-        // alert("device successfully discovered!");
-        $('.toast').toast('show');
+        toastr.success('IP/Host: ' + data.ip + ' Successfully Discovered!');
     }
     else
     {
-        alert("device already added!");
+        toastr.warning('IP/Host: ' + data.ip + ' not Discovered!');
     }
-
-    refreshPage();
 }
 
-function discoverData()
+// add device
+function addDevice()
+{
+    setTimeout(refreshPage, 1000);
+
+    toastr.success("Device Successfully Added!");
+}
+
+function addData()
 {
     let name = $("#name").val();
 
@@ -65,7 +70,12 @@ function discoverData()
 
     let deviceType = $("#device").val();
 
-    getGetCall({ url: "discoveryProcess", data: { name: name, ip: ip, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword, deviceType: deviceType }, callback: verifyDiscovery });
+    executePOSTRequest({ url: "discoveryProcess", data: { name: name, ip: ip, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword, deviceType: deviceType }, callback: addDevice });
+}
+
+function discoverData(id, ip, deviceType)
+{
+    executeGETRequest({ url: "discoverData", data: { id: id, ip: ip, deviceType: deviceType }, callback: verifyDiscovery });
 }
 
 // fetch discovery data from database
@@ -120,9 +130,7 @@ function discoveryTable(request)
 
         let array = parameter.split(",");
 
-        reDiscoverData(array[0], array[1].trim(), array[2].trim());
-
-        alert("your ip is successfully rediscovered!");
+        discoverData(array[0], array[1].trim(), array[2].trim());
 
     });
 
@@ -156,7 +164,7 @@ function getDiscoveryDetails()
 {
     let provisionForm = "provisionForm";
 
-    getGetCall({url: "discoveryTable", callback: discoveryTable});
+    executeGETRequest({url: "discoveryTable", callback: discoveryTable} );
 }
 
 // toggle discovery table
@@ -206,7 +214,7 @@ function fetchDeviceData(request)
 
 function editIPAddress(id, ip, deviceType)
 {
-    getGetCall({ url: "fetchDeviceData", data: { id: id, ip: ip, deviceType: deviceType }, callback: fetchDeviceData });
+    executeGETRequest({ url: "fetchDeviceData", data: { id: id, ip: ip, deviceType: deviceType }, callback: fetchDeviceData });
 }
 
 function updateDevice(request)
@@ -215,17 +223,17 @@ function updateDevice(request)
     {
         $('#myModal').modal('hide');
 
+        setTimeout(refreshPage, 1500);
+
         if (request.data.beanList[0].flag)
         {
-            alert("successfully updated!");
+            toastr.success("Device Successfully Updated!");
         }
         else
         {
-            alert("successfully not updated!");
+            toastr.warning("Device Already Exist!");
         }
     }
-
-    refreshPage();
 }
 
 function updateDiscoveryData()
@@ -242,7 +250,7 @@ function updateDiscoveryData()
 
     let discoveryPassword = $('#editPassword').val();
 
-    getGetCall({ url: "updateDevice", data: { id: id, name: name, ip: ip, deviceType: deviceType, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword }, callback: updateDevice })
+    executeGETRequest({ url: "updateDevice", data: { id: id, name: name, ip: ip, deviceType: deviceType, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword }, callback: updateDevice })
 }
 
 // delete discovery table row
@@ -251,7 +259,16 @@ function deletedDiscoveryRow(result)
     document.getElementById(result.data.id).remove();
 }
 
+function deleteDiscoveryData(id)
+{
+    executePOSTRequest({ url: "discoverDelete", data: { id: id }, callback: deletedDiscoveryRow });
+
+    $('#deleteModal').modal('hide');
+}
+
 function executeDeleteDiscoveryRow(id)
 {
-    getPostCall({ url: "discoverDelete", data: { id: id }, callback: deletedDiscoveryRow });
+    $('#deleteModal').modal();
+
+    $('#deleteButton').html('<a class="btn btn-danger" onclick="deleteDiscoveryData('+id+')">Delete</a>');
 }

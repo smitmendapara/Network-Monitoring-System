@@ -8,11 +8,9 @@ import org.apache.struts2.interceptor.SessionAware;
 
 import util.Logger;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import java.util.Map;
 
-public class Login extends ActionSupport implements SessionAware
+public class Login implements SessionAware
 {
     private String username;
 

@@ -39,7 +39,7 @@ function showForm(id)
 
     $('#' + monitorFormId).css({display: "block"});
 
-    getGetCall({ url: "monitorForm", data: { id: id }, callback: getMonitorForm });
+    executeGETRequest({ url: "monitorForm", data: { id: id }, callback: getMonitorForm });
 }
 
 // provision ip
@@ -57,11 +57,11 @@ function provisionIP(request)
 
     if (flag)
     {
-        alert("device successfully monitored!");
+        toastr.success("Device Successfully Monitored!");
     }
     else
     {
-        alert("device already added or ip is down!");
+        toastr.warning("Device Already Added!");
     }
 
     $('#' + monitorFormId).css({display: "none"});
@@ -74,11 +74,11 @@ function monitorData(id)
     {
         let id = $("input[name=key]").val();
 
-        getGetCall({ url: "monitorProcess", data: { id: id }, callback: provisionIP });
+        executeGETRequest({ url: "monitorProcess", data: { id: id }, callback: provisionIP });
     }
     else
     {
-        alert("must be checked checkbox!");
+        toastr.warning("Checkbox must be Checked!");
     }
 }
 
@@ -146,7 +146,7 @@ function getMonitorTable(result)
 
 function getMonitorDetails()
 {
-    getGetCall({ url: "monitorTable", callback: getMonitorTable });
+    executeGETRequest({ url: "monitorTable", callback: getMonitorTable });
 }
 
 function deleteMonitorRow(request)
@@ -156,7 +156,16 @@ function deleteMonitorRow(request)
     refreshPage();
 }
 
+function deleteMonitorData(id)
+{
+    executePOSTRequest({ url: "monitorDelete", data: { id: id }, callback: deleteMonitorRow });
+
+    $('#deleteModal').modal('hide');
+}
+
 function executeDeleteMonitorRow(id)
 {
-    getPostCall({ url: "monitorDelete", data: { id: id }, callback: deleteMonitorRow });
+    $('#deleteModal').modal();
+
+    $('#deleteButton').html('<a class="btn btn-danger" onclick="deleteMonitorData('+id+')">Delete</a>');
 }

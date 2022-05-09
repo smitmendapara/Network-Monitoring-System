@@ -9,7 +9,7 @@ function refreshPage()
 }
 
 // post request
-function getPostCall(request)
+function executePOSTRequest(request)
 {
     $.ajax({
 
@@ -48,7 +48,7 @@ function getPostCall(request)
 }
 
 // get request
-function getGetCall(request)
+function executeGETRequest(request)
 {
     $.ajax({
 

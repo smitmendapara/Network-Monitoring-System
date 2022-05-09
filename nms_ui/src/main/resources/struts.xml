@@ -50,12 +50,15 @@
 
         <!-- enter data into discovery table -->
 
-        <action name="discoveryProcess" class="action.discover.Discovery" method="executeDiscovery">
+        <action name="discoveryProcess" class="action.discover.Discovery" method="insertDevice">
 
             <result name="success" type="json">WEB-INF/index.jsp</result>
 
-            <result name="error" type="json">discovery_error.jsp</result>
+        </action>
 
+        <action name="discoverData" class="action.discover.Discovery" method="executeDiscovery">
+
+            <result name="success" type="json"/>
         </action>
 
         <action name="discoveryTable" class="action.discover.Discovery" method="getDiscoverData">
@@ -119,6 +122,12 @@
         <!-- DASHBOARD ACTION -->
 
         <action name="dashboardTable" class="action.dashboard.Dashboard" method="getDashboardData">
+
+            <result name="success" type="json" />
+
+        </action>
+
+        <action name="homeDashboardData" class="action.dashboard.Dashboard" method="getHomeDashboardData">
 
             <result name="success" type="json" />
 

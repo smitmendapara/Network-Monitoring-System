@@ -4,17 +4,17 @@ import bean.DiscoverBean;
 
 import dao.DAO;
 
-import action.helper.ServiceProvider;
+import service.ServiceProvider;
 
+import util.CommonConstantUI;
 import util.Logger;
-
-import com.opensymphony.xwork2.ActionSupport;
 
 import java.util.ArrayList;
 
+import java.util.HashMap;
 import java.util.List;
 
-public class Discovery extends ActionSupport
+public class Discovery
 {
     private int id;
 
@@ -100,40 +100,56 @@ public class Discovery extends ActionSupport
 
     private static final Logger _logger = new Logger();
 
-    public String executeDiscovery()
+    public String insertDevice()
     {
-        beanList = new ArrayList<>();
-
-        bean = new DiscoverBean();
-
         ServiceProvider serviceProvider = new ServiceProvider();
 
         try
         {
-            if (serviceProvider.addDevice(name, ip, discoveryUsername, discoveryPassword, deviceType))
+            if (deviceType.equals("0"))
             {
-                bean.setFlag(Boolean.TRUE);
-
-                beanList.add(bean);
-
-                return "success";
+                deviceType = CommonConstantUI.PING_DEVICE;
             }
             else
             {
-                bean.setFlag(Boolean.FALSE);
-
-                beanList.add(bean);
-
-                return  "error";
+                deviceType = CommonConstantUI.LINUX_DEVICE;
             }
 
+
+            serviceProvider.addDevice(name, ip, discoveryUsername, discoveryPassword, deviceType);
+        }
+        catch (Exception exception)
+        {
+            _logger.error("device not inserted!", exception);
+        }
+
+        return "success";
+    }
+
+    public String executeDiscovery()
+    {
+        ServiceProvider serviceProvider = new ServiceProvider();
+
+        setMonitorData();
+
+        try
+        {
+            beanList = new ArrayList<>();
+
+            bean = new DiscoverBean();
+
+            bean.setFlag(serviceProvider.executeDeviceDiscovery(id, ip, discoveryUsername, discoveryPassword, deviceType));
+
+            bean.setIP(ip);
+
+            beanList.add(bean);
         }
         catch (Exception exception)
         {
             _logger.error("discovery failed!", exception);
         }
 
-        return null;
+        return "success";
     }
 
     public String deleteDiscoverData()
@@ -272,6 +288,31 @@ public class Discovery extends ActionSupport
         catch (Exception exception)
         {
             _logger.warn("bean list not set...");
+        }
+    }
+
+    private void setMonitorData()
+    {
+        DAO dao = new DAO();
+
+        try
+        {
+            List<HashMap<String, Object>> monitorDetailsList = dao.getMonitorDetails(id);
+
+            for (HashMap<String, Object> monitorDetails : monitorDetailsList)
+            {
+                ip = monitorDetails.get("IP").toString();
+
+                discoveryUsername = monitorDetails.get("Username").toString();
+
+                discoveryPassword = monitorDetails.get("Password").toString();
+
+                deviceType = monitorDetails.get("Device").toString();
+            }
+        }
+        catch (Exception exception)
+        {
+
         }
     }
 

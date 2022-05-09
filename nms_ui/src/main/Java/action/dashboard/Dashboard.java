@@ -1,6 +1,6 @@
 package action.dashboard;
 
-import action.helper.ServiceProvider;
+import service.ServiceProvider;
 
 import bean.DashboardBean;
 
@@ -10,14 +10,12 @@ import util.CommonConstantUI;
 
 import util.Logger;
 
-import com.opensymphony.xwork2.ActionSupport;
-
 import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class Dashboard extends ActionSupport
+public class Dashboard
 {
     private int id;
 
@@ -101,9 +99,9 @@ public class Dashboard extends ActionSupport
 
                 bean.setId(id);
 
-                bean.setName((String) dashboardData.get("Name"));
+                bean.setName(dashboardData.get("Name").toString());
 
-                bean.setIP((String) dashboardData.get("IP"));
+                bean.setIP(dashboardData.get("IP").toString());
 
                 if (dashboardData.get("Profile") == null)
                 {
@@ -113,33 +111,33 @@ public class Dashboard extends ActionSupport
                 }
                 else
                 {
-                    bean.setUsername((String) dashboardData.get("Profile"));
+                    bean.setUsername(dashboardData.get("Profile").toString());
                 }
 
-                bean.setDevice((String) dashboardData.get("DeviceType"));
+                bean.setDevice(dashboardData.get("DeviceType").toString());
 
                 if (dashboardData.get("DeviceType").equals(CommonConstantUI.LINUX_DEVICE) && dashboardData.get("Status").equals(CommonConstantUI.DEVICE_DOWN))
                 {
-                    String linuxResponse[] = serviceProvider.getLinuxData((String) dashboardData.get("Response"), (String) dashboardData.get("Status"));
+                    String linuxResponse[] = serviceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
 
                     bean.setResponse(linuxResponse);
                 }
                 else if (dashboardData.get("DeviceType").equals(CommonConstantUI.LINUX_DEVICE) && dashboardData.get("Status").equals(CommonConstantUI.DEVICE_UP))
                 {
-                    String linuxResponse[] = serviceProvider.getLinuxData((String) dashboardData.get("Response"), (String) dashboardData.get("Status"));
+                    String linuxResponse[] = serviceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
 
                     bean.setResponse(linuxResponse);
                 }
                 else
                 {
-                    String pingResponse[] = serviceProvider.getPingData((String) dashboardData.get("Response"));
+                    String pingResponse[] = serviceProvider.getPingData(dashboardData.get("Response").toString());
 
                     bean.setResponse(pingResponse);
                 }
 
-                bean.setStatus((String) dashboardData.get("Status"));
+                bean.setStatus(dashboardData.get("Status").toString());
 
-                List<Integer> statusPercent = dao.getStatusPercent((String) dashboardData.get("IP"), (String) dashboardData.get("DeviceType"));
+                List<Integer> statusPercent = dao.getStatusPercent(dashboardData.get("IP").toString(), dashboardData.get("DeviceType").toString());
 
                 int statusArray[] = new int[statusPercent.size()];
 
@@ -154,15 +152,15 @@ public class Dashboard extends ActionSupport
 
                 bean.setCurrentTime(dateTime);
 
-                String receivedPacket[] = new String[dateTime.length];
+                int receivedPacket[] = new int[dateTime.length];
 
-                String memoryStorage[] = new String[dateTime.length];
+                float memoryStorage[] = new float[dateTime.length];
 
                 if (dashboardData.get("DeviceType").equals(CommonConstantUI.PING_DEVICE))
                 {
                     for (int index = 0; index < dateTime.length; index++)
                     {
-                        receivedPacket[index] = dao.getUpdatedPacket(id, (String) dashboardData.get("IP"), dateTime[index], (String) dashboardData.get("DeviceType"));
+                        receivedPacket[index] = dao.getUpdatedPacket(id, dashboardData.get("IP").toString(), dateTime[index], dashboardData.get("DeviceType").toString());
                     }
 
                     bean.setPacket(receivedPacket);
@@ -171,7 +169,7 @@ public class Dashboard extends ActionSupport
                 {
                     for (int index = 0; index < dateTime.length; index++)
                     {
-                        memoryStorage[index] = String.valueOf(dao.getUpdatedMemory(id, (String) dashboardData.get("IP"), dateTime[index], (String) dashboardData.get("DeviceType")));
+                        memoryStorage[index] = dao.getUpdatedMemory(id, dashboardData.get("IP").toString(), dateTime[index], dashboardData.get("DeviceType").toString());
                     }
 
                     bean.setMemory(memoryStorage);
@@ -186,6 +184,11 @@ public class Dashboard extends ActionSupport
             _logger.warn("dashboard data not found!");
         }
 
+        return "success";
+    }
+
+    public String getHomeDashboardData()
+    {
         return "success";
     }
 }

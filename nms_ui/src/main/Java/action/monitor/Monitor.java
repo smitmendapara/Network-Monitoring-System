@@ -4,18 +4,17 @@ import bean.MonitorBean;
 
 import dao.DAO;
 
-import action.helper.ServiceProvider;
+import service.ServiceProvider;
 
 import util.Logger;
-
-import com.opensymphony.xwork2.ActionSupport;
 
 import java.util.ArrayList;
 
 import java.util.HashMap;
+
 import java.util.List;
 
-public class Monitor extends ActionSupport
+public class Monitor
 {
     private int id;
 
@@ -143,49 +142,28 @@ public class Monitor extends ActionSupport
 
     public String provisionMonitor()
     {
-        beanList = new ArrayList<>();
-
-        bean = new MonitorBean();
-
         DAO dao = new DAO();
 
-        setMonitorData();
-
-        if (dao.checkIpMonitor(ip, deviceType))
-        {
-            bean.setFlag(executeDiscovery());
-
-            beanList.add(bean);
-
-            return "success";
-        }
-        else
-        {
-            bean.setFlag(Boolean.FALSE);
-
-            beanList.add(bean);
-
-            return "success";
-        }
-    }
-
-    private boolean executeDiscovery()
-    {
         ServiceProvider serviceProvider = new ServiceProvider();
 
         setMonitorData();
 
-        try
-        {
-            return serviceProvider.checkDiscovery(id, ip, discoveryUsername, discoveryPassword, deviceType);
+        beanList = new ArrayList<>();
 
-        }
-        catch (Exception exception)
+        bean = new MonitorBean();
+
+        if (dao.checkIpMonitor(ip, deviceType))
         {
-            _logger.error("discovery failed!", exception);
+            bean.setFlag(serviceProvider.checkDiscovery(id, ip, discoveryUsername, discoveryPassword, deviceType));
+        }
+        else
+        {
+            bean.setFlag(Boolean.FALSE);
         }
 
-        return false;
+        beanList.add(bean);
+
+        return "success";
     }
 
     public String getMonitorData()
@@ -255,13 +233,13 @@ public class Monitor extends ActionSupport
 
             for (HashMap<String, Object> monitorDetails : monitorDetailsList)
             {
-                ip = (String) monitorDetails.get("IP");
+                ip = monitorDetails.get("IP").toString();
 
-                discoveryUsername = (String) monitorDetails.get("Username");
+                discoveryUsername = monitorDetails.get("Username").toString();
 
-                discoveryPassword = (String) monitorDetails.get("Password");
+                discoveryPassword = monitorDetails.get("Password").toString();
 
-                deviceType = (String) monitorDetails.get("Device");
+                deviceType = monitorDetails.get("Device").toString();
             }
         }
         catch (Exception exception)

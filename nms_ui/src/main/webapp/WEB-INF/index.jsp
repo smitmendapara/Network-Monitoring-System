@@ -44,22 +44,9 @@
             <%-- icon library --%>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
-            <%-- chart library --%>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-            <%-- chart library --%>
-            <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
             <%-- jQuery library --%>
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-
-            <%-- js file --%>
-            <script src="js/index.js"></script>
-            <script src="./js/discovery.js"></script>
-            <script src="./js/monitor.js"></script>
-            <script src="./js/dashboard.js"></script>
+            <link rel="stylesheet" href="css/toastr.min.css">
 
             <%-- project title --%>
             <div class="demo" style="margin: 10px 0 0 -15px">
@@ -161,7 +148,7 @@
 
                     <div class="demo">
 
-                        <button type="button" class="btn change" onclick="discoverData()" style="cursor: pointer; background-color: #32adcf">Create</button>
+                        <button type="button" class="btn change" onclick="addData()" style="cursor: pointer; background-color: #32adcf">Create</button>
 
                         <button type="button" class="btn cancel" onclick="closeForm('discoveryForm')" style="cursor: pointer; background-color: orange">Cancel</button>
 
@@ -268,7 +255,7 @@
 
             </div>
 
-            <%-- edit feilds modal --%>
+            <%-- edit feilds modal starts here --%>
             <div id="myModal" class="modal fade" tabindex="-1">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -297,6 +284,41 @@
                     </div>
                 </div>
             </div>
+            <%-- edit feilds modal ends here --%>
+
+            <!----delete modal starts here--->
+            <div id="deleteModal" class="modal fade" role='dialog'>
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p><b>Do you want to delete this Device ?</b></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><b>Cancel</b></button>
+                            <span id= 'deleteButton'></span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- delete modal ends here--->
+
+            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+            <script type="text/javascript" src="js/toastr.min.js"></script>
+
+            <%-- chart library --%>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+            <%-- chart library --%>
+            <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+            <%-- js file --%>
+            <script src="js/index.js"></script>
+            <script src="./js/discovery.js"></script>
+            <script src="./js/monitor.js"></script>
+            <script src="./js/dashboard.js"></script>
 
             <script>
 
@@ -308,7 +330,12 @@
                     getMonitorDetails();
                 });
 
+                $('#dashboard').click(function () {
+                    getHomeDashboardDetails();
+                });
+
             </script>
+
 
         </body>
 

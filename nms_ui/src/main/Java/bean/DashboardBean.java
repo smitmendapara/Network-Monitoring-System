@@ -20,9 +20,9 @@ public class DashboardBean
 
     private String[] CurrentTime;
 
-    private String[] Packet;
+    private int[] Packet;
 
-    private String[] Memory;
+    private float[] Memory;
 
     private int[] percent;
 
@@ -98,19 +98,19 @@ public class DashboardBean
         Response = response;
     }
 
-    public String[] getPacket() {
+    public int[] getPacket() {
         return Packet;
     }
 
-    public void setPacket(String[] packet) {
+    public void setPacket(int[] packet) {
         Packet = packet;
     }
 
-    public String[] getMemory() {
+    public float[] getMemory() {
         return Memory;
     }
 
-    public void setMemory(String[] memory) {
+    public void setMemory(float[] memory) {
         Memory = memory;
     }
 

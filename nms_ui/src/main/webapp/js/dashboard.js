@@ -1,3 +1,20 @@
+// home dashboard matrix
+function getHomeDashboardData(request) {
+
+    let tableData = "";
+
+    tableData += "<div class='float-container'><div class='float-child'><div class='green'>Div 1</div></div><div class='float-child'><div class='blue'>Div 2</div></div><div class='float-child'><div class='yellow'>Div 3</div></div></div>" +
+                 "<div class='float-container'><div class='float-second-child'><div class='green'>Div 1</div></div><div class='float-second-child'><div class='blue'>Div 2</div></div></div>";
+
+    $('#tableData').html(tableData);
+
+}
+
+function getHomeDashboardDetails()
+{
+    executeGETRequest({ url: "homeDashboardData", callback: getHomeDashboardData });
+}
+
 // dashboard data
 function getDashboardData(request)
 {
@@ -130,7 +147,7 @@ function getDashboardData(request)
 
 function showDashboard(id, ip, deviceType)
 {
-    getGetCall({ url: "dashboardTable", data: { id: id, ip: ip, deviceType: deviceType }, callback: getDashboardData });
+    executeGETRequest({ url: "dashboardTable", data: { id: id, ip: ip, deviceType: deviceType }, callback: getDashboardData });
 }
 
 // pie chart
@@ -175,7 +192,7 @@ function getPieChartData(request)
 
 function getPieChartDetails(id, ip, deviceType)
 {
-    getGetCall({ url: "dashboardTable", data: {id: id, ip: ip, deviceType: deviceType }, callback: getPieChartData });
+    executeGETRequest({ url: "dashboardTable", data: {id: id, ip: ip, deviceType: deviceType }, callback: getPieChartData });
 }
 
 // column chart
@@ -187,8 +204,6 @@ function getColumnChartData(request)
 
         let secondChart;
 
-        let status = this.status;
-
         let deviceType = this.device;
 
         let receivedPacket = this.packet;
@@ -197,7 +212,7 @@ function getColumnChartData(request)
 
         let timeArray = this.currentTime;
 
-        if (status == "Down" && deviceType == "Ping")
+        if (deviceType === "Ping")
         {
             secondChart = new CanvasJS.Chart("areaChart",
                 {
@@ -223,120 +238,26 @@ function getColumnChartData(request)
 
                             dataPoints: [
 
-                                { label: timeArray[0], y: parseInt(receivedPacket[0]) },
+                                { label: timeArray[0], y: receivedPacket[0] },
 
-                                { label: timeArray[1], y: parseInt(receivedPacket[1]) },
+                                { label: timeArray[1], y: receivedPacket[1] },
 
-                                { label: timeArray[2], y: parseInt(receivedPacket[2]) },
+                                { label: timeArray[2], y: receivedPacket[2] },
 
-                                { label: timeArray[3], y: parseInt(receivedPacket[3]) },
+                                { label: timeArray[3], y: receivedPacket[3] },
 
-                                { label: timeArray[4], y: parseInt(receivedPacket[4]) },
+                                { label: timeArray[4], y: receivedPacket[4] },
 
-                                { label: timeArray[5], y: parseInt(receivedPacket[5]) },
+                                { label: timeArray[5], y: receivedPacket[5] },
 
-                                { label: timeArray[6], y: parseInt(receivedPacket[6]) },
+                                { label: timeArray[6], y: receivedPacket[6] },
 
-                                { label: timeArray[7], y: parseInt(receivedPacket[7]) },
+                                { label: timeArray[7], y: receivedPacket[7] },
                             ]
 
                         }
                     ]
 
-                });
-        }
-        else if (status == "Up" && deviceType == "Ping")
-        {
-            secondChart = new CanvasJS.Chart("areaChart",
-                {
-                    width : 1420,
-
-                    title:{
-                        text: "Last 40 Minutes "+ this.IP +" Availability",
-                        fontSize: 16,
-                    },
-
-                    axisY: {
-                        title: "Received Packet",
-                        minimum: 0
-                    },
-
-                    axisX: {
-                        title: "Minutes Interval"
-                    },
-
-                    data: [
-                        {
-                            type: "column",
-
-                            dataPoints: [
-
-                                { label: timeArray[0], y: parseInt(receivedPacket[0]) },
-
-                                { label: timeArray[1], y: parseInt(receivedPacket[1]) },
-
-                                { label: timeArray[2], y: parseInt(receivedPacket[2]) },
-
-                                { label: timeArray[3], y: parseInt(receivedPacket[3]) },
-
-                                { label: timeArray[4], y: parseInt(receivedPacket[4]) },
-
-                                { label: timeArray[5], y: parseInt(receivedPacket[5]) },
-
-                                { label: timeArray[6], y: parseInt(receivedPacket[6]) },
-
-                                { label: timeArray[7], y: parseInt(receivedPacket[7]) },
-                            ]
-
-                        }
-                    ]
-                });
-        }
-        else if (status == "Up" && deviceType == "Linux")
-        {
-            secondChart = new CanvasJS.Chart("areaChart",
-                {
-                    width : 1420,
-
-                    title:{
-                        text: "Last 40 Minutes "+ this.IP +" Availability",
-                        fontSize: 16,
-                    },
-
-                    axisY: {
-                        title: "Memory (%)",
-                        minimum: 0
-                    },
-
-                    axisX: {
-                        title: "Minutes Interval"
-                    },
-
-                    data: [
-                        {
-                            type: "column",
-
-                            dataPoints: [
-
-                                { label: timeArray[0], y: parseFloat(memoryPercent[0]) },
-
-                                { label: timeArray[1], y: parseFloat(memoryPercent[1]) },
-
-                                { label: timeArray[2], y: parseFloat(memoryPercent[2]) },
-
-                                { label: timeArray[3], y: parseFloat(memoryPercent[3]) },
-
-                                { label: timeArray[4], y: parseFloat(memoryPercent[4]) },
-
-                                { label: timeArray[5], y: parseFloat(memoryPercent[5]) },
-
-                                { label: timeArray[6], y: parseFloat(memoryPercent[6]) },
-
-                                { label: timeArray[7], y: parseFloat(memoryPercent[7]) },
-                            ]
-
-                        }
-                    ]
                 });
         }
         else
@@ -365,21 +286,21 @@ function getColumnChartData(request)
 
                             dataPoints: [
 
-                                { label: timeArray[0], y: parseFloat(memoryPercent[0]) },
+                                { label: timeArray[0], y: memoryPercent[0] },
 
-                                { label: timeArray[1], y: parseFloat(memoryPercent[1]) },
+                                { label: timeArray[1], y: memoryPercent[1] },
 
-                                { label: timeArray[2], y: parseFloat(memoryPercent[2]) },
+                                { label: timeArray[2], y: memoryPercent[2] },
 
-                                { label: timeArray[3], y: parseFloat(memoryPercent[3]) },
+                                { label: timeArray[3], y: memoryPercent[3] },
 
-                                { label: timeArray[4], y: parseFloat(memoryPercent[4]) },
+                                { label: timeArray[4], y: memoryPercent[4] },
 
-                                { label: timeArray[5], y: parseFloat(memoryPercent[5]) },
+                                { label: timeArray[5], y: memoryPercent[5] },
 
-                                { label: timeArray[6], y: parseFloat(memoryPercent[6]) },
+                                { label: timeArray[6], y: memoryPercent[6] },
 
-                                { label: timeArray[7], y: parseFloat(memoryPercent[7]) },
+                                { label: timeArray[7], y: memoryPercent[7] },
                             ]
 
                         }
@@ -396,5 +317,5 @@ function getColumnChartData(request)
 
 function getColumnChartDetails(id, ip, deviceType)
 {
-    getGetCall({ url: "dashboardTable", data: {id: id, ip: ip, deviceType: deviceType }, callback: getColumnChartData });
+    executeGETRequest({ url: "dashboardTable", data: {id: id, ip: ip, deviceType: deviceType }, callback: getColumnChartData });
 }
