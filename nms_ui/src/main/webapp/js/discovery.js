@@ -22,148 +22,211 @@ function closeForm(idName)
 // display linux profile fields
 function displayLinuxProfile(id, elementValue)
 {
-    let value = elementValue.value;
-
-    document.getElementById(id).style.display = value === "1" ? 'block' : 'none';
+    document.getElementById(id).style.display = elementValue.value === "1" ? 'block' : 'none';
 }
 
 // device discover or not
 function verifyDiscovery(request)
 {
-    let flag = true;
-
-    let data = request.data;
-
-    $.each(data.beanList, function ()
+    if (request !== undefined && request.data !== undefined)
     {
-        flag = this.flag;
-
-    });
-
-    if (flag)
-    {
-        toastr.success('IP/Host: ' + data.ip + ' Successfully Discovered!');
+        if (request.data.beanList[0].flag)
+        {
+            toastr.success('Device Added in Queue!');
+        }
+        else
+        {
+            toastr.warning('Device Not Added in Queue!');
+        }
     }
     else
     {
-        toastr.warning('IP/Host: ' + data.ip + ' not Discovered!');
+        toastr.error("Discovery verification response undefined!");
     }
 }
 
 // add device
-function addDevice()
+function addDevice(request)
 {
-    setTimeout(refreshPage, 1000);
+    if (request !== undefined && request.data !== undefined)
+    {
+        if (request.data.ipValid)
+        {
+            setTimeout(refreshPage, 1000);
 
-    toastr.success("Device Successfully Added!");
+            if (request.data.flag)
+            {
+                toastr.success("Device Successfully Added!");
+            }
+            else
+            {
+                toastr.error("Device Not Added!");
+            }
+        }
+        else
+        {
+            toastr.error("IP/Host not Valid!");
+
+            $('#IP').val('');
+        }
+    }
+    else
+    {
+        toastr.error("Add device request data undefined!");
+    }
+
 }
 
 function addData()
 {
-    let name = $("#name").val();
+    let serializeParams = $('.form-popUp form').serialize();
 
-    let ip = $("#IP").val();
-
-    let discoveryUsername = $("#username").val();
-
-    let discoveryPassword = $("#password").val();
-
-    let deviceType = $("#device").val();
-
-    executePOSTRequest({ url: "discoveryProcess", data: { name: name, ip: ip, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword, deviceType: deviceType }, callback: addDevice });
+    executePOSTRequest({ url: "discoveryProcess", data: serializeParams, callback: addDevice });
 }
 
 function discoverData(id, ip, deviceType)
 {
-    executeGETRequest({ url: "discoverData", data: { id: id, ip: ip, deviceType: deviceType }, callback: verifyDiscovery });
+    executePOSTRequest({ url: "discoverData", data: { id: id, ip: ip, deviceType: deviceType }, callback: verifyDiscovery });
+}
+
+function getWebSocket()
+{
+    let requestURL = $(location).attr('href');
+
+    let splitURL = requestURL.split("/");
+
+    let webSocket = new WebSocket("wss://" + splitURL[2] + "/endpoint");
+
+    webSocket.onopen = function (message) {
+        messageOnOpen("Web Socket Open " + message);
+    };
+
+    webSocket.onmessage = function (message) {
+        messageOnMessage(message);
+    };
+
+    webSocket.onclose = function (message) {
+        messageOnClose(message);
+    };
+
+    webSocket.onerror = function (message) {
+        messageOnError(message);
+    };
+
+    function messageOnOpen(message)
+    {
+        toastr.info("Frontend Web Socket Started...");
+    }
+    
+    function messageOnMessage(message)
+    {
+        toastr.info(message.data);
+    }
+
+    function messageOnClose(message)
+    {
+        toastr.info("Frontend Web Socket Closed..." + message.data);
+    }
+
+    function messageOnError(message)
+    {
+        toastr.info("Web Socket Error : " + message.data)
+    }
 }
 
 // fetch discovery data from database
 function discoveryTable(request)
 {
-    let tableData = "";
+    getWebSocket();
 
-    let tableHead = "";
+    if (request !== undefined && request.data !== undefined)
+    {
+        let tableData = "";
 
-    let data = request.data;
+        let tableHead = "";
 
-    tableHead += "<div class='demo' style='margin-top: 10px' id='myTableDiv' id=\"myTable\">" +
-        "<table class='disc__table' style='width: 95%'>" +
-        "<thead><tr class='disc__heading' style='text-align: left'>" +
-        "<th scope='col'>Name</th><th scope='col'>IP/Host</th><th scope='col'>Options</th>" +
-        "</tr>" +
-        "</thead>" +
-        "<tbody id='mainTable'></tbody>" +
-        "</table>" +
-        "</div>";
+        let data = request.data;
 
-    $('#tableData').html(tableHead);
+        tableHead += "<div class='demo' style='margin-top: 10px' id='myTableDiv' id=\"myTable\">" +
+            "<table class='disc__table' style='width: 95%'>" +
+            "<thead><tr class='disc__heading' style='text-align: left'>" +
+            "<th scope='col'>Name</th><th scope='col'>IP/Host</th><th scope='col'>Options</th>" +
+            "</tr>" +
+            "</thead>" +
+            "<tbody id='mainTable'></tbody>" +
+            "</table>" +
+            "</div>";
 
-    $.each(data.beanList, function () {
+        $('#tableData').html(tableHead);
 
-        tableData += "<tr class='disc__data' id='"+this.id+"'>" +
+        $.each(data.beanList, function () {
 
-            "<td>" + this.name + "</td>" +
+            tableData += "<tr class='disc__data' id='" + this.id + "'>" +
 
-            "<td>" + this.IP + "</td>" +
+                "<td>" + this.name + "</td>" +
 
-            "<td>" +
+                "<td>" + this.ip + "</td>" +
 
-            "<i class='bi bi-play disc__discovery' title='Discovery' data-value='"+this.id+", "+this.IP+", "+this.device+"'></i> &nbsp;" +
+                "<td>" +
 
-            "<i class='bi bi-eye disc__monitor' title='View Result' data-value='"+this.id+"'></i> &nbsp;" +
+                "<i class='bi bi-play disc__discovery' title='Discovery' data-value='" + this.id + ", "+this.ip +", "+this.deviceType+"'></i> &nbsp;" +
 
-            "<i class='bi bi-pencil-square disc__edit' title='Edit' data-value='"+this.id+", "+this.IP+", "+this.device+"'></i> &nbsp;" +
+                "<i class='bi bi-eye disc__monitor' title='View Result' data-value='"+this.id+"'></i> &nbsp;" +
 
-            "<i class='bi bi-trash disc__delete' title='Delete' data-value='"+this.id+"'></i> &nbsp;" +
+                "<i class='bi bi-pencil-square disc__edit' title='Edit' data-value='" + this.id + ", " + this.ip + ", " + this.deviceType + "'></i> &nbsp;" +
 
-            "</td>" +
+                "<i class='bi bi-trash disc__delete' title='Delete' data-value='" + this.id + "'></i> &nbsp;" +
 
-            "</tr>"
-    });
+                "</td>" +
 
-    $('#mainTable').html(tableData);
+                "</tr>"
+        });
 
-    $('.bi-play').on('click', function () {
+        $('#mainTable').html(tableData);
 
-        let parameter = event.currentTarget.getAttribute('data-value');
+        $('.bi-play').on('click', function () {
 
-        let array = parameter.split(",");
+            let parameter = event.currentTarget.getAttribute('data-value');
 
-        discoverData(array[0], array[1].trim(), array[2].trim());
+            let array = parameter.split(",");
 
-    });
+            discoverData(array[0], array[1].trim(), array[2].trim());
 
-    $('.bi-eye').on('click', function () {
+        });
 
-        let parameter = event.currentTarget.getAttribute('data-value');
+        $('.bi-eye').on('click', function () {
 
-        showForm(parameter);
+            let parameter = event.currentTarget.getAttribute('data-value');
 
-    });
+            showForm(parameter);
 
-    $('.bi-pencil-square').on('click', function () {
+        });
 
-        let parameter = event.currentTarget.getAttribute('data-value');
+        $('.bi-pencil-square').on('click', function () {
 
-        let array = parameter.split(",");
+            let parameter = event.currentTarget.getAttribute('data-value');
 
-        editIPAddress(array[0], array[1].trim(), array[2].trim());
-    });
+            let array = parameter.split(",");
 
-    $('.bi-trash').on('click', function () {
+            editIPAddress(array[0], array[1].trim(), array[2].trim());
+        });
 
-        let parameter = event.currentTarget.getAttribute('data-value');
+        $('.bi-trash').on('click', function () {
 
-        executeDeleteDiscoveryRow(parameter);
+            let parameter = event.currentTarget.getAttribute('data-value');
 
-    });
+            executeDeleteDiscoveryRow(parameter);
+
+        });
+    }
+    else
+    {
+        toastr.error("Discover data undefined!");
+    }
 }
 
 function getDiscoveryDetails()
 {
-    let provisionForm = "provisionForm";
-
     executeGETRequest({url: "discoveryTable", callback: discoveryTable} );
 }
 
@@ -185,27 +248,29 @@ function toggleTable()
 // edit discover data fields
 function fetchDeviceData(request)
 {
-    if (request != undefined && request.data != undefined)
+    if (request !== undefined && request.data !== undefined)
     {
         let requestData = request.data;
 
         $('#editID').val(requestData.id);
 
-        $('#editName').val(requestData.beanList[0].name);
+        $('#editName').val(requestData.name);
 
         $('#editIP').val(requestData.ip);
 
         $('#editDeviceType').val(requestData.deviceType);
 
-        if (requestData.deviceType == "Ping")
+        if (requestData.deviceType === "Ping")
         {
             $('#editProfile').css({display: 'none'});
         }
         else
         {
-            $('#editUsername').val(requestData.beanList[0].username);
+            $('#editProfile').css({display: 'block'});
 
-            $('#editPassword').val(requestData.beanList[0].password);
+            $('#editUsername').val(requestData.discoveryUsername);
+
+            $('#editPassword').val(requestData.discoveryPassword);
         }
 
         $("#myModal").modal('show');
@@ -214,18 +279,18 @@ function fetchDeviceData(request)
 
 function editIPAddress(id, ip, deviceType)
 {
-    executeGETRequest({ url: "fetchDeviceData", data: { id: id, ip: ip, deviceType: deviceType }, callback: fetchDeviceData });
+    executePOSTRequest({ url: "fetchDeviceData", data: { id: id, ip: ip, deviceType: deviceType }, callback: fetchDeviceData });
 }
 
 function updateDevice(request)
 {
-    if (request != undefined && request.data != undefined)
+    if (request !== undefined && request.data !== undefined)
     {
         $('#myModal').modal('hide');
 
         setTimeout(refreshPage, 1500);
 
-        if (request.data.beanList[0].flag)
+        if (request.data.flag)
         {
             toastr.success("Device Successfully Updated!");
         }
@@ -234,29 +299,34 @@ function updateDevice(request)
             toastr.warning("Device Already Exist!");
         }
     }
+    else
+    {
+        toastr.error("Device updated data undefined!");
+    }
 }
 
 function updateDiscoveryData()
 {
-    let id = $('#editID').val();
+    let serializeParams = $('.discoverEditForm form').serialize() + "&deviceType=" + $('#editDeviceType').val();
 
-    let name = $('#editName').val();
-
-    let ip = $('#editIP').val();
-
-    let deviceType = $('#editDeviceType').val();
-
-    let discoveryUsername = $('#editUsername').val();
-
-    let discoveryPassword = $('#editPassword').val();
-
-    executeGETRequest({ url: "updateDevice", data: { id: id, name: name, ip: ip, deviceType: deviceType, discoveryUsername: discoveryUsername, discoveryPassword: discoveryPassword }, callback: updateDevice })
+    executePOSTRequest({ url: "updateDevice", data: serializeParams, callback: updateDevice })
 }
 
 // delete discovery table row
-function deletedDiscoveryRow(result)
+function deletedDiscoveryRow(request)
 {
-    document.getElementById(result.data.id).remove();
+    if (request !== undefined && request.data !== undefined)
+    {
+        $('#' + request.data.id).remove();
+
+        toastr.success("Device Successfully Deleted!");
+
+        setTimeout(refreshPage, 1000);
+    }
+    else
+    {
+        toastr.error("Delete response data undefined!");
+    }
 }
 
 function deleteDiscoveryData(id)

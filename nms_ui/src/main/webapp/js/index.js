@@ -33,6 +33,8 @@ function executePOSTRequest(request)
 
                 myCallback.add(request.callback);
 
+                request.data = data;
+
                 myCallback.fire(request);
 
                 myCallback.remove(request.callback);
@@ -41,7 +43,7 @@ function executePOSTRequest(request)
         },
         error: function () {
 
-            alert("some error occurred!");
+            toastr.error('POST request break!');
         }
 
     });
@@ -81,7 +83,7 @@ function executeGETRequest(request)
         },
         error : function () {
 
-            alert("some error occurred!");
+            toastr.error('GET request break!');
         }
     });
 }

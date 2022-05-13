@@ -9,7 +9,7 @@
 <html>
     <head>
 
-        <title>Home Page</title>
+        <title>Login Page</title>
 
         <%-- external css file  --%>
         <link rel="stylesheet" href="css/style.css">
@@ -21,19 +21,15 @@
         <script type="text/javascript" src="js/jquery-3.1.1.min.js" defer></script>
 
         <%-- jQuery library --%>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-3.5.1.min.js" defer></script>
+
+        <%-- bootstrap file --%>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" defer></script>
 
     </head>
 
-</html>
-
     <%@ taglib uri="/struts-tags" prefix="s" %>
-
-        <%-- external css file --%>
-
-        <link rel="stylesheet" href="css/style.css">
 
         <%-- login form --%>
 
@@ -56,3 +52,5 @@
             </div>
 
         </s:form>
+
+</html>

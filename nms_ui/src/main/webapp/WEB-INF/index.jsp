@@ -25,28 +25,18 @@
             <title>Home Page</title>
 
             <%-- external css file  --%>
-
             <link rel="stylesheet" href="css/style.css">
 
             <%-- bootstrap icon --%>
-
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-
-        </head>
-
-        <body>
-
-            <%@ taglib uri="/struts-tags" prefix="s" %>
-
-            <%-- css file --%>
-            <link rel="stylesheet" href="css/style.css">
-
-            <%-- icon library --%>
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
             <%-- jQuery library --%>
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
             <link rel="stylesheet" href="css/toastr.min.css">
+
+        </head>
+
+        <body>
 
             <%-- project title --%>
             <div class="demo" style="margin: 10px 0 0 -15px">
@@ -82,7 +72,6 @@
             <hr/>
 
             <%-- body content --%>
-
             <div id="tableData">
 
             </div>
@@ -114,7 +103,7 @@
 
                         <input type="text" name="name" placeholder="Enter Name" id="name" class="disc__name" required size="17">
 
-                        <input type="text" name="IP" placeholder="Enter IP/Host" id="IP" class="disc__address" required size="17"> <br>
+                        <input type="text" name="ip" placeholder="Enter IP/Host" id="IP" class="disc__address" required size="17"> <br>
 
                     </div>
 
@@ -122,7 +111,7 @@
 
                         <p class="name" style="margin-top:12px">Device Type</p>
 
-                        <select name="device" id="device" class="list" style="width: 10%;height: 25px" data-drop-down="true" data-required="true" onchange="displayLinuxProfile('profile', this)" required>
+                        <select name="deviceType" id="device" class="list" style="width: 10%;height: 25px" data-drop-down="true" data-required="true" onchange="displayLinuxProfile('profile', this)" required>
 
                             <option value="0" class="ping">Ping</option>
 
@@ -138,9 +127,9 @@
 
                         <div class="demo">
 
-                            Username : <input type="text" name="username" id="username" class="linux_user" placeholder="Linux Username" required size="17"> &nbsp;&nbsp;
+                            Username : <input type="text" name="discoveryUsername" id="username" class="linux_user" placeholder="Linux Username" required size="17"> &nbsp;&nbsp;
 
-                            Password : <input type="password" id="password" class="linux_pass" placeholder="Linux Password" required size="17"> <br><br>
+                            Password : <input type="password" name="discoveryPassword" id="password" class="linux_pass" placeholder="Linux Password" required size="17"> <br><br>
 
                         </div>
 
@@ -157,8 +146,6 @@
                 </form>
 
             </div>
-
-
 
             <%-- view result form --%>
             <div class="disc__popUp" id="provisionForm">
@@ -263,17 +250,17 @@
                             <h5 class="modal-title">Edit IP Address</h5>
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body discoverEditForm">
                             <form action="">
 
-                                <input type="text" id="editID" hidden>
-                                Name : <input type="text" id="editName"><br><br>
-                                IP Address : <input type="text" id="editIP"><br><br>
+                                <input type="text" id="editID" name="id" hidden>
+                                Name : <input type="text" id="editName" name="name"><br><br>
+                                IP Address : <input type="text" id="editIP" name="ip"><br><br>
                                 <div id="editProfile">
-                                    Username : <input type="text" id="editUsername"><br><br>
-                                    Password : <input type="password" id="editPassword"><br><br>
+                                    Username : <input type="text" id="editUsername" name="discoveryUsername"><br><br>
+                                    Password : <input type="password" id="editPassword" name="discoveryPassword"><br><br>
                                 </div>
-                                Device Type : <input type="text" id="editDeviceType" disabled>
+                                Device Type : <input type="text" id="editDeviceType" name="deviceType" disabled>
 
                             </form>
                         </div>
@@ -303,18 +290,20 @@
             </div>
             <!-- delete modal ends here--->
 
-            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-            <script type="text/javascript" src="js/toastr.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
             <%-- chart library --%>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+            <%-- toastr js file --%>
+            <script type="text/javascript" src="js/toastr.min.js"></script>
 
             <%-- chart library --%>
             <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
-            <%-- js file --%>
+            <%-- external js file --%>
             <script src="js/index.js"></script>
             <script src="./js/discovery.js"></script>
             <script src="./js/monitor.js"></script>

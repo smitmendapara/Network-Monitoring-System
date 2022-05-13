@@ -6,6 +6,8 @@
 
 <struts>
 
+    <constant name="struts.action.excludePattern" value=".*endpoint"/>
+
     <package name="abc" extends="struts-default">
 
         <result-types>
@@ -59,6 +61,7 @@
         <action name="discoverData" class="action.discover.Discovery" method="executeDiscovery">
 
             <result name="success" type="json"/>
+
         </action>
 
         <action name="discoveryTable" class="action.discover.Discovery" method="getDiscoverData">
@@ -115,7 +118,7 @@
 
         <action name="monitorDelete" class="action.monitor.Monitor" method="deleteMonitorData">
 
-            <result name="success">WEB-INF/index.jsp</result>
+            <result name="success" type="json">WEB-INF/index.jsp</result>
 
         </action>
 
