@@ -54,6 +54,14 @@
 
 -------------------------------------------------------- Linux Command ------------------------------------------------------
 
+-> uname
+
+-> uname -a
+
+-> uname -m
+
+-> uname -r
+
 -> free - memory data
 
 -> iostat - cpu data
@@ -80,6 +88,14 @@
 
 -> null pointer exception (method parameter take null value at a calling time)
 
+-> horg.h2.jdbc.JdbcSQLException: Connection is broken: "java.net.ConnectException: Connection refused (Connection refused): localhost"
+
+-> Unable to load configuration. - action - file:/home/smit/IdeaProjects/nms_ui/target/nms_ui/WEB-INF/classes/struts.xml:87:90
+
+-> Unsupported connection setting &quot;MVCC&quot; [90113-200] 90113/90113 (check your jar path in project structure)
+
+-> com.jcraft.jsch.JSchException: UnknownHostKey: 172.16.8.68. RSA key fingerprint is f0:5b:86:bb:91:66:ec:90:f7:d5:48:80:ce:3a:10:e9
+
 ------------------------------------------------------------------ SQL Queries --------------------------------------------------------
 
 -> CREATE TABLE TB_MONITOR(ip varchar(20), response varchar(20), username varchar(20), password varchar(20), device varchar(20));
@@ -94,6 +110,10 @@
 
    1.70, 1.87]', 'Up', '2022-02-02 19:05');
 
+-> INSERT INTO TB_RESULT VALUES (30, '127.0.0.1234', 'admin', 'Linux', '[Linux, ubuntu, x86_64, 8174812, 4935904, 1205740, 4.4.0-131-generic, GNU/Linux, 7999484, 109220, 7890264, 31, 1.70, 1.87]', 'Up', 
+
+   '2022-02-02 19:05');
+
 -> CREATE TABLE TB_DATADUMP(Id int, IP varchar(20), Packet varchar(10), Memory double, Device varchar(20), CurrentTime varchar(40));
 
 -> insert into TB_DISCOVER(Name, IP, Username, Password, Device) values('Test', '127.0.0.1', 'null', 'null', 'Ping'); // for auto increment
@@ -107,3 +127,48 @@
 -> ALTER TABLE TB_RESULT DROP COLUMN CurrentTime;
 
 -> DELETE FROM TB_DATADUMP LIMIT 500;
+
+-> DELETE FROM TB_DATADUMP LIMIT SELECT COUNT(ID)/2 FROM TB_DATADUMP WHERE STATUS = 'UP'
+
+-> DELETE FROM TB_DATADUMP LIMIT SELECT COUNT(ID)/2 FROM TB_DATADUMP WHERE STATUS = 'DOWN'
+
+-> SELECT COUNT(IP) FROM TB_DATADUMP WHERE IP = '127.0.0.5' AND DEVICE = 'Ping' AND STATUS = 'Down'
+
+-> SELECT COUNT(*) FROM TB_DATADUMP WHERE IP = '127.0.0.5' AND DEVICE = 'Ping'
+
+-> SELECT STATUS, COUNT(IP) AS Frequency  FROM TB_DATADUMP WHERE IP = '172.16.8.182' GROUP BY STATUS ORDER BY STATUS DESC
+
+-> SELECT * FROM TB_DATADUMP WHERE IP='172.16.8.182' BETWEEN '2022-02-21 09:00' AND '2022-02-22 22:41'
+
+-> SELECT STATUS, COUNT(IP) FROM TB_DATADUMP WHERE IP = '127.0.0.5' AND DEVICE = 'Ping' AND CURRENTTIME BETWEEN '2022-02-22 17:18' AND '2022-02-23 17:18' GROUP BY STATUS ORDER BY STATUS DESC
+
+-> ALTER TABLE TB_DATADUMP DROP RESPONSE
+
+-------------------------------------------- SQL Injection ------------------------------------------
+
+-> SELECT * FROM Users WHERE UserId = 105 OR 1=1;
+
+-> SELECT * FROM Users WHERE Name ="" or ""="" AND Pass ="" or ""=""
+
+-------------------------------------------- Top Device Details Query ------------------------------------------------
+
+-> SELECT MAX(MEMORY) AS MAXPERCENT, IP FROM TB_DATADUMP WHERE CURRENTTIME > '2022-05-10 14:12' GROUP BY IP OERDER BY MAXPERCENT DESC LIMIT 3;
+
+-> SELECT MAX(DISK) AS MAXPERCENT, IP FROM TB_DATADUMP WHERE CURRENTTIME > '2022-05-10 14:12' GROUP BY IP OERDER BY MAXPERCENT DESC LIMIT 3;
+
+-> SELECT MAX(CPU) AS MAXPERCENT, IP FROM TB_DATADUMP WHERE CURRENTTIME > '2022-05-10 14:12' GROUP BY IP OERDER BY MAXPERCENT DESC LIMIT 3;
+
+-> ALTER TABLE TB_MONITOR MODIFY Status varchar(30);
+
+
+------------------------- Http to Https ---------------------------------
+
+-> java -jar start.jar --add-to-startd=ssl
+
+-> jetty.ssl.port=8443
+
+-> --module=https
+
+-> Plain Text : Hello World!
+
+-> t8Fw6T8UV81pQfyhDkhebbz7+oiwldr1j2gHBB3L3RFTRsQCpaSnSBZ78Vme+DpDVJPvZdZUZHpzbbcqmSW1+3xXGsERHg9YDmpYk0VVDiRvw1H5miNieJeJ/FNUjgH0BmVRWII6+T4MnDwmCMZUI/orxP3HGwYCSIvyzS3MpmmSe4iaWKCOHQ==
