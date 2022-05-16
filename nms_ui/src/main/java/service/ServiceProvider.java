@@ -11,8 +11,6 @@ import util.SSHConnectionUtil;
 import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
-
-import java.sql.Time;
 import java.sql.Timestamp;
 
 import java.text.DecimalFormat;
@@ -24,91 +22,13 @@ import java.util.regex.Pattern;
 
 public class ServiceProvider
 {
-    private int id;
-
-    private String name;
-
-    private String ip;
-
-    private String discoveryUsername;
-
-    private String discoveryPassword;
-
-    private String deviceType;
-
-    private String ipStatus;
-
-    private String response;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getDiscoveryUsername() {
-        return discoveryUsername;
-    }
-
-    public void setDiscoveryUsername(String discoveryUsername) {
-        this.discoveryUsername = discoveryUsername;
-    }
-
-    public String getDiscoveryPassword() {
-        return discoveryPassword;
-    }
-
-    public void setDiscoveryPassword(String discoveryPassword) {
-        this.discoveryPassword = discoveryPassword;
-    }
-
-    public String getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
-    }
-
-    public String getIpStatus() {
-        return ipStatus;
-    }
-
-    public void setIpStatus(String ipStatus) {
-        this.ipStatus = ipStatus;
-    }
-
-    public String getResponse() {
-        return response;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
-    }
-
     private static final Logger _logger = new Logger();
 
     public boolean provisionMonitor(int id, String deviceType)
     {
         boolean status = true;
+
+        String response = "", ipStatus = "Unknown";
 
         DAO dao = new DAO();
 
@@ -118,10 +38,6 @@ public class ServiceProvider
             {
                 try
                 {
-                    response = "";
-
-                    ipStatus = "Unknown";
-
                     if (dao.enterMonitorTableData(id, response, ipStatus))
                     {
                         _logger.debug("successfully data inserted into tb_monitor table!");
@@ -146,10 +62,6 @@ public class ServiceProvider
             {
                 try
                 {
-                    response = "";
-
-                    ipStatus = "Unknown";
-
                     if (dao.enterMonitorTableData(id, response, ipStatus))
                     {
                         _logger.debug("successfully data inserted into tb_monitor table!");
@@ -183,7 +95,7 @@ public class ServiceProvider
     {
         boolean status = true;
 
-        String response, ipStatus = CommonConstantUI.DEVICE_UP;
+        String response, ipStatus;
 
         DAO dao = new DAO();
 
@@ -593,7 +505,7 @@ public class ServiceProvider
         {
             if (dao.enterDiscoveryData(name, ip, discoveryUsername, discoveryPassword, deviceType, timestamp.toString()))
             {
-               _logger.debug("successfully data inserted into tb_discovery table!");
+                _logger.debug("successfully data inserted into tb_discovery table!");
             }
             else
             {
@@ -606,34 +518,33 @@ public class ServiceProvider
         }
     }
 
-    private void checkStatus(String packet)
+    private String checkStatus(String packet)
     {
+        String ipStatus = CommonConstantUI.DEVICE_UP;
         try
         {
             if (packet.equals(CommonConstantUI.STRING_ZERO))
             {
                 ipStatus = CommonConstantUI.DEVICE_DOWN;
             }
-            else
-            {
-                ipStatus = CommonConstantUI.DEVICE_UP;
-            }
         }
         catch (Exception exception)
         {
             _logger.warn("doesn't check ping ip status!");
         }
+
+        return ipStatus;
     }
 
     private String checkPingIpStatus(String subString)
     {
-        String packet;
+        String ipStatus = null;
 
         try
         {
-            packet = subString.substring(subString.indexOf("transmitted") + 13, subString.indexOf("transmitted") + 14);
+            String packet = subString.substring(subString.indexOf("transmitted") + 13, subString.indexOf("transmitted") + 14);
 
-            checkStatus(packet);
+            ipStatus = checkStatus(packet);
 
         }
         catch (Exception exception)
@@ -926,23 +837,23 @@ public class ServiceProvider
             {
                 case CommonConstantUI.STRING_ZERO  : packetLoss = CommonConstantUI.STRING_HUNDRED;
 
-                                                     break;
+                    break;
 
                 case CommonConstantUI.STRING_ONE   : packetLoss = CommonConstantUI.STRING_SEVENTY_FIVE;
 
-                                                     break;
+                    break;
 
                 case CommonConstantUI.STRING_TWO   : packetLoss = CommonConstantUI.STRING_FIFTY;
 
-                                                     break;
+                    break;
 
                 case CommonConstantUI.STRING_THREE : packetLoss = CommonConstantUI.STRING_TWENTY_FIVE;
 
-                                                     break;
+                    break;
 
                 case CommonConstantUI.STRING_FOUR  : packetLoss = CommonConstantUI.STRING_ZERO;
 
-                                                     break;
+                    break;
             }
         }
         catch (Exception exception)
@@ -1248,6 +1159,8 @@ public class ServiceProvider
                     list.add(map.get("Status").toString());
                 }
 
+                list.add(map.get("Password").toString());
+
                 commonList.add(list);
             }
         }
@@ -1259,7 +1172,7 @@ public class ServiceProvider
         return commonList;
     }
 
-    public List<Integer> getDeviceDetailsList(List<HashMap<String, Object>> upDeviceList, List<HashMap<String, Object>> downDeviceList)
+    public List<Integer> getDeviceDetailsList(List<HashMap<String, Object>> upDeviceList, List<HashMap<String, Object>> downDeviceList, List<HashMap<String, Object>> unknownDeviceList)
     {
         List<Integer> deviceList = new ArrayList<>();
 
@@ -1272,6 +1185,13 @@ public class ServiceProvider
             for (HashMap<String, Object> downDevice : downDeviceList)
             {
                 deviceList.add(Integer.parseInt(downDevice.get("COUNT(IP)").toString()));
+            }
+            if (unknownDeviceList != null)
+            {
+                for (HashMap<String, Object> unknownDevice : unknownDeviceList)
+                {
+                    deviceList.add(Integer.parseInt(unknownDevice.get("COUNT(IP)").toString()));
+                }
             }
         }
         catch (Exception exception)
@@ -1322,8 +1242,8 @@ public class ServiceProvider
                     + "d{2}|2[0-4]\\d|25[0-5])";
 
             String regex = zeroTo255 + "\\." +
-                            zeroTo255 + "\\."
-                            + zeroTo255 + "\\."
+                    zeroTo255 + "\\."
+                    + zeroTo255 + "\\."
                     + zeroTo255;
 
             Pattern pattern = Pattern.compile(regex);

@@ -1,13 +1,13 @@
 package action.monitor;
 
-import monitorBean.DiscoverBean;
-import monitorBean.MonitorBean;
+import bean.MonitorBean;
 
 import com.opensymphony.xwork2.ModelDriven;
 import dao.DAO;
 
 import service.ServiceProvider;
 
+import util.CommonConstantUI;
 import util.Logger;
 
 import java.util.ArrayList;
@@ -22,6 +22,7 @@ public class Monitor implements ModelDriven<MonitorBean>
 
     private static final Logger _logger = new Logger();
 
+    // monitor form for provision
     public String getMonitorForm()
     {
         DAO dao = new DAO();
@@ -34,8 +35,6 @@ public class Monitor implements ModelDriven<MonitorBean>
             {
                 for (List<String> subList : monitorList)
                 {
-                    monitorBean = new MonitorBean();
-
                     monitorBean.setId(Integer.parseInt(subList.get(0)));
 
                     monitorBean.setIp(subList.get(2));
@@ -48,12 +47,13 @@ public class Monitor implements ModelDriven<MonitorBean>
         }
         catch (Exception exception)
         {
-            _logger.warn("monitor data not set into the bean!");
+            _logger.warn("monitor data not fetched.");
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // provision device
     public String provisionMonitor()
     {
         DAO dao = new DAO();
@@ -70,9 +70,9 @@ public class Monitor implements ModelDriven<MonitorBean>
 
                 monitorBean.setDiscoveryUsername(monitorDetails.get("Username").toString());
 
-                monitorBean.setDiscoveryUsername(monitorDetails.get("Password").toString());
+                monitorBean.setDiscoveryPassword(monitorDetails.get("Password").toString());
 
-                monitorBean.setDiscoveryUsername(monitorDetails.get("Device").toString());
+                monitorBean.setDeviceType(monitorDetails.get("Device").toString());
             }
 
             if (dao.checkIpMonitor(monitorBean.getIp(), monitorBean.getDeviceType()))
@@ -86,12 +86,13 @@ public class Monitor implements ModelDriven<MonitorBean>
         }
         catch (Exception exception)
         {
-            _logger.error("device not monitored...", exception);
+            _logger.error("device not monitored.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // get monitor table data
     public String getMonitorData()
     {
         DAO dao = new DAO();
@@ -126,28 +127,27 @@ public class Monitor implements ModelDriven<MonitorBean>
         }
         catch (Exception exception)
         {
-            _logger.warn("monitor data not set into the bean!");
+            _logger.warn("monitor table data not fetched.");
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // delete monitor device
     public String deleteMonitorData()
     {
         DAO dao = new DAO();
 
         try
         {
-            monitorBean = new MonitorBean();
-
             monitorBean.setFlag(dao.deleteMonitorData(monitorBean.getId()));
         }
         catch (Exception exception)
         {
-            _logger.error("monitor row not deleted...", exception);
+            _logger.error("monitor device not deleted.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
     @Override

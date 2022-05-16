@@ -6,7 +6,7 @@
 
 <struts>
 
-    <constant name="struts.action.excludePattern" value=".*endpoint"/>
+    <constant name="struts.action.excludePattern" value=".*serverEndPoint"/>
 
     <package name="abc" extends="struts-default">
 
@@ -118,13 +118,13 @@
 
         <action name="monitorDelete" class="action.monitor.Monitor" method="deleteMonitorData">
 
-            <result name="success" type="json">WEB-INF/index.jsp</result>
+            <result name="success" type="json" />
 
         </action>
 
         <!-- DASHBOARD ACTION -->
 
-        <action name="dashboardTable" class="action.dashboard.Dashboard" method="getDashboardData">
+        <action name="dashboardTable" class="action.dashboard.Dashboard" method="getDeviceDashboardData">
 
             <result name="success" type="json" />
 

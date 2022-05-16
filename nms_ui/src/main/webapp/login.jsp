@@ -18,10 +18,12 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 
         <%-- jQuery --%>
-        <script type="text/javascript" src="js/jquery-3.1.1.min.js" defer></script>
+<%--        <script type="text/javascript" src="./js/jquery-3.1.1.min.js" defer></script>--%>
 
         <%-- jQuery library --%>
         <script src="https://code.jquery.com/jquery-3.5.1.min.js" defer></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
         <%-- bootstrap file --%>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">

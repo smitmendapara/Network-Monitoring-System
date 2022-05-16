@@ -4,6 +4,7 @@ import org.apache.struts2.dispatcher.SessionMap;
 
 import org.apache.struts2.interceptor.SessionAware;
 
+import util.CommonConstantUI;
 import util.Logger;
 
 import java.util.Map;
@@ -14,6 +15,7 @@ public class Logout implements SessionAware
 
     private static final Logger _logger = new Logger();
 
+    // logout user
     public String executeLogout()
     {
         try
@@ -22,15 +24,13 @@ public class Logout implements SessionAware
             {
                 sessionMap.invalidate();
             }
-
-            return "success";
         }
         catch (Exception exception)
         {
-            _logger.error("logout not execute properly!", exception);
+            _logger.error("user not logged out.", exception);
         }
 
-        return "error";
+        return CommonConstantUI.SUCCESS;
     }
 
     @Override

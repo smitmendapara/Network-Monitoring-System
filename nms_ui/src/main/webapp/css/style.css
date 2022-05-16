@@ -243,7 +243,7 @@ tr:nth-child(even) {
 }
 
 .float-second-child {
-    width: 583px;
+    width: 355px;
     height: 30%;
     float: left;
     padding: 20px;
@@ -265,12 +265,12 @@ tr:nth-child(even) {
     padding: 20px;
     border: 2px solid black;
     border-radius: 8px;
-    margin-left: 88px;
+    margin-left: 86px;
     background-color: orange;
 }
 
 .content {
-    margin-left: 110px;
+    margin-left: 85px;
     font-size: 20px;
 }
 
@@ -280,13 +280,13 @@ tr:nth-child(even) {
 }
 
 .content-2 {
-    margin-left: 200px;
+    margin-left: 100px;
     font-size: 18px;
 
 }
 
 .content-2-second {
-    margin-left: 180px;
+    margin-left: 90px;
     font-size: 18px;
 }
 
@@ -296,8 +296,8 @@ tr:nth-child(even) {
 }
 
 .content-2-title {
-    margin-left: 80px;
-    width: 70%;
+    margin-left: 25px;
+    width: 82%;
 }
 
 .content-3-title {
@@ -318,6 +318,6 @@ tr:nth-child(even) {
 }
 
 .content-title {
-    margin-left: 100px;
+    margin-left: 76px;
     font-size: 20px;
 }

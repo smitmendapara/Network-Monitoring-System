@@ -183,7 +183,7 @@ public class DAO
                 }
                 if (totalFrequency.size() == 1)
                 {
-                    if (totalFrequency.get(0).get("STATUS").equals("Up"))
+                    if (totalFrequency.get(0).get("Status").equals("Up"))
                     {
                         up = Double.parseDouble(totalFrequency.get(0).get("COUNT(IP)").toString());
                     }
@@ -446,7 +446,9 @@ public class DAO
 
             List<HashMap<String, Object>> downDevice = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "COUNT(IP)", "WHERE Status = 'Down'");
 
-            deviceList = serviceProvider.getDeviceDetailsList(upDevice, downDevice);
+            List<HashMap<String, Object>> unknownDevice = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "COUNT(IP)", "WHERE Status = 'Unknown'");
+
+            deviceList = serviceProvider.getDeviceDetailsList(upDevice, downDevice, unknownDevice);
         }
         catch (Exception exception)
         {
@@ -470,7 +472,7 @@ public class DAO
 
             List<HashMap<String, Object>> linuxDevice = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "COUNT(IP)", "WHERE DeviceType = 'Linux'");
 
-            deviceList = serviceProvider.getDeviceDetailsList(pingDevice, linuxDevice);
+            deviceList = serviceProvider.getDeviceDetailsList(pingDevice, linuxDevice, null);
         }
         catch (Exception exception)
         {

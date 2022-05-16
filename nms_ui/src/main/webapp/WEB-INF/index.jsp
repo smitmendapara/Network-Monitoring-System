@@ -95,7 +95,7 @@
 
                         <p class="name">Name</p>
 
-                        <p class="IP">IP/Host</p><br>
+                        <p class="IP">IP</p><br>
 
                     </div>
 
@@ -103,7 +103,7 @@
 
                         <input type="text" name="name" placeholder="Enter Name" id="name" class="disc__name" required size="17">
 
-                        <input type="text" name="ip" placeholder="Enter IP/Host" id="IP" class="disc__address" required size="17"> <br>
+                        <input type="text" name="ip" placeholder="Enter IP Address" id="IP" class="disc__address" required size="17"> <br>
 
                     </div>
 

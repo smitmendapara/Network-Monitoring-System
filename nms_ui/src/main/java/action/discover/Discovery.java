@@ -1,11 +1,11 @@
 package action.discover;
 
-import monitorBean.DiscoverBean;
+import bean.DiscoverBean;
 
 import com.opensymphony.xwork2.ModelDriven;
 import dao.DAO;
 
-import helper.QueueHandler;
+import util.CommonUtil;
 import service.ServiceProvider;
 
 import util.CommonConstantUI;
@@ -22,6 +22,7 @@ public class Discovery implements ModelDriven<DiscoverBean>
 
     private static final Logger _logger = new Logger();
 
+    // add discover device
     public String insertDevice()
     {
         ServiceProvider serviceProvider = new ServiceProvider();
@@ -50,12 +51,13 @@ public class Discovery implements ModelDriven<DiscoverBean>
         }
         catch (Exception exception)
         {
-            _logger.error("device not inserted!", exception);
+            _logger.error("device not added.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // execute device discovery
     public String executeDiscovery()
     {
         DAO dao = new DAO();
@@ -75,16 +77,17 @@ public class Discovery implements ModelDriven<DiscoverBean>
                 discoverBean.setDeviceType(monitorDetails.get("Device").toString());
             }
 
-            discoverBean.setFlag(QueueHandler.putDiscoverBean(discoverBean));
+            discoverBean.setFlag(CommonUtil.putDiscoverBean(discoverBean));
         }
         catch (Exception exception)
         {
-            _logger.error("discovery failed!", exception);
+            _logger.error("discovery not executed.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // delete particular device
     public String deleteDiscoverData()
     {
         DAO dao = new DAO();
@@ -95,12 +98,13 @@ public class Discovery implements ModelDriven<DiscoverBean>
         }
         catch (Exception exception)
         {
-            _logger.error("discovery device not deleted...", exception);
+            _logger.error("discovery device not deleted.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // get discovered device details
     public String getDiscoverData()
     {
         DAO dao = new DAO();
@@ -133,12 +137,13 @@ public class Discovery implements ModelDriven<DiscoverBean>
         }
         catch (Exception exception)
         {
-            _logger.warn("getting data error from DiscoverBean!");
+            _logger.error("discover table data not fetched.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // set edit device details
     public String editDevice()
     {
         DAO dao = new DAO();
@@ -158,12 +163,13 @@ public class Discovery implements ModelDriven<DiscoverBean>
         }
         catch (Exception exception)
         {
-            _logger.error("edited data not set into the beanList...", exception);
+            _logger.error("edit device details not fetched.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // update device details
     public String updateDeviceData()
     {
         DAO dao = new DAO();
@@ -174,10 +180,10 @@ public class Discovery implements ModelDriven<DiscoverBean>
         }
         catch (Exception exception)
         {
-            _logger.error("device not updated!", exception);
+            _logger.error("device not updated.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
     @Override

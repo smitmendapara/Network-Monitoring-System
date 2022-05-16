@@ -7,25 +7,21 @@ function getMonitorForm(request)
 
         let data = request.data;
 
-        $.each(data.beanList, function () {
+        tableData = "<tr class='disc__data'>" +
 
-            tableData = "<tr class='disc__data'>" +
+            "<td><input type='hidden' class='one' name='key' id='key' value='"+data.id+"'>" + data.id + "</td>" +
 
-                "<td><input type='hidden' class='one' name='key' id='key' value='"+this.id+"'>" + this.id + "</td>" +
+            "<td><input type='checkbox' id='check' checked></td>" +
 
-                "<td><input type='checkbox' id='check' checked></td>" +
+            "<td>" + data.ip + "</td>" +
 
-                "<td>" + this.ip + "</td>" +
+            "<td>" + "0" + "</td>" +
 
-                "<td>" + "0" + "</td>" +
+            "<td>" + data.discoveryUsername + "</td>" +
 
-                "<td>" + this.discoveryUsername + "</td>" +
+            "<td>" + data.deviceType + "</td>" +
 
-                "<td>" + this.deviceType + "</td>" +
-
-                + "</tr>";
-
-        });
+            + "</tr>";
 
         $('#resultTable').html(tableData);
     }
@@ -54,23 +50,13 @@ function provisionIP(request)
 {
     if (request !== undefined && request.data !== undefined)
     {
-        let flag = true;
-
-        let data = request.data;
-
-        $.each(data.beanList, function () {
-
-            flag = this.flag;
-
-        });
-
-        if (flag)
+        if (request.data.flag)
         {
             toastr.success("Device Successfully Monitored!");
         }
         else
         {
-            toastr.warning("Device Already Added!");
+            toastr.error("Device Already Added!");
         }
     }
     else
@@ -110,7 +96,7 @@ function getMonitorTable(request)
         tableHead += "<div class='demo' style='margin-top: 10px'>" +
             "<table class='disc__table' style='width: 95%'>" +
             "<thead><tr class='disc__heading' style='text-align: left'>" +
-            "<th scope='col'><input type='checkbox'></th><th scope='col'>ID</th><th scope='col'>IP/Host</th><th scope='col'>Type</th><th scope='col'>Status</th><th scope='col'>Options</th>" +
+            "<th scope='col'><input type='checkbox'></th><th scope='col'>ID</th><th scope='col'>IP</th><th scope='col'>Device Type</th><th scope='col'>Status</th><th scope='col'>Options</th>" +
             "</tr>" +
             "</thead>" +
             "<tbody id='monitorTable'></tbody>" +
@@ -127,13 +113,13 @@ function getMonitorTable(request)
 
                 "<td>" + this.id + "</td>" +
 
-                "<td>" + this.IP + "</td>" +
+                "<td>" + this.ip + "</td>" +
 
-                "<td>" + this.device + "</td>" +
+                "<td>" + this.deviceType + "</td>" +
 
                 "<td>" + this.status + "</td>" +
 
-                "<td>" + "&nbsp;&nbsp;&nbsp;&nbsp;<i class='bi bi-box-arrow-up-right monitor__icon' data-value='"+this.id+", "+this.IP+", "+this.device+"' style='cursor: pointer'></i>" + "&nbsp;<i class='bi bi-trash disc__delete' title='Delete' data-value='"+this.id+"' style='cursor: pointer'></i> &nbsp;" + "</td>" +
+                "<td>" + "&nbsp;&nbsp;&nbsp;&nbsp;<i class='bi bi-box-arrow-up-right monitor__icon' data-value='"+this.id+", "+this.ip+", "+this.deviceType+"' style='cursor: pointer'></i>" + "&nbsp;<i class='bi bi-trash disc__delete' title='Delete' data-value='"+this.id+"' style='cursor: pointer'></i> &nbsp;" + "</td>" +
 
                 "</tr>";
 
@@ -184,7 +170,7 @@ function deleteMonitorRow(request)
 {
     if (request !== undefined && request.data !== undefined)
     {
-        if (request.data.beanList[0].flag)
+        if (request.data.flag)
         {
             $('#' + request.data.id).remove();
 

@@ -1,78 +1,62 @@
 package action.login;
 
+import bean.LoginBean;
+import com.opensymphony.xwork2.ModelDriven;
 import dao.DAO;
 
 import org.apache.struts2.dispatcher.SessionMap;
 
 import org.apache.struts2.interceptor.SessionAware;
 
+import util.CommonConstantUI;
 import util.Logger;
 
 import java.util.Map;
 
-public class Login implements SessionAware
+public class Login implements SessionAware, ModelDriven<LoginBean>
 {
-    private String username;
-
-    private String password;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     private SessionMap<String,Object> sessionMap;
+
+    private LoginBean loginBean = new LoginBean();
 
     private static final Logger _logger = new Logger();
 
+    // login user
     public String executeLogin()
     {
         DAO dao = new DAO();
 
         try
         {
-            if (!username.equals("") && !password.equals(""))
+            if (!loginBean.getUsername().equals("") && !loginBean.getPassword().equals(""))
             {
-                if(dao.checkCredential(username, password))
+                if(dao.checkCredential(loginBean.getUsername(), loginBean.getPassword()))
                 {
                     sessionMap.put("login", Boolean.TRUE);
 
-                    sessionMap.put("username", username);
+                    sessionMap.put("username", loginBean.getUsername());
 
-                    return "success";
+                    return CommonConstantUI.SUCCESS;
                 }
-                else
-                {
-                    return "error";
-                }
-            }
-            else
-            {
-                return "error";
             }
         }
         catch (Exception exception)
         {
-            _logger.error("user not login properly!", exception);
+            _logger.error("user credentials was wrong.", exception);
         }
 
-        return "error";
+        return CommonConstantUI.ERROR;
     }
 
     @Override
     public void setSession(Map<String, Object> map)
     {
         sessionMap = (SessionMap) map;
+    }
+
+    @Override
+    public LoginBean getModel()
+    {
+        return loginBean;
     }
 }

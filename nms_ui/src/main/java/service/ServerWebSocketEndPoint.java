@@ -5,7 +5,7 @@ import util.Logger;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint("/endpoint")
+@ServerEndpoint("/serverEndPoint")
 public class ServerWebSocketEndPoint
 {
     private static final Logger _logger = new Logger();
@@ -21,7 +21,7 @@ public class ServerWebSocketEndPoint
         }
         catch (Exception exception)
         {
-            _logger.error("Server socket not open...", exception);
+            _logger.error("Server socket not open.", exception);
         }
     }
 
@@ -36,12 +36,12 @@ public class ServerWebSocketEndPoint
             }
             else
             {
-                ServerWebSocketEndPoint.session.getBasicRemote().sendText("Web Socket Session is not Open...");
+                ServerWebSocketEndPoint.session.getBasicRemote().sendText("Web Socket Session is not Open.");
             }
         }
         catch (Exception exception)
         {
-            _logger.error("Message not sent successfully from server web socket...", exception);
+            _logger.error("Message not sent successfully from server web socket.", exception);
         }
     }
 
@@ -54,7 +54,7 @@ public class ServerWebSocketEndPoint
         }
         catch (Exception exception)
         {
-            _logger.error("Server socket not closed...", exception);
+            _logger.error("Server socket not closed!", exception);
         }
     }
 
@@ -63,16 +63,11 @@ public class ServerWebSocketEndPoint
     {
         try
         {
-            StackTraceElement[] stackTrace = throwable.getStackTrace();
-
-            for (int index = 0; index < stackTrace.length; index++)
-            {
-                System.out.println(stackTrace[index]);
-            }
+            _logger.error("Server socket error occurred.", throwable);
         }
         catch (Exception exception)
         {
-            _logger.error("ServerWebSocket OnError method having error. ", exception);
+            _logger.error("ServerWebSocket OnError method having error.", exception);
         }
     }
 }

@@ -84,6 +84,10 @@ public class CommonConstantUI
 
     public static final String DB_TB_USER = "TB_USER";
 
+    public static final String SUCCESS = "success";
+
+    public static final String ERROR = "error";
+
     public static final String DATABASE_URL = "jdbc:h2:tcp://localhost/configdb;" +
                                               "DATABASE_TO_UPPER=false;IGNORECASE=TRUE;" +
                                               "MODE=PostgreSQL;AUTO_RECONNECT=TRUE;" +

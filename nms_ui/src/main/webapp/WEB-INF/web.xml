@@ -14,7 +14,7 @@
 
   <servlet>
     <servlet-name>connectionPool</servlet-name>
-    <servlet-class>helper.ConnectionPoolServlet</servlet-class>
+    <servlet-class>helper.CommonServlet</servlet-class>
     <load-on-startup>0</load-on-startup>
   </servlet>
 </web-app>

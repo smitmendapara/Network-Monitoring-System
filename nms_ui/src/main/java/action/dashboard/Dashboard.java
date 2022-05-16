@@ -1,8 +1,9 @@
 package action.dashboard;
 
+import com.opensymphony.xwork2.ModelDriven;
 import service.ServiceProvider;
 
-import monitorBean.DashboardBean;
+import bean.DashboardBean;
 
 import dao.DAO;
 
@@ -10,78 +11,17 @@ import util.CommonConstantUI;
 
 import util.Logger;
 
-import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 
-public class Dashboard
+public class Dashboard implements ModelDriven<DashboardBean>
 {
-    private int id;
-
-    private String ip;
-
-    private String deviceType;
-
-    private String[] response;
-
-    private int[] percent;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
-    }
-
-    public String[] getResponse() {
-        return response;
-    }
-
-    public void setResponse(String[] response) {
-        this.response = response;
-    }
-
-    public int[] getPercent() {
-        return percent;
-    }
-
-    public void setPercent(int[] percent) {
-        this.percent = percent;
-    }
-
-    private DashboardBean bean = null;
-
-    private List<DashboardBean> beanList = null;
-
-    public List<DashboardBean> getBeanList() {
-        return beanList;
-    }
-
-    public void setBeanList(List<DashboardBean> beanList) {
-        this.beanList = beanList;
-    }
+    private DashboardBean dashboardBean = new DashboardBean();
 
     private static final Logger _logger = new Logger();
 
-    public String getDashboardData()
+    // get particular device dashboard data
+    public String getDeviceDashboardData()
     {
         DAO dao = new DAO();
 
@@ -89,53 +29,47 @@ public class Dashboard
 
         try
         {
-            beanList = new ArrayList<>();
-
-            List<HashMap<String, Object>> dashboardDataList = dao.getDashboardData(ip, deviceType);
+            List<HashMap<String, Object>> dashboardDataList = dao.getDashboardData(dashboardBean.getIp(), dashboardBean.getDeviceType());
 
             for (HashMap<String, Object> dashboardData : dashboardDataList)
             {
-                bean = new DashboardBean();
+                dashboardBean.setId(dashboardBean.getId());
 
-                bean.setId(id);
+                dashboardBean.setName(dashboardData.get("Name").toString());
 
-                bean.setName(dashboardData.get("Name").toString());
+                dashboardBean.setIp(dashboardData.get("IP").toString());
 
-                bean.setIP(dashboardData.get("IP").toString());
-
-                if (dashboardData.get("Profile") == null)
+                if (dashboardData.get("Profile").equals(""))
                 {
-                    String profile = CommonConstantUI.STRING_NULL;
-
-                    bean.setUsername(profile);
+                    dashboardBean.setDiscoveryUsername(CommonConstantUI.STRING_NULL);
                 }
                 else
                 {
-                    bean.setUsername(dashboardData.get("Profile").toString());
+                    dashboardBean.setDiscoveryPassword(dashboardData.get("Profile").toString());
                 }
 
-                bean.setDevice(dashboardData.get("DeviceType").toString());
+                dashboardBean.setDeviceType(dashboardData.get("DeviceType").toString());
 
                 if (dashboardData.get("DeviceType").equals(CommonConstantUI.LINUX_DEVICE) && dashboardData.get("Status").equals(CommonConstantUI.DEVICE_DOWN))
                 {
                     String linuxResponse[] = serviceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
 
-                    bean.setResponse(linuxResponse);
+                    dashboardBean.setResponse(linuxResponse);
                 }
                 else if (dashboardData.get("DeviceType").equals(CommonConstantUI.LINUX_DEVICE) && dashboardData.get("Status").equals(CommonConstantUI.DEVICE_UP))
                 {
                     String linuxResponse[] = serviceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
 
-                    bean.setResponse(linuxResponse);
+                    dashboardBean.setResponse(linuxResponse);
                 }
                 else
                 {
                     String pingResponse[] = serviceProvider.getPingData(dashboardData.get("Response").toString());
 
-                    bean.setResponse(pingResponse);
+                    dashboardBean.setResponse(pingResponse);
                 }
 
-                bean.setStatus(dashboardData.get("Status").toString());
+                dashboardBean.setStatus(dashboardData.get("Status").toString());
 
                 List<Integer> statusPercent = dao.getStatusPercent(dashboardData.get("IP").toString(), dashboardData.get("DeviceType").toString());
 
@@ -146,11 +80,11 @@ public class Dashboard
                     statusArray[index] = statusPercent.get(index);
                 }
 
-                bean.setPercent(statusArray);
+                dashboardBean.setPercent(statusArray);
 
                 String dateTime[] = serviceProvider.getDateTime();
 
-                bean.setCurrentTime(dateTime);
+                dashboardBean.setCurrentTime(dateTime);
 
                 float dataPoints[] = new float[dateTime.length];
 
@@ -158,37 +92,35 @@ public class Dashboard
                 {
                     for (int index = 0; index < dateTime.length; index++)
                     {
-                        dataPoints[index] = dao.getUpdatedPacket(id, dashboardData.get("IP").toString(), dateTime[index], dashboardData.get("DeviceType").toString());
+                        dataPoints[index] = dao.getUpdatedPacket(dashboardBean.getId(), dashboardData.get("IP").toString(), dateTime[index], dashboardData.get("DeviceType").toString());
                     }
 
-                    bean.setDataPoints(dataPoints);
+                    dashboardBean.setDataPoints(dataPoints);
 
-                    bean.setTitle("Received Packet");
+                    dashboardBean.setTitle("Received Packet");
                 }
                 else
                 {
                     for (int index = 0; index < dateTime.length; index++)
                     {
-                        dataPoints[index] = dao.getUpdatedMemory(id, dashboardData.get("IP").toString(), dateTime[index], dashboardData.get("DeviceType").toString());
+                        dataPoints[index] = dao.getUpdatedMemory(dashboardBean.getId(), dashboardData.get("IP").toString(), dateTime[index], dashboardData.get("DeviceType").toString());
                     }
 
-                    bean.setDataPoints(dataPoints);
+                    dashboardBean.setDataPoints(dataPoints);
 
-                    bean.setTitle("Free Memory (%)");
+                    dashboardBean.setTitle("Free Memory (%)");
                 }
-
-                beanList.add(bean);
-
             }
         }
         catch (Exception exception)
         {
-            _logger.warn("dashboard data not found!");
+            _logger.warn("particular device data not fetched.");
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
     }
 
+    // get home dashboard matrix data
     public String getHomeDashboardData()
     {
         DAO dao = new DAO();
@@ -197,26 +129,24 @@ public class Dashboard
         {
             List<Integer> statusList = dao.getDeviceStatusList();
 
-            beanList = new ArrayList<>();
-
-            bean = new DashboardBean();
-
             if (statusList.size() > 0)
             {
-                bean.setTotalDevice(statusList.get(0) + statusList.get(1));
+                dashboardBean.setTotalDevice(statusList.get(0) + statusList.get(1) + statusList.get(2));
 
-                bean.setUpDevice(statusList.get(0));
+                dashboardBean.setUpDevice(statusList.get(0));
 
-                bean.setDownDevice(statusList.get(1));
+                dashboardBean.setDownDevice(statusList.get(1));
+
+                dashboardBean.setUnknownDevice(statusList.get(2));
             }
 
             List<Integer> deviceTypeList = dao.getDeviceTypeList();
 
             if (deviceTypeList.size() > 0)
             {
-                bean.setPingDevice(deviceTypeList.get(0));
+                dashboardBean.setPingDevice(deviceTypeList.get(0));
 
-                bean.setLinuxDevice(deviceTypeList.get(1));
+                dashboardBean.setLinuxDevice(deviceTypeList.get(1));
             }
 
             String []topMemoryDeviceDetails = dao.getTopMemoryDeviceDetails();
@@ -225,19 +155,23 @@ public class Dashboard
 
             String []topDiskDeviceDetails = dao.getTopDiskDeviceDetails();
 
-            bean.setTopMemory(topMemoryDeviceDetails);
+            dashboardBean.setTopMemory(topMemoryDeviceDetails);
 
-            bean.setTopCPU(topCPUDeviceDetails);
+            dashboardBean.setTopCPU(topCPUDeviceDetails);
 
-            bean.setTopDisk(topDiskDeviceDetails);
-
-            beanList.add(bean);
+            dashboardBean.setTopDisk(topDiskDeviceDetails);
         }
         catch (Exception exception)
         {
-
+            _logger.error("home dashboard data not fetched.", exception);
         }
 
-        return "success";
+        return CommonConstantUI.SUCCESS;
+    }
+
+    @Override
+    public DashboardBean getModel()
+    {
+        return dashboardBean;
     }
 }

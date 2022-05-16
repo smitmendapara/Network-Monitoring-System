@@ -10,10 +10,7 @@ public class Test
 {
     public static void main(String[] args) throws ParseException
     {
-        String s = "           3.56    0.01    2.25    1.02    0.00   93.16";
-
-
-        System.out.println(s.substring(48, s.length()).trim());
+        System.out.println(Runtime.getRuntime().availableProcessors());
 
 //        String s = "0";
 //

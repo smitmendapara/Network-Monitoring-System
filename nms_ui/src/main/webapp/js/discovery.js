@@ -30,13 +30,13 @@ function verifyDiscovery(request)
 {
     if (request !== undefined && request.data !== undefined)
     {
-        if (request.data.beanList[0].flag)
+        if (request.data.flag)
         {
             toastr.success('Device Added in Queue!');
         }
         else
         {
-            toastr.warning('Device Not Added in Queue!');
+            toastr.error('Device Not Added in Queue!');
         }
     }
     else
@@ -65,7 +65,7 @@ function addDevice(request)
         }
         else
         {
-            toastr.error("IP/Host not Valid!");
+            toastr.error("IP not Valid!");
 
             $('#IP').val('');
         }
@@ -95,7 +95,7 @@ function getWebSocket()
 
     let splitURL = requestURL.split("/");
 
-    let webSocket = new WebSocket("wss://" + splitURL[2] + "/endpoint");
+    let webSocket = new WebSocket("wss://" + splitURL[2] + "/serverEndPoint");
 
     webSocket.onopen = function (message) {
         messageOnOpen("Web Socket Open " + message);
@@ -125,7 +125,9 @@ function getWebSocket()
 
     function messageOnClose(message)
     {
-        toastr.info("Frontend Web Socket Closed..." + message.data);
+        toastr.info("Frontend Web Socket Closed...");
+
+        getWebSocket();
     }
 
     function messageOnError(message)
@@ -150,7 +152,7 @@ function discoveryTable(request)
         tableHead += "<div class='demo' style='margin-top: 10px' id='myTableDiv' id=\"myTable\">" +
             "<table class='disc__table' style='width: 95%'>" +
             "<thead><tr class='disc__heading' style='text-align: left'>" +
-            "<th scope='col'>Name</th><th scope='col'>IP/Host</th><th scope='col'>Options</th>" +
+            "<th scope='col'>Name</th><th scope='col'>IP</th><th scope='col'>Device Type</th><th scope='col'>Options</th>" +
             "</tr>" +
             "</thead>" +
             "<tbody id='mainTable'></tbody>" +
@@ -166,6 +168,8 @@ function discoveryTable(request)
                 "<td>" + this.name + "</td>" +
 
                 "<td>" + this.ip + "</td>" +
+
+                "<td>" + this.deviceType + "</td>" +
 
                 "<td>" +
 
@@ -296,7 +300,7 @@ function updateDevice(request)
         }
         else
         {
-            toastr.warning("Device Already Exist!");
+            toastr.error("Device Already Exist!");
         }
     }
     else

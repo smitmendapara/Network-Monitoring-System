@@ -1,6 +1,6 @@
 package helper;
 
-import monitorBean.DiscoverBean;
+import bean.DiscoverBean;
 import service.ServerWebSocketEndPoint;
 import service.ServiceProvider;
 
@@ -24,13 +24,12 @@ public class MultipleDeviceDiscover implements Runnable
         {
             if (serviceProvider.executeDeviceDiscovery(discoverBean.getId(), discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
             {
-                serverWebSocketEndPoint.onMessage("IP/Host : " + discoverBean.getIp() + " Discovered!");
+                serverWebSocketEndPoint.onMessage("IP : " + discoverBean.getIp() + " Discovered!");
             }
             else
             {
-                serverWebSocketEndPoint.onMessage("IP/Host : " + discoverBean.getIp() + " not Discovered!");
+                serverWebSocketEndPoint.onMessage("IP : " + discoverBean.getIp() + " not Discovered!");
             }
-
         }
         catch (Exception exception)
         {
