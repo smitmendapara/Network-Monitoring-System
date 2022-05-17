@@ -2,15 +2,18 @@ package helper;
 
 import bean.DiscoverBean;
 import service.ServerWebSocketEndPoint;
-import service.ServiceProvider;
+import service.CommonServiceProvider;
+import util.Logger;
 
 public class MultipleDeviceDiscover implements Runnable
 {
-    DiscoverBean discoverBean;
+    private DiscoverBean discoverBean;
 
-    ServiceProvider serviceProvider = new ServiceProvider();
+    private CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
-    ServerWebSocketEndPoint serverWebSocketEndPoint = new ServerWebSocketEndPoint();
+    private ServerWebSocketEndPoint serverWebSocketEndPoint = new ServerWebSocketEndPoint();
+
+    private static final Logger _logger = new Logger();
 
     public MultipleDeviceDiscover(DiscoverBean discoverBean)
     {
@@ -22,7 +25,7 @@ public class MultipleDeviceDiscover implements Runnable
     {
         try
         {
-            if (serviceProvider.executeDeviceDiscovery(discoverBean.getId(), discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
+            if (commonServiceProvider.executeDeviceDiscovery(discoverBean.getId(), discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
             {
                 serverWebSocketEndPoint.onMessage("IP : " + discoverBean.getIp() + " Discovered!");
             }
@@ -33,7 +36,7 @@ public class MultipleDeviceDiscover implements Runnable
         }
         catch (Exception exception)
         {
-
+            _logger.error("device discovery failed.", exception);
         }
     }
 }

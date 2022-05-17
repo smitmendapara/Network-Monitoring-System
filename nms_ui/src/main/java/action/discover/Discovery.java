@@ -6,7 +6,7 @@ import com.opensymphony.xwork2.ModelDriven;
 import dao.DAO;
 
 import util.CommonUtil;
-import service.ServiceProvider;
+import service.CommonServiceProvider;
 
 import util.CommonConstantUI;
 import util.Logger;
@@ -25,11 +25,11 @@ public class Discovery implements ModelDriven<DiscoverBean>
     // add discover device
     public String insertDevice()
     {
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
-            if (serviceProvider.validIP(discoverBean.getIp()))
+            if (commonServiceProvider.validIP(discoverBean.getIp()))
             {
                 if (discoverBean.getDeviceType().equals(CommonConstantUI.STRING_ZERO))
                 {
@@ -42,7 +42,7 @@ public class Discovery implements ModelDriven<DiscoverBean>
 
                 discoverBean.setIpValid(Boolean.TRUE);
 
-                discoverBean.setFlag(serviceProvider.addDevice(discoverBean.getName(), discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()));
+                discoverBean.setFlag(commonServiceProvider.addDevice(discoverBean.getName(), discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()));
             }
             else
             {
@@ -176,7 +176,7 @@ public class Discovery implements ModelDriven<DiscoverBean>
 
         try
         {
-            discoverBean.setFlag(dao.insertUpdatedDeviceData(discoverBean.getId(), discoverBean.getIp(), discoverBean.getDeviceType(), discoverBean.getName(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword()));
+            discoverBean.setFlag(dao.updatedDeviceData(discoverBean.getId(), discoverBean.getIp(), discoverBean.getDeviceType(), discoverBean.getName(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword()));
         }
         catch (Exception exception)
         {

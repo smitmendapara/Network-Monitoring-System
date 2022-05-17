@@ -32,7 +32,7 @@ public class Login implements SessionAware, ModelDriven<LoginBean>
             {
                 if(dao.checkCredential(loginBean.getUsername(), loginBean.getPassword()))
                 {
-                    sessionMap.put("login", Boolean.TRUE);
+//                    sessionMap.put("login", Boolean.TRUE);
 
                     sessionMap.put("username", loginBean.getUsername());
 

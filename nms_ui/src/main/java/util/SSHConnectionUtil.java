@@ -8,6 +8,7 @@ import com.jcraft.jsch.Session;
 
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 
 import java.util.Properties;
@@ -117,13 +118,9 @@ public class SSHConnectionUtil
 
             session.connect(timeout * 1000);
 
-            session.setTimeout(timeout * 1000);
-
             if (session.isConnected())
             {
                 connected = true;
-
-                _logger.debug(hostIp + " - connection established!");
             }
             else
             {
@@ -144,11 +141,9 @@ public class SSHConnectionUtil
 
         try
         {
-            connect = connect();
-
-            if (connect)
+            if (connect())
             {
-                _logger.debug("connected to " + hostIp);
+                connect = true;
             }
             else
             {
@@ -177,13 +172,9 @@ public class SSHConnectionUtil
 
                 return null;
             }
-
-            _logger.info("Successful SSH to hostIp " + host);
         }
         catch (Exception exception)
         {
-            _logger.info("SSH failed for the hostIp " + host);
-
             _logger.error("failed for get SSH object", exception);
 
             sshConnectionUtil = null;
@@ -192,7 +183,7 @@ public class SSHConnectionUtil
         return sshConnectionUtil;
     }
 
-    public String executeCommand(String command, boolean wait)
+    public String executeCommand(String command)
     {
         ChannelExec channel = null;
 
@@ -212,21 +203,17 @@ public class SSHConnectionUtil
 
                 channel.connect();
 
-                if (channel.isConnected())
+                // wait for command output
+                while (channel.isConnected())
                 {
-                    if (wait)
-                    {
-                        output.append(IOUtils.toString(inputStream));
-
-                        output.append(CommonConstantUI.NEW_LINE);
-
-                        _logger.debug(hostIp + " - command output -> \n" + output.toString());
-                    }
+                    Thread.sleep(100);
                 }
-                else
-                {
-                    _logger.warn(hostIp + " - channel is not connected!");
-                }
+
+                output.append(IOUtils.toString(inputStream));
+
+                output.append(CommonConstantUI.NEW_LINE);
+
+                _logger.debug(hostIp + " - command output -> \n" + output.toString());
             }
             else
             {

@@ -88,10 +88,6 @@ public class BootManager
             Thread schedulerThread = new Thread(scheduler);
 
             schedulerThread.start();
-
-            ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-            executorService.execute(new Polling());
         }
         catch (Exception exception)
         {

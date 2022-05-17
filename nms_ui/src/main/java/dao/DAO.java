@@ -1,6 +1,6 @@
 package dao;
 
-import service.ServiceProvider;
+import service.CommonServiceProvider;
 import util.CommonConstantUI;
 import util.Logger;
 
@@ -34,7 +34,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-            _logger.error("data not get properly!", exception);
+            _logger.error("access not granted.", exception);
         }
 
         return status;
@@ -63,7 +63,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't inserted discover device.", exception);
         }
 
         return status;
@@ -95,7 +95,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't inserted monitor device.", exception);
         }
 
         return status;
@@ -135,7 +135,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched monitor device details.", exception);
         }
 
         return null;
@@ -151,7 +151,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched dashboard data.", exception);
         }
 
         return null;
@@ -163,13 +163,13 @@ public class DAO
 
         List<Integer> statusPercent = new ArrayList<>();
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
             connection = connectionPoolIml.getConnection();
 
-            List<String> currentTime = serviceProvider.getCurrentTime();
+            List<String> currentTime = commonServiceProvider.getCurrentTime();
 
             List<HashMap<String, Object>> totalFrequency = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "Status, COUNT(IP)", "WHERE IP = '" + ip + "' AND Device = '" + deviceType + "' AND CurrentTime BETWEEN '" + currentTime.get(1) + "' AND '" + currentTime.get(0) + "' GROUP BY Status ORDER BY Status DESC");
 
@@ -202,7 +202,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched status percent.", exception);
         }
 
         return statusPercent;
@@ -225,7 +225,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't updated device packet.", exception);
         }
 
         return packet;
@@ -248,7 +248,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched device updated memory.", exception);
         }
 
         return memoryPercent;
@@ -281,12 +281,12 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched edit device details.", exception);
         }
         return editData;
     }
 
-    public boolean insertUpdatedDeviceData(int id, String ip, String deviceType, String name, String discoveryUsername, String discoveryPassword)
+    public boolean updatedDeviceData(int id, String ip, String deviceType, String name, String discoveryUsername, String discoveryPassword)
     {
         boolean status = false;
 
@@ -312,7 +312,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't updated discover device.", exception);
         }
 
         return status;
@@ -335,7 +335,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't updated discover device data.", exception);
         }
 
         return status;
@@ -359,7 +359,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched discover data details.", exception);
         }
 
         return status;
@@ -369,7 +369,7 @@ public class DAO
     {
         List<List<String>> discoverList = new ArrayList<>();
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
@@ -377,11 +377,11 @@ public class DAO
 
             List<HashMap<String, Object>> discoverDataList = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "");
 
-            discoverList = serviceProvider.getFormData(discoverDataList);
+            discoverList = commonServiceProvider.getFormData(discoverDataList);
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched discover table data.", exception);
         }
 
         return discoverList;
@@ -391,7 +391,7 @@ public class DAO
     {
         List<List<String>> monitorList = null;
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
@@ -399,12 +399,12 @@ public class DAO
 
             List<HashMap<String, Object>> monitorDataList = executeSELECT(connection, CommonConstantUI.DB_TB_DISCOVER, "*", "WHERE Id = " + id);
 
-            monitorList = serviceProvider.getFormData(monitorDataList);
+            monitorList = commonServiceProvider.getFormData(monitorDataList);
 
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched monitor form.", exception);
         }
 
         return monitorList;
@@ -414,7 +414,7 @@ public class DAO
     {
         List<List<String>> monitorList = null;
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
@@ -422,11 +422,11 @@ public class DAO
 
             List<HashMap<String, Object>> monitorDataList = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "*", "");
 
-            monitorList = serviceProvider.getFormData(monitorDataList);
+            monitorList = commonServiceProvider.getFormData(monitorDataList);
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched monitor table data.", exception);
         }
 
         return monitorList;
@@ -436,7 +436,7 @@ public class DAO
     {
         List<Integer> deviceList = new ArrayList<>();
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
@@ -448,11 +448,11 @@ public class DAO
 
             List<HashMap<String, Object>> unknownDevice = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "COUNT(IP)", "WHERE Status = 'Unknown'");
 
-            deviceList = serviceProvider.getDeviceDetailsList(upDevice, downDevice, unknownDevice);
+            deviceList = commonServiceProvider.getDeviceDetailsList(upDevice, downDevice, unknownDevice);
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched device status list.", exception);
         }
 
         return deviceList;
@@ -462,7 +462,7 @@ public class DAO
     {
         List<Integer> deviceList = new ArrayList<>();
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
@@ -472,11 +472,11 @@ public class DAO
 
             List<HashMap<String, Object>> linuxDevice = executeSELECT(connection, CommonConstantUI.DB_TB_MONITOR, "COUNT(IP)", "WHERE DeviceType = 'Linux'");
 
-            deviceList = serviceProvider.getDeviceDetailsList(pingDevice, linuxDevice, null);
+            deviceList = commonServiceProvider.getDeviceDetailsList(pingDevice, linuxDevice, null);
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched device type list.", exception);
         }
 
         return deviceList;
@@ -484,7 +484,7 @@ public class DAO
 
     public String[] getTopMemoryDeviceDetails()
     {
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         String[] topMemoryCPUDiskDevice = null;
 
@@ -492,16 +492,16 @@ public class DAO
         {
             connection = connectionPoolIml.getConnection();
 
-            String previousTime = serviceProvider.getPreviousTime();
+            String previousTime = commonServiceProvider.getPreviousTime();
 
-            List<HashMap<String, Object>> topMemoryDevice = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "MAX(Memory) AS MAXPERCENT, IP", "WHERE CurrentTime > '" + previousTime + "' GROUP BY IP ORDER BY MAXPERCENT DESC LIMIT 3");
+            List<HashMap<String, Object>> topMemoryDevice = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "MAX(Memory) AS MAXPERCENT, IP", "WHERE CurrentTime > '" + previousTime + "' GROUP BY IP ORDER BY MAXPERCENT DESC LIMIT 2");
 
-            topMemoryCPUDiskDevice = serviceProvider.getTopMemoryCPUDiskDevice(topMemoryDevice);
+            topMemoryCPUDiskDevice = commonServiceProvider.getTopMemoryCPUDiskDevice(topMemoryDevice);
 
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched top memory device details.", exception);
         }
 
         return topMemoryCPUDiskDevice;
@@ -509,7 +509,7 @@ public class DAO
 
     public String[] getTopCPUDeviceDetails()
     {
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         String[] topMemoryCPUDiskDevice = null;
 
@@ -517,16 +517,16 @@ public class DAO
         {
             connection = connectionPoolIml.getConnection();
 
-            String previousTime = serviceProvider.getPreviousTime();
+            String previousTime = commonServiceProvider.getPreviousTime();
 
-            List<HashMap<String, Object>> topCpuDevice = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "MAX(CPU) AS MAXPERCENT, IP", "WHERE CurrentTime > '" + previousTime + "' GROUP BY IP ORDER BY MAXPERCENT DESC LIMIT 3");
+            List<HashMap<String, Object>> topCpuDevice = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "MAX(CPU) AS MAXPERCENT, IP", "WHERE CurrentTime > '" + previousTime + "' GROUP BY IP ORDER BY MAXPERCENT DESC LIMIT 2");
 
-            topMemoryCPUDiskDevice = serviceProvider.getTopMemoryCPUDiskDevice(topCpuDevice);
+            topMemoryCPUDiskDevice = commonServiceProvider.getTopMemoryCPUDiskDevice(topCpuDevice);
 
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched top cpu device details.", exception);
         }
 
         return topMemoryCPUDiskDevice;
@@ -534,7 +534,7 @@ public class DAO
 
     public String[] getTopDiskDeviceDetails()
     {
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         String[] topMemoryCPUDiskDevice = null;
 
@@ -542,16 +542,16 @@ public class DAO
         {
             connection = connectionPoolIml.getConnection();
 
-            String previousTime = serviceProvider.getPreviousTime();
+            String previousTime = commonServiceProvider.getPreviousTime();
 
-            List<HashMap<String, Object>> topDiskDevice = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "MAX(Disk) AS MAXPERCENT, IP", "WHERE CurrentTime > '" + previousTime + "' GROUP BY IP ORDER BY MAXPERCENT DESC LIMIT 3");
+            List<HashMap<String, Object>> topDiskDevice = executeSELECT(connection, CommonConstantUI.DB_TB_DATADUMP, "MAX(Disk) AS MAXPERCENT, IP", "WHERE CurrentTime > '" + previousTime + "' GROUP BY IP ORDER BY MAXPERCENT DESC LIMIT 2");
 
-            topMemoryCPUDiskDevice = serviceProvider.getTopMemoryCPUDiskDevice(topDiskDevice);
+            topMemoryCPUDiskDevice = commonServiceProvider.getTopMemoryCPUDiskDevice(topDiskDevice);
 
         }
         catch (Exception exception)
         {
-
+            _logger.error("didn't fetched top disk device details.", exception);
         }
 
         return topMemoryCPUDiskDevice;
@@ -574,7 +574,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("delete query not executed for monitor.", exception);
         }
 
         return status;
@@ -597,7 +597,7 @@ public class DAO
         }
         catch (Exception exception)
         {
-
+            _logger.error("delete query not executed for discover.", exception);
         }
 
         return status;
@@ -777,10 +777,6 @@ public class DAO
     {
         List<HashMap<String, Object>> tableData = null;
 
-        HashMap<String, Object> tableRow;
-
-        ResultSetMetaData metaData;
-
         try
         {
             if (!connection.isClosed())
@@ -798,9 +794,9 @@ public class DAO
                             tableData = new ArrayList<>();
                         }
 
-                        tableRow = new HashMap<>();
+                        HashMap<String, Object> tableRow = new HashMap<>();
 
-                        metaData = resultSet.getMetaData();
+                        ResultSetMetaData metaData = resultSet.getMetaData();
 
                         if (metaData != null)
                         {

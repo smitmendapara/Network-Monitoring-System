@@ -22,7 +22,11 @@ public class CommonServlet extends HttpServlet
 
                 BootManager.startScheduler();
 
-                Thread provisionThread = new Thread(new ParallelProvision());
+                Thread pollingThread = new Thread(new PollingInitializer());
+
+                pollingThread.start();
+
+                Thread provisionThread = new Thread(new ParallelDiscovery());
 
                 provisionThread.start();
             }

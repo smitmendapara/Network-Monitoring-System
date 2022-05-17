@@ -1,7 +1,7 @@
 package action.dashboard;
 
 import com.opensymphony.xwork2.ModelDriven;
-import service.ServiceProvider;
+import service.CommonServiceProvider;
 
 import bean.DashboardBean;
 
@@ -25,7 +25,7 @@ public class Dashboard implements ModelDriven<DashboardBean>
     {
         DAO dao = new DAO();
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
@@ -52,19 +52,19 @@ public class Dashboard implements ModelDriven<DashboardBean>
 
                 if (dashboardData.get("DeviceType").equals(CommonConstantUI.LINUX_DEVICE) && dashboardData.get("Status").equals(CommonConstantUI.DEVICE_DOWN))
                 {
-                    String linuxResponse[] = serviceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
+                    String linuxResponse[] = commonServiceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
 
                     dashboardBean.setResponse(linuxResponse);
                 }
                 else if (dashboardData.get("DeviceType").equals(CommonConstantUI.LINUX_DEVICE) && dashboardData.get("Status").equals(CommonConstantUI.DEVICE_UP))
                 {
-                    String linuxResponse[] = serviceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
+                    String linuxResponse[] = commonServiceProvider.getLinuxData(dashboardData.get("Response").toString(), dashboardData.get("Status").toString());
 
                     dashboardBean.setResponse(linuxResponse);
                 }
                 else
                 {
-                    String pingResponse[] = serviceProvider.getPingData(dashboardData.get("Response").toString());
+                    String pingResponse[] = commonServiceProvider.getPingData(dashboardData.get("Response").toString());
 
                     dashboardBean.setResponse(pingResponse);
                 }
@@ -82,7 +82,7 @@ public class Dashboard implements ModelDriven<DashboardBean>
 
                 dashboardBean.setPercent(statusArray);
 
-                String dateTime[] = serviceProvider.getDateTime();
+                String dateTime[] = commonServiceProvider.getDateTime();
 
                 dashboardBean.setCurrentTime(dateTime);
 

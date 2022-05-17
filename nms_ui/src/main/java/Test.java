@@ -8,9 +8,15 @@ import java.util.Date;
 
 public class Test
 {
-    public static void main(String[] args) throws ParseException
+    public static void main(String[] args) throws Exception
     {
         System.out.println(Runtime.getRuntime().availableProcessors());
+
+//        SSHConnectionUtil sshObject = SSHConnectionUtil.getSSHObject("172.16.10.88", CommonConstantUI.SSH_PORT, "root", "motadata", CommonConstantUI.SSH_TIMEOUT);
+//
+//        String free = sshObject.executeCommand("iostat", false);
+//
+//        System.out.println(free);
 
 //        String s = "0";
 //
@@ -28,20 +34,6 @@ public class Test
 //        list.add(12);
 //
 //        System.out.println(list.get(0) instanceof Integer);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //        String string = "[Linux, ubuntu, x86_64, 8174812, 5872428, 139788, 4.4.0-131-generic, GNU/Linux, 7999484, 116808, 7882676, 33, 1.67, 1.80]";
 //

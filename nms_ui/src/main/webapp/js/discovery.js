@@ -115,7 +115,7 @@ function getWebSocket()
 
     function messageOnOpen(message)
     {
-        toastr.info("Frontend Web Socket Started...");
+
     }
     
     function messageOnMessage(message)

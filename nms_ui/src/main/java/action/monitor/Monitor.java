@@ -5,7 +5,7 @@ import bean.MonitorBean;
 import com.opensymphony.xwork2.ModelDriven;
 import dao.DAO;
 
-import service.ServiceProvider;
+import service.CommonServiceProvider;
 
 import util.CommonConstantUI;
 import util.Logger;
@@ -58,7 +58,7 @@ public class Monitor implements ModelDriven<MonitorBean>
     {
         DAO dao = new DAO();
 
-        ServiceProvider serviceProvider = new ServiceProvider();
+        CommonServiceProvider commonServiceProvider = new CommonServiceProvider();
 
         try
         {
@@ -77,7 +77,7 @@ public class Monitor implements ModelDriven<MonitorBean>
 
             if (dao.checkIpMonitor(monitorBean.getIp(), monitorBean.getDeviceType()))
             {
-                monitorBean.setFlag(serviceProvider.provisionMonitor(monitorBean.getId(), monitorBean.getDeviceType()));
+                monitorBean.setFlag(commonServiceProvider.provisionMonitor(monitorBean.getId(), monitorBean.getDeviceType()));
             }
             else
             {
