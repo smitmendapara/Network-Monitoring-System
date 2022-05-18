@@ -19,6 +19,7 @@ public class Polling implements Runnable
     @Override
     public void run()
     {
+        //TODO where is try catch ?
         if (commonServiceProvider.pollingDevice(discoverBean.getId(), discoverBean.getName(),discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
         {
             _logger.info("IP : " + discoverBean.getIp() + " successfully discovered!");

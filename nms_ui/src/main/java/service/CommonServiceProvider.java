@@ -421,6 +421,8 @@ public class CommonServiceProvider
             }
 
             bufferedInput.close();
+
+            //TODO destroy process in finally
         }
         catch (Exception exception)
         {

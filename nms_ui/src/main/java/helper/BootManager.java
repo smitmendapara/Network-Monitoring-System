@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+//TODO renamed to CommonServletHelper
 public class BootManager
 {
     private static final Logger _logger = new Logger();

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+//TODO renamed class with connectionDao
 public class DAO
 {
     private Connection connection = null;

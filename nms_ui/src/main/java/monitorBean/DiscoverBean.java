@@ -2,6 +2,7 @@ package monitorBean;
 
 import java.util.List;
 
+//TODO why duplicate bean classes
 public class DiscoverBean
 {
     private int id;

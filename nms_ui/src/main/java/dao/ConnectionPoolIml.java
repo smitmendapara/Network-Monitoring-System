@@ -33,6 +33,7 @@ public class ConnectionPoolIml implements ConnectionPool
     {
         for (int index = 0; index < CONNECTION_POOL_SIZE; index++)
         {
+            //TODO what if createConnection return null
             connectionPool.add(createConnection(url, user, password));
         }
     }
@@ -80,6 +81,7 @@ public class ConnectionPoolIml implements ConnectionPool
     @Override
     public void releaseConnection(Connection connection)
     {
+        //TODO - you can put check for the connection here instead of where the method is being called
         connectionPool.add(connection);
     }
 }

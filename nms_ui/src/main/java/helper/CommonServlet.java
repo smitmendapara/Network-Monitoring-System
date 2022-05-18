@@ -18,8 +18,10 @@ public class CommonServlet extends HttpServlet
             {
                 ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
 
+                //TODO what if your connection not created as per your need ?
                 connectionPoolIml.createPool();
 
+                //TODO what if your schedular failts to start
                 BootManager.startScheduler();
 
                 Thread pollingThread = new Thread(new PollingInitializer());

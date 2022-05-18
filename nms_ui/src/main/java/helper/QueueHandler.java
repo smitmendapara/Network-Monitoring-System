@@ -25,6 +25,7 @@ public class QueueHandler
         return null;
     }
 
+    //TODO if not using then remove it
     public static boolean putDiscoverBean(DiscoverBean discoverBean)
     {
         boolean add = false;

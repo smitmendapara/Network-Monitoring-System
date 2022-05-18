@@ -6,6 +6,7 @@ import util.Logger;
 
 import java.util.Timer;
 
+//TODO why duplicate class name ?
 public class BootManager
 {
     private static final Logger _logger = new Logger();

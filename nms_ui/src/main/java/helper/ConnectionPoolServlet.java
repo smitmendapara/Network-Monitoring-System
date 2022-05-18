@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 
 public class ConnectionPoolServlet extends HttpServlet
 {
+    //TODO removed if it is not being used
     @Override
     public void init()
     {

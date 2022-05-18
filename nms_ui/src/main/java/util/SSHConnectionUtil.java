@@ -75,6 +75,8 @@ public class SSHConnectionUtil
         }
     }
 
+    //TODO where is this method being used ?
+
     public boolean reCreateConnection()
     {
         boolean result = false;
@@ -116,7 +118,11 @@ public class SSHConnectionUtil
 
             session.setConfig(config);
 
+            //TODO what is difference between session timeout and channel timeout ?
             session.connect(timeout * 1000);
+
+            //TODO why you are not using below method
+            //session.setTimeout();
 
             if (session.isConnected())
             {
@@ -195,6 +201,8 @@ public class SSHConnectionUtil
         {
             if (session != null)
             {
+               // TODO Be clear with the use of exec command instead of using shell is possible try to explain us practically
+
                 channel = (ChannelExec) session.openChannel("exec");
 
                 channel.setCommand(command);
@@ -203,12 +211,17 @@ public class SSHConnectionUtil
 
                 channel.connect();
 
+                //TODO why not provided time out and
+                //channel.connect(timeout);
+
+                //TODO why you have putted wait ?
                 // wait for command output
                 while (channel.isConnected())
                 {
                     Thread.sleep(100);
                 }
 
+                //TODO you are not usinng bufferreader why ?
                 output.append(IOUtils.toString(inputStream));
 
                 output.append(CommonConstantUI.NEW_LINE);
