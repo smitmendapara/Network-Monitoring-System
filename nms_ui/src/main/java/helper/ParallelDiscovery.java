@@ -20,6 +20,7 @@ public class ParallelDiscovery implements Runnable
 
             while (true)
             {
+                //TODO what if take bean return null ?
                 DiscoverBean discoverBean = CommonUtil.takeDiscoverBean();
 
                 executorService.execute(new MultipleDeviceDiscover(discoverBean));

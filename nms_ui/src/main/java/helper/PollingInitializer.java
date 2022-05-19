@@ -23,7 +23,7 @@ public class PollingInitializer implements Runnable
             {
                 DiscoverBean discoverBean = CommonUtil.takeDevice();
 
-                //TODO what if this take device retunr null ?
+                //TODO what if this take device return null ?
                 if (discoverBean != null)
                 {
                     executorService.execute(new Polling(discoverBean));

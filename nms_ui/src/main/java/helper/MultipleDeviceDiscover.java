@@ -8,8 +8,10 @@ public class MultipleDeviceDiscover implements Runnable
 {
     private DiscoverBean discoverBean;
 
+    //TODO this will create new object at every 2 second
     private DiscoveryService discoveryService = new DiscoveryService();
 
+    //TODO this will create new object at every 2 second
     private ServerWebSocketEndPoint serverWebSocketEndPoint = new ServerWebSocketEndPoint();
 
     private static final Logger _logger = new Logger();

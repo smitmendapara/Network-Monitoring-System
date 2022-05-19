@@ -60,6 +60,8 @@ public class Logger
         }
     }
 
+    //TODO what is use of throwable here
+
     public void error(String message, Throwable throwable)
     {
         BufferedWriter writer = null;

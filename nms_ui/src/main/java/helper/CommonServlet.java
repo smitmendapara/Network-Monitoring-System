@@ -13,6 +13,7 @@ public class CommonServlet extends HttpServlet
     {
         try
         {
+            //TODO Add error message in the else part
             if (CommonServletHelper.initializeDatabase())
             {
                 _logger.info("database successfully initialized!");
