@@ -15,7 +15,7 @@ public class DashboardService
 {
     private static final Logger _logger = new Logger();
 
-    public void evaluateDeviceDashboardData(DashboardBean dashboardBean)
+    public static void evaluateDeviceDashboardData(DashboardBean dashboardBean)
     {
         ConnectionDAO connectionDao = new ConnectionDAO();
 
@@ -110,7 +110,7 @@ public class DashboardService
         }
     }
 
-    public void evaluateHomeDashboardData(DashboardBean dashboardBean)
+    public static void evaluateHomeDashboardData(DashboardBean dashboardBean)
     {
         ConnectionDAO connectionDao = new ConnectionDAO();
 
@@ -156,7 +156,7 @@ public class DashboardService
         }
     }
 
-    private String[] getDateTime()
+    private static String[] getDateTime()
     {
         String[] currentDate = null;
 
@@ -232,7 +232,7 @@ public class DashboardService
         return currentDate;
     }
 
-    private String getPacketLoss(String subString)
+    private static String getPacketLoss(String subString)
     {
         String receivedPacket;
 
@@ -273,7 +273,7 @@ public class DashboardService
         return packetLoss;
     }
 
-    private String getSentPacket(String subString)
+    private static String getSentPacket(String subString)
     {
         String sentPacket = CommonConstant.NULL;
 
@@ -289,7 +289,7 @@ public class DashboardService
         return sentPacket;
     }
 
-    private String getReceivedPacket(String subString)
+    private static String getReceivedPacket(String subString)
     {
         String receivedPacket = CommonConstant.NULL;
 
@@ -305,7 +305,7 @@ public class DashboardService
         return receivedPacket;
     }
 
-    private String[] getPingData(String response)
+    private static String[] getPingData(String response)
     {
         String receivedPacket, sentPacket, rttTime, packetLoss;
 
@@ -332,7 +332,7 @@ public class DashboardService
         return pingResponse;
     }
 
-    private String[] getLinuxData(String response, String ipStatus)
+    private static String[] getLinuxData(String response, String ipStatus)
     {
         String deviceName, systemName, cpuType, osVersion, osName, rtt_Time, diskPercent, systemCPUPercent, userCPUPercent;
 
@@ -388,7 +388,7 @@ public class DashboardService
         return linuxResponse;
     }
 
-    private String getRTTTime(String subString)
+    private static String getRTTTime(String subString)
     {
         String rttTime = CommonConstant.STRING_ZERO;
 
@@ -410,7 +410,7 @@ public class DashboardService
         return rttTime;
     }
 
-    private String getFreeMemoryPercent(String linuxResponse)
+    private static String getFreeMemoryPercent(String linuxResponse)
     {
         String free = CommonConstant.STRING_ZERO;
 
@@ -432,7 +432,7 @@ public class DashboardService
         return free;
     }
 
-    private String getUsedMemoryPercent(String linuxResponse)
+    private static String getUsedMemoryPercent(String linuxResponse)
     {
         String used = CommonConstant.STRING_ZERO;
 
@@ -454,7 +454,7 @@ public class DashboardService
         return used;
     }
 
-    private String getFreeSwapPercent(String linuxResponse)
+    private static String getFreeSwapPercent(String linuxResponse)
     {
         String free = CommonConstant.STRING_ZERO;
 
@@ -478,7 +478,7 @@ public class DashboardService
         return free;
     }
 
-    private String getUsedSwapPercent(String linuxResponse)
+    private static String getUsedSwapPercent(String linuxResponse)
     {
         String used = CommonConstant.STRING_ZERO;
 
@@ -502,7 +502,7 @@ public class DashboardService
         return used;
     }
 
-    private String getOSVersion(String linuxResponse)
+    private static String getOSVersion(String linuxResponse)
     {
         String os_Version = CommonConstant.NULL;
 
@@ -520,7 +520,7 @@ public class DashboardService
         return os_Version;
     }
 
-    private String getCPUType(String linuxResponse)
+    private static String getCPUType(String linuxResponse)
     {
         String cpu_Type = CommonConstant.NULL;
 
@@ -538,7 +538,7 @@ public class DashboardService
         return cpu_Type;
     }
 
-    private String getSystemName(String linuxResponse)
+    private static String getSystemName(String linuxResponse)
     {
         String systemName = CommonConstant.NULL;
 
@@ -556,7 +556,7 @@ public class DashboardService
         return systemName;
     }
 
-    private String getOSName(String linuxResponse)
+    private static String getOSName(String linuxResponse)
     {
         String os_Name = CommonConstant.NULL;
 
@@ -574,7 +574,7 @@ public class DashboardService
         return os_Name;
     }
 
-    private String getDeviceType(String linuxResponse)
+    private static String getDeviceType(String linuxResponse)
     {
         StringBuffer device_Type;
 
@@ -598,7 +598,7 @@ public class DashboardService
         return deviceType;
     }
 
-    private String getSystemCPUPercent(String linuxResponse)
+    private static String getSystemCPUPercent(String linuxResponse)
     {
         String cpu_System = null;
 
@@ -618,7 +618,7 @@ public class DashboardService
         return cpu_System;
     }
 
-    private String getUserCPUPercent(String linuxResponse)
+    private static String getUserCPUPercent(String linuxResponse)
     {
         String cpu_User = CommonConstant.NULL;
 
@@ -638,7 +638,7 @@ public class DashboardService
         return cpu_User;
     }
 
-    private String getDiskPercent(String linuxResponse)
+    private static String getDiskPercent(String linuxResponse)
     {
         String disk = CommonConstant.NULL;
 

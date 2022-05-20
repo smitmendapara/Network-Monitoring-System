@@ -18,12 +18,10 @@ public class Dashboard implements ModelDriven<DashboardBean>
     // get particular device dashboard data
     public String getDeviceDashboardData()
     {
-        DashboardService dashboardService = new DashboardService();
-
         try
         {
             //TODO what if you create static method and call it without creating object
-            dashboardService.evaluateDeviceDashboardData(dashboardBean);
+            DashboardService.evaluateDeviceDashboardData(dashboardBean);
         }
         catch (Exception exception)
         {
@@ -33,15 +31,12 @@ public class Dashboard implements ModelDriven<DashboardBean>
         return CommonConstant.SUCCESS;
     }
 
-    //TODO - Dao can not be the part of action class.
     // get home dashboard matrix data
     public String getHomeDashboardData()
     {
-        DashboardService dashboardService = new DashboardService();
-
         try
         {
-           dashboardService.evaluateHomeDashboardData(dashboardBean);
+            DashboardService.evaluateHomeDashboardData(dashboardBean);
         }
         catch (Exception exception)
         {
