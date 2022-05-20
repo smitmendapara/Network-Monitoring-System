@@ -1,5 +1,6 @@
 package bean;
 
+import javax.websocket.Session;
 import java.util.List;
 
 public class DiscoverBean
@@ -19,6 +20,8 @@ public class DiscoverBean
     private boolean flag;
 
     private boolean ipValid;
+
+    private Session session;
 
     private List<DiscoverBean> beanList;
 
@@ -92,5 +95,13 @@ public class DiscoverBean
 
     public void setIpValid(boolean ipValid) {
         this.ipValid = ipValid;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
     }
 }

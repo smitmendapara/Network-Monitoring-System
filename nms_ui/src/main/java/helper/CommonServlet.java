@@ -38,7 +38,23 @@ public class CommonServlet extends HttpServlet
 
                         provisionThread.start();
                     }
+                    else
+                    {
+                        _logger.warn("scheduler not started.");
+                    }
                 }
+                else
+                {
+                    _logger.warn("connection is not created.");
+
+                    System.exit(0);
+                }
+            }
+            else
+            {
+                _logger.warn("database not initialized.");
+
+                System.exit(0);
             }
         }
         catch (Exception exception)

@@ -36,7 +36,7 @@ public class Logger
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-info.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-info.log", CommonConstant.TRUE));
 
             writer.write(message + "\n");
         }
@@ -72,9 +72,16 @@ public class Logger
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-error.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-error.log", CommonConstant.TRUE));
 
             writer.write(message + "\n");
+
+            StackTraceElement[] stackTrace = throwable.getStackTrace();
+
+            for (int index = 0; index < stackTrace.length; index++)
+            {
+                _logger.warn("error stacktrace -> " + stackTrace[index]);
+            }
 
         }
         catch (IOException exception)
@@ -107,7 +114,7 @@ public class Logger
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-warn.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-warn.log", CommonConstant.TRUE));
 
             writer.write(message + "\n");
         }
@@ -141,7 +148,7 @@ public class Logger
 
             file.mkdir();
 
-            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-debug.log", true));
+            writer = new BufferedWriter(new FileWriter(PATH + dateFormat +"-debug.log", CommonConstant.TRUE));
 
             writer.write(message + "\n");
         }

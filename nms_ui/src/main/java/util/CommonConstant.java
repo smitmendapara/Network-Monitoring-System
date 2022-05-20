@@ -24,6 +24,10 @@ public class CommonConstant
 
     public static final String WEB_OPTION = "-webAllowOthers";
 
+    public static final boolean TRUE = true;
+
+    public static final boolean FALSE = false;
+
     public static final Double DOUBLE_ZERO = 0.0;
 
     public static final int SSH_PORT = 22;

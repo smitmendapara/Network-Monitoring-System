@@ -37,7 +37,7 @@ public class DiscoveryService
                     discoverBean.setDeviceType(CommonConstant.LINUX_DEVICE);
                 }
 
-                discoverBean.setIpValid(Boolean.TRUE);
+                discoverBean.setIpValid(CommonConstant.TRUE);
 
                 discoverBean.setFlag(addDevice(discoverBean.getName(), discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()));
             }
@@ -166,9 +166,9 @@ public class DiscoveryService
         }
     }
 
-    public boolean executeDeviceDiscovery(int id, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
+    public static boolean executeDeviceDiscovery(int id, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
     {
-        boolean status = true;
+        boolean status = CommonConstant.TRUE;
 
         String response, ipStatus;
 
@@ -195,7 +195,7 @@ public class DiscoveryService
                 {
                     _logger.error("something went wrong on ping discovery verify side!", exception);
 
-                    status = false;
+                    status = CommonConstant.FALSE;
                 }
 
                 return status;
@@ -225,7 +225,7 @@ public class DiscoveryService
                             }
                             else
                             {
-                                status = false;
+                                status = CommonConstant.FALSE;
                             }
                         }
                         else
@@ -251,7 +251,7 @@ public class DiscoveryService
                 {
                     _logger.error("something went wrong on linux discovery verify side!", exception);
 
-                    status = false;
+                    status = CommonConstant.FALSE;
                 }
                 finally
                 {
@@ -276,15 +276,15 @@ public class DiscoveryService
         {
             _logger.error("something went wrong on discovery side!", exception);
 
-            status = false;
+            status = CommonConstant.FALSE;
         }
 
         return status;
     }
 
-    public boolean pollingDevice(int id, String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
+    public static boolean pollingDevice(int id, String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
     {
-        boolean status = true;
+        boolean status = CommonConstant.TRUE;
 
         double memory, disk, cpu;
 
@@ -333,7 +333,7 @@ public class DiscoveryService
                 {
                     _logger.error("something went wrong on ping discovery verify side!", exception);
 
-                    status = false;
+                    status = CommonConstant.FALSE;
                 }
 
                 return status;
@@ -434,7 +434,7 @@ public class DiscoveryService
                 {
                     _logger.error("something went wrong on linux discovery verify side!", exception);
 
-                    status = false;
+                    status = CommonConstant.FALSE;
                 }
 
                 finally
@@ -461,14 +461,14 @@ public class DiscoveryService
         {
             _logger.error("something went wrong on discovery side!", exception);
 
-            status = false;
+            status = CommonConstant.FALSE;
         }
 
         return status;
 
     }
 
-    private Double getMemoryPercent(String linuxResponse)
+    private static Double getMemoryPercent(String linuxResponse)
     {
         double free = CommonConstant.DOUBLE_ZERO;
 
@@ -490,7 +490,7 @@ public class DiscoveryService
         return free;
     }
 
-    private Double getUsedDiskPercent(String linuxResponse)
+    private static Double getUsedDiskPercent(String linuxResponse)
     {
         double disk = CommonConstant.DOUBLE_ZERO;
 
@@ -510,7 +510,7 @@ public class DiscoveryService
         return disk;
     }
 
-    private Double getCPUPercent(String linuxResponse)
+    private static Double getCPUPercent(String linuxResponse)
     {
         double cpu = CommonConstant.DOUBLE_ZERO;
 
@@ -530,7 +530,7 @@ public class DiscoveryService
         return cpu;
     }
 
-    private String getSpecificData(String uName, String uName_M, String uName_R, String hostName, String uName_output, String free_output, String df_Output, String ioStat_Output)
+    private static String getSpecificData(String uName, String uName_M, String uName_R, String hostName, String uName_output, String free_output, String df_Output, String ioStat_Output)
     {
         String data = null;
 
@@ -589,7 +589,7 @@ public class DiscoveryService
         return data;
     }
 
-    private String pingDeviceResponse(String ip)
+    private static String pingDeviceResponse(String ip)
     {
         String pingResult = "";
 
@@ -597,7 +597,7 @@ public class DiscoveryService
 
         Runtime runtime;
 
-        Process process;
+        Process process = null;
 
         BufferedReader bufferedInput = null;
 
@@ -615,8 +615,6 @@ public class DiscoveryService
             {
                 pingResult = pingResult.concat(inputLine);
             }
-
-            //TODO destroy process in finally
         }
         catch (Exception exception)
         {
@@ -624,23 +622,28 @@ public class DiscoveryService
         }
         finally
         {
-            if (bufferedInput != null)
+            try
             {
-                try
+                if (bufferedInput != null)
                 {
                     bufferedInput.close();
                 }
-                catch (Exception exception)
+                if (process != null)
                 {
-                    _logger.error("buffer input not closed...", exception);
+                    process.destroy();
                 }
             }
+            catch (Exception exception)
+            {
+                _logger.error("buffer input or process not closed...", exception);
+            }
+
         }
 
         return pingResult.substring(pingResult.indexOf("-"));
     }
 
-    private String checkStatus(String packet)
+    private static String checkStatus(String packet)
     {
         String ipStatus = CommonConstant.DEVICE_UP;
         try
@@ -658,7 +661,7 @@ public class DiscoveryService
         return ipStatus;
     }
 
-    private String checkPingIpStatus(String subString)
+    private static String checkPingIpStatus(String subString)
     {
         String ipStatus = null;
 
@@ -677,7 +680,7 @@ public class DiscoveryService
         return ipStatus;
     }
 
-    private String getReceivedPacket(String subString)
+    private static String getReceivedPacket(String subString)
     {
         String receivedPacket = CommonConstant.NULL;
 
@@ -695,13 +698,13 @@ public class DiscoveryService
 
     private static boolean validIP(String ipAddress)
     {
-        boolean result = false;
+        boolean result = CommonConstant.FALSE;
 
         try
         {
             if (ipAddress == null)
             {
-                return false;
+                return result;
             }
 
             String zeroTo255 = "(\\d{1,2}|(0|1)\\"
@@ -728,7 +731,7 @@ public class DiscoveryService
 
     private static boolean addDevice(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType)
     {
-        boolean status = true;
+        boolean status = CommonConstant.TRUE;
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -741,12 +744,12 @@ public class DiscoveryService
 
             else
             {
-                return false;
+                return CommonConstant.FALSE;
             }
         }
         catch (Exception exception)
         {
-            status = false;
+            status = CommonConstant.FALSE;
         }
 
         return status;
@@ -754,7 +757,7 @@ public class DiscoveryService
 
     private static boolean checkIp(String ip, String deviceType)
     {
-        boolean status = true;
+        boolean status = CommonConstant.TRUE;
 
         ConnectionDAO connectionDao = new ConnectionDAO();
 

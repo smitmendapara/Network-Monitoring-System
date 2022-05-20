@@ -1,6 +1,7 @@
 package helper;
 
 import bean.DiscoverBean;
+import util.CommonConstant;
 import util.CommonUtil;
 import util.Logger;
 
@@ -19,7 +20,7 @@ public class PollingInitializer implements Runnable
         {
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            while (true)
+            while (CommonConstant.TRUE)
             {
                 DiscoverBean discoverBean = CommonUtil.takeDevice();
 

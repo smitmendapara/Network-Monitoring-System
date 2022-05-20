@@ -6,7 +6,7 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
 @ServerEndpoint("/serverEndPoint")
-public class ServerWebSocketEndPoint
+public class ServerWebSocket
 {
     private static final Logger _logger = new Logger();
 
@@ -17,7 +17,7 @@ public class ServerWebSocketEndPoint
     {
         try
         {
-            ServerWebSocketEndPoint.session = session;
+            ServerWebSocket.session = session;
         }
         catch (Exception exception)
         {
@@ -30,13 +30,13 @@ public class ServerWebSocketEndPoint
     {
         try
         {
-            if (ServerWebSocketEndPoint.session.isOpen())
+            if (ServerWebSocket.session.isOpen())
             {
-                ServerWebSocketEndPoint.session.getBasicRemote().sendText(message);
+                ServerWebSocket.session.getBasicRemote().sendText(message);
             }
             else
             {
-                ServerWebSocketEndPoint.session.getBasicRemote().sendText("Web Socket Session is not Open.");
+                ServerWebSocket.session.getBasicRemote().sendText("Web Socket Session is not Open.");
             }
         }
         catch (Exception exception)
@@ -50,7 +50,7 @@ public class ServerWebSocketEndPoint
     {
         try
         {
-            ServerWebSocketEndPoint.session.close();
+            ServerWebSocket.session.close();
         }
         catch (Exception exception)
         {

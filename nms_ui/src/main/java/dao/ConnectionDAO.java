@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//TODO renamed class with connectionDao
 public class ConnectionDAO
 {
     private Connection connection = null;
@@ -20,7 +19,7 @@ public class ConnectionDAO
 
     public boolean checkCredential(String username, String password)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -30,7 +29,7 @@ public class ConnectionDAO
 
             if (credentialsList.size() != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -43,7 +42,7 @@ public class ConnectionDAO
 
     public boolean enterDiscoveryData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String timestamp)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         ArrayList<String> data = new ArrayList<>();
 
@@ -59,7 +58,7 @@ public class ConnectionDAO
 
             if (affectedRows != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -72,7 +71,7 @@ public class ConnectionDAO
 
     public boolean enterMonitorTableData(int id, String response, String ipStatus)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         ArrayList<String> data = new ArrayList<>();
 
@@ -91,7 +90,7 @@ public class ConnectionDAO
 
             if (affectedRows != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -104,7 +103,7 @@ public class ConnectionDAO
 
     public boolean checkIpMonitor(String ip, String deviceType)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -114,7 +113,7 @@ public class ConnectionDAO
 
             if (monitorIpList == null)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -289,7 +288,7 @@ public class ConnectionDAO
 
     public boolean updatedDeviceData(int id, String ip, String deviceType, String name, String discoveryUsername, String discoveryPassword)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -308,7 +307,7 @@ public class ConnectionDAO
 
             if (affectedRow != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -321,7 +320,7 @@ public class ConnectionDAO
 
     public boolean updateDiscoverData(String ip, String deviceType, String timestamp, String ipStatus)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -331,7 +330,7 @@ public class ConnectionDAO
 
             if (affected != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -344,7 +343,7 @@ public class ConnectionDAO
 
     public boolean getDiscoverTB(String ip, String deviceType)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -354,7 +353,7 @@ public class ConnectionDAO
 
             if (discoverList == null)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
 
         }
@@ -560,7 +559,7 @@ public class ConnectionDAO
 
     public boolean deleteMonitorData(int id)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -570,7 +569,7 @@ public class ConnectionDAO
 
             if (affected != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -583,7 +582,7 @@ public class ConnectionDAO
 
     public boolean deleteDiscoverTableData(int id)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -593,7 +592,7 @@ public class ConnectionDAO
 
             if (affected != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -606,7 +605,7 @@ public class ConnectionDAO
 
     public boolean enterReMonitorData(String name, String ip, String discoveryUsername, String discoveryPassword, String deviceType, String response, String ipStatus, String timestamp)
     {
-        boolean result = false;
+        boolean result = CommonConstant.FALSE;
 
         try
         {
@@ -616,7 +615,7 @@ public class ConnectionDAO
 
             if (affected != 0)
             {
-                result = Boolean.TRUE;
+                result = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)
@@ -629,7 +628,7 @@ public class ConnectionDAO
 
     public boolean enterDataDump(int id, String ip, String packet, Double memory, String deviceType, String time, String ipStatus, Double cpu, Double disk)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         ArrayList<String> data = new ArrayList<>();
 
@@ -643,7 +642,7 @@ public class ConnectionDAO
 
             if (affectedRows != 0)
             {
-                status = Boolean.TRUE;
+                status = CommonConstant.TRUE;
             }
         }
         catch (Exception exception)

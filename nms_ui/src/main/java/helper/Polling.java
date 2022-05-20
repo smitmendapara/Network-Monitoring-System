@@ -9,7 +9,6 @@ public class Polling implements Runnable
     private DiscoverBean discoverBean;
 
     //TODO this will create new object at every 2 second
-    private DiscoveryService discoveryService = new DiscoveryService();
 
     private static final Logger _logger = new Logger();
 
@@ -23,11 +22,16 @@ public class Polling implements Runnable
         //TODO where is try catch ?
         try
         {
-            if (discoveryService.pollingDevice(discoverBean.getId(), discoverBean.getName(),discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
+            if (DiscoveryService.pollingDevice(discoverBean.getId(), discoverBean.getName(),discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
             {
                 //TODO you are doing polling or discovering ? update your log
-                _logger.info("IP : " + discoverBean.getIp() + " successfully discovered!");
+                _logger.info("IP : " + discoverBean.getIp() + " successfully polled!");
             }
+            else
+            {
+                _logger.info("IP : " + discoverBean.getIp() + " not polled!");
+            }
+            //TODO dump message for else block
         }
         catch (Exception exception)
         {

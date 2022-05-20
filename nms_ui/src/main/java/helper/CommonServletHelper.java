@@ -12,7 +12,7 @@ public class CommonServletHelper
 
     public static boolean initializeDatabase()
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         try
         {
@@ -22,7 +22,7 @@ public class CommonServletHelper
 
             if (startH2Database()) // first step start h2 database server
             {
-                status = true;
+                status = CommonConstant.TRUE;
 
                 _logger.info("Started h2 database!");
             }
@@ -41,7 +41,7 @@ public class CommonServletHelper
 
     private static boolean startH2Database()
     {
-        boolean result = true;
+        boolean result = CommonConstant.TRUE;
 
         Server tcp_Server, web_Server;
 
@@ -65,7 +65,7 @@ public class CommonServletHelper
         {
             _logger.error("something went wrong on the creating database side!",exception);
 
-            result = false;
+            result = CommonConstant.FALSE;
         }
 
         return result;
@@ -73,7 +73,7 @@ public class CommonServletHelper
 
     public static boolean startScheduler()
     {
-        boolean result = true;
+        boolean result = CommonConstant.TRUE;
 
         try
         {
@@ -91,7 +91,7 @@ public class CommonServletHelper
         {
             _logger.error("something went wrong to be start scheduler", exception);
 
-            result = false;
+            result = CommonConstant.FALSE;
         }
 
         return result;

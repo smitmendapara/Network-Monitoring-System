@@ -29,7 +29,7 @@ public class CommonUtil
     //TODO where is this method being used ?
     public static boolean putDiscoverBean(DiscoverBean discoverBean)
     {
-        boolean add = false;
+        boolean add = CommonConstant.FALSE;
 
         try
         {
@@ -59,7 +59,7 @@ public class CommonUtil
 
     public static boolean putDevice(DiscoverBean discoverBean)
     {
-        boolean add = true;
+        boolean add = CommonConstant.FALSE;
 
         try
         {

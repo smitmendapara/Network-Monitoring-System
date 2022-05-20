@@ -2,6 +2,7 @@ package service;
 
 import bean.LoginBean;
 import dao.ConnectionDAO;
+import util.CommonConstant;
 import util.Logger;
 
 public class LoginService
@@ -10,7 +11,7 @@ public class LoginService
 
     public static boolean verifyLogin(LoginBean loginBean)
     {
-        boolean status = false;
+        boolean status = CommonConstant.FALSE;
 
         ConnectionDAO connectionDao = new ConnectionDAO();
 

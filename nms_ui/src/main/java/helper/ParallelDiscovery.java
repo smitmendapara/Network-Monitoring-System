@@ -1,6 +1,7 @@
 package helper;
 
 import bean.DiscoverBean;
+import util.CommonConstant;
 import util.CommonUtil;
 import util.Logger;
 
@@ -18,12 +19,15 @@ public class ParallelDiscovery implements Runnable
         {
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            while (true)
+            while (CommonConstant.TRUE)
             {
                 //TODO what if take bean return null ?
                 DiscoverBean discoverBean = CommonUtil.takeDiscoverBean();
 
-                executorService.execute(new MultipleDeviceDiscover(discoverBean));
+                if (discoverBean != null)
+                {
+                    executorService.execute(new MultipleDeviceDiscover(discoverBean));
+                }
             }
         }
         catch (Exception exception)

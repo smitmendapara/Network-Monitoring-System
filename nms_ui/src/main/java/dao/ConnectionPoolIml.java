@@ -45,7 +45,7 @@ public class ConnectionPoolIml implements ConnectionPool
                 }
                 else
                 {
-                    return false;
+                    return CommonConstant.FALSE;
                 }
             }
         }
@@ -54,7 +54,7 @@ public class ConnectionPoolIml implements ConnectionPool
             _logger.error("connection was not created.", exception);
         }
 
-        return true;
+        return CommonConstant.TRUE;
     }
 
     private static Connection createConnection(String url, String user, String password)
@@ -95,7 +95,7 @@ public class ConnectionPoolIml implements ConnectionPool
     public boolean releaseConnection(Connection connection)
     {
         //TODO - you can put check for the connection here instead of where the method is being called
-        boolean add = false;
+        boolean add = CommonConstant.FALSE;
 
         try
         {

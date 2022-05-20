@@ -8,8 +8,10 @@ import com.jcraft.jsch.Session;
 
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 public class SSHConnectionUtil
@@ -59,7 +61,7 @@ public class SSHConnectionUtil
 
     private boolean createConnection()
     {
-        boolean connected = false;
+        boolean connected = CommonConstant.FALSE;
 
         Properties config;
 
@@ -84,7 +86,7 @@ public class SSHConnectionUtil
 
             if (session.isConnected())
             {
-                connected = true;
+                connected = CommonConstant.TRUE;
             }
             else
             {
@@ -128,7 +130,7 @@ public class SSHConnectionUtil
     {
         ChannelExec channel = null;
 
-        InputStream inputStream = null;
+        BufferedReader bufferReader = null;
 
         StringBuilder output = new StringBuilder();
 
@@ -140,7 +142,7 @@ public class SSHConnectionUtil
 
                 channel.setCommand(command);
 
-                inputStream = channel.getInputStream();
+                bufferReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
 
                 channel.connect();
 
@@ -150,9 +152,14 @@ public class SSHConnectionUtil
                     Thread.sleep(100);
                 }
 
-                output.append(IOUtils.toString(inputStream));
+                String input;
 
-                output.append(CommonConstant.NEW_LINE);
+                while ((input = bufferReader.readLine()) != null)
+                {
+                    output.append(input);
+
+                    output.append(CommonConstant.NEW_LINE);
+                }
 
                 _logger.debug(hostIp + " - command output -> \n" + output.toString());
             }
@@ -170,9 +177,9 @@ public class SSHConnectionUtil
         {
             try
             {
-                if (inputStream != null)
+                if (bufferReader != null)
                 {
-                    inputStream.close();
+                    bufferReader.close();
                 }
 
                 if (channel != null && !channel.isClosed())

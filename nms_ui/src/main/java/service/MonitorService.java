@@ -129,7 +129,7 @@ public class MonitorService
 
     private static boolean provisionMonitor(int id, String deviceType)
     {
-        boolean status = true;
+        boolean status = CommonConstant.TRUE;
 
         String response = "", ipStatus = "Unknown";
 
@@ -154,7 +154,7 @@ public class MonitorService
                 {
                     _logger.error("something went wrong on ping discovery verify side!", exception);
 
-                    status = false;
+                    status = CommonConstant.FALSE;
                 }
 
                 return status;
@@ -178,7 +178,7 @@ public class MonitorService
                 {
                     _logger.error("something went wrong on linux discovery verify side!", exception);
 
-                    status = false;
+                    status = CommonConstant.FALSE;
                 }
 
                 return status;
@@ -188,7 +188,7 @@ public class MonitorService
         {
             _logger.error("something went wrong on discovery side!", exception);
 
-            status = false;
+            status = CommonConstant.FALSE;
         }
 
         return status;

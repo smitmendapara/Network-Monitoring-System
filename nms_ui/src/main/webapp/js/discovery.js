@@ -1,3 +1,5 @@
+let webSocket;
+
 // open discovery form
 function openForm(idName)
 {
@@ -89,13 +91,16 @@ function discoverData(id, ip, deviceType)
     executePOSTRequest({ url: "discoverData", data: { id: id, ip: ip, deviceType: deviceType }, callback: verifyDiscovery });
 }
 
-function getWebSocket()
+// front end web socket
+function initializeClientSocket()
 {
     let requestURL = $(location).attr('href');
 
     let splitURL = requestURL.split("/");
 
-    let webSocket = new WebSocket("wss://" + splitURL[2] + "/serverEndPoint");
+    let protocol = splitURL[0] === "https:" ? "wss://" : "ws://";
+
+    webSocket = new WebSocket(protocol + splitURL[2] + "/serverEndPoint");
 
     webSocket.onopen = function (message) {
         messageOnOpen("Web Socket Open " + message);
@@ -115,7 +120,7 @@ function getWebSocket()
 
     function messageOnOpen(message)
     {
-
+        toastr.info("Frontend web socket started.");
     }
     
     function messageOnMessage(message)
@@ -125,21 +130,24 @@ function getWebSocket()
 
     function messageOnClose(message)
     {
-        toastr.info("Frontend Web Socket Closed...");
-
-        getWebSocket();
+        toastr.info("Frontend web socket closed...");
     }
 
     function messageOnError(message)
     {
-        toastr.info("Web Socket Error : " + message.data)
+        toastr.error("Web socket error : " + message.data);
+
+        initializeClientSocket();
     }
 }
 
 // fetch discovery data from database
 function discoveryTable(request)
 {
-    getWebSocket();
+    if (webSocket === undefined || webSocket.readyState === webSocket.CLOSED)
+    {
+        initializeClientSocket();
+    }
 
     if (request !== undefined && request.data !== undefined)
     {

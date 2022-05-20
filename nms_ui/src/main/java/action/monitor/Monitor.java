@@ -14,7 +14,6 @@ public class Monitor implements ModelDriven<MonitorBean>
 
     private static final Logger _logger = new Logger();
 
-    //TODO - renamed with loadMonitorData
     // monitor form for provision
     public String loadMonitorData()
     {
