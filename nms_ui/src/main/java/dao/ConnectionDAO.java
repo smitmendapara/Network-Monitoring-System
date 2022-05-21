@@ -13,7 +13,7 @@ public class ConnectionDAO
 {
     private Connection connection = null;
 
-    private ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
+    private ConnectionPool connectionPool = new ConnectionPool();
 
     private static final Logger _logger = new Logger();
 
@@ -23,7 +23,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> credentialsList = executeSELECT(connection, CommonConstant.DB_TB_USER, "*", "WHERE user = '" + username + "' AND password = '" + password + "'");
 
@@ -52,7 +52,7 @@ public class ConnectionDAO
 
             data.add("(Name, IP, Username, Password, Device, CurrentTime, Status)");
 
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             int affectedRows = executeINSERT(connection, CommonConstant.DB_TB_DISCOVER, data.get(0), data.get(1));
 
@@ -77,7 +77,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> discoverDataList = executeSELECT(connection, CommonConstant.DB_TB_DISCOVER, "*", "WHERE Id = " + id);
 
@@ -107,7 +107,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> monitorIpList = executeSELECT(connection, CommonConstant.DB_TB_MONITOR, "*", "WHERE IP = '" + ip + "' AND DeviceType = '" + deviceType + "'");
 
@@ -129,7 +129,7 @@ public class ConnectionDAO
     {
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             return executeSELECT(connection, CommonConstant.DB_TB_DISCOVER, "*", "WHERE Id = " + id);
         }
@@ -145,7 +145,7 @@ public class ConnectionDAO
     {
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             return executeSELECT(connection, CommonConstant.DB_TB_MONITOR, "*", "WHERE IP = '" + ip + "' AND DeviceType = '" + deviceType + "'");
         }
@@ -167,7 +167,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<String> currentTime = commonService.getCurrentTime();
 
@@ -214,7 +214,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> updatedPacket = executeSELECT(connection, CommonConstant.DB_TB_DATADUMP, "*", "WHERE Id = " + id + " AND IP = '" + ip + "' AND Device = '" + deviceType + "' AND CurrentTime = '" + time + "'");
 
@@ -237,7 +237,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> memoryMap = executeSELECT(connection, CommonConstant.DB_TB_DATADUMP, "*", "WHERE Id = " + id + " AND IP = '" + ip + "' AND Device = '" + deviceType + "' AND CurrentTime = '" + time + "'");
 
@@ -260,7 +260,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> editMap = executeSELECT(connection, CommonConstant.DB_TB_DISCOVER, "*", "WHERE IP = '" + ip + "' AND Device = '" + deviceType + "'");
 
@@ -292,7 +292,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> updateDataExist = executeSELECT(connection, CommonConstant.DB_TB_DISCOVER, "*", "WHERE Id != " + id + " AND IP = '" + ip + "' AND Device = '" + deviceType + "'");
 
@@ -324,7 +324,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             int affected = executeUPDATE(connection, CommonConstant.DB_TB_DISCOVER, "WHERE IP = '" + ip + "' AND Device = '" + deviceType + "'", "CurrentTime = '" + timestamp.substring(0, 16) + "', Status = '" + ipStatus + "'");
 
@@ -347,7 +347,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> discoverList = executeSELECT(connection, CommonConstant.DB_TB_DISCOVER, "*", "WHERE IP = '" + ip + "' AND Device = '" + deviceType + "'");
 
@@ -373,7 +373,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> discoverDataList = executeSELECT(connection, CommonConstant.DB_TB_DISCOVER, "*", "");
 
@@ -395,7 +395,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> monitorDataList = executeSELECT(connection, CommonConstant.DB_TB_DISCOVER, "*", "WHERE Id = " + id);
 
@@ -418,7 +418,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> monitorDataList = executeSELECT(connection, CommonConstant.DB_TB_MONITOR, "*", "");
 
@@ -440,7 +440,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> upDevice = executeSELECT(connection, CommonConstant.DB_TB_MONITOR, "COUNT(IP)", "WHERE Status = 'Up'");
 
@@ -466,7 +466,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             List<HashMap<String, Object>> pingDevice = executeSELECT(connection, CommonConstant.DB_TB_MONITOR, "COUNT(IP)", "WHERE DeviceType = 'Ping'");
 
@@ -490,7 +490,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             String previousTime = commonService.getPreviousTime();
 
@@ -515,7 +515,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             String previousTime = commonService.getPreviousTime();
 
@@ -540,7 +540,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             String previousTime = commonService.getPreviousTime();
 
@@ -563,7 +563,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             int affected = executeDELETE(connection, CommonConstant.DB_TB_MONITOR, "WHERE Id = " + id);
 
@@ -586,7 +586,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             int affected = executeDELETE(connection, CommonConstant.DB_TB_DISCOVER, "WHERE Id = " + id);
 
@@ -609,7 +609,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             int affected = executeUPDATE(connection, CommonConstant.DB_TB_MONITOR, "WHERE IP = '" + ip + "' AND DeviceType = '" + deviceType + "'", "Response = '" + response + "', Status = '" + ipStatus + "', CurrentTime = '" + timestamp.substring(0, 16) + "'");
 
@@ -634,7 +634,7 @@ public class ConnectionDAO
 
         try
         {
-            connection = connectionPoolIml.getConnection();
+            connection = connectionPool.getConnection();
 
             data.add(id + ", '" + ip + "', '" + packet + "', '" + memory + "', '" + deviceType + "', '" + time.substring(0, 16) + "', '" + ipStatus + "', '" + cpu + "', '" + disk + "'");
 
@@ -681,7 +681,7 @@ public class ConnectionDAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    if (connectionPoolIml.releaseConnection(connection))
+                    if (connectionPool.releaseConnection(connection))
                     {
                         _logger.info("connection successfully released from DELETE query...");
                     }
@@ -724,7 +724,7 @@ public class ConnectionDAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    if (connectionPoolIml.releaseConnection(connection))
+                    if (connectionPool.releaseConnection(connection))
                     {
                         _logger.info("connection successfully released from UPDATE query...");
                     }
@@ -767,7 +767,7 @@ public class ConnectionDAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    if (connectionPoolIml.releaseConnection(connection))
+                    if (connectionPool.releaseConnection(connection))
                     {
                         _logger.info("connection successfully released from INSERT query...");
                     }
@@ -833,7 +833,7 @@ public class ConnectionDAO
             {
                 if (connection != null && !connection.isClosed())
                 {
-                    if (connectionPoolIml.releaseConnection(connection))
+                    if (connectionPool.releaseConnection(connection))
                     {
                         _logger.info("connection successfully released from SELECT query...");
                     }

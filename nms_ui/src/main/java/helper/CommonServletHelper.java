@@ -20,7 +20,7 @@ public class CommonServletHelper
 
             _logger.info("Starting h2 database...");
 
-            if (startH2Database()) // first step start h2 database server
+            if (startH2Database())
             {
                 status = CommonConstant.TRUE;
 

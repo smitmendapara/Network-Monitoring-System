@@ -1,6 +1,6 @@
 package helper;
 
-import dao.ConnectionPoolIml;
+import dao.ConnectionPool;
 import util.Logger;
 
 import javax.servlet.http.HttpServlet;
@@ -17,9 +17,7 @@ public class CommonServlet extends HttpServlet
             {
                 _logger.info("database successfully initialized!");
 
-                ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
-
-                if (connectionPoolIml.createPool())
+                if (ConnectionPool.createPool())
                 {
                     _logger.info("connection pool successfully created!");
 
