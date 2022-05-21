@@ -13,19 +13,16 @@ public class CommonServlet extends HttpServlet
     {
         try
         {
-            //TODO Add error message in the else part
             if (CommonServletHelper.initializeDatabase())
             {
                 _logger.info("database successfully initialized!");
 
                 ConnectionPoolIml connectionPoolIml = new ConnectionPoolIml();
 
-                //TODO what if your connection not created as per your need ?
                 if (connectionPoolIml.createPool())
                 {
                     _logger.info("connection pool successfully created!");
 
-                    //TODO what if your schedular failts to start
                     if (CommonServletHelper.startScheduler())
                     {
                         _logger.info("scheduler successfully started!");

@@ -21,7 +21,6 @@ public class ParallelDiscovery implements Runnable
 
             while (CommonConstant.TRUE)
             {
-                //TODO what if take bean return null ?
                 DiscoverBean discoverBean = CommonUtil.takeDiscoverBean();
 
                 if (discoverBean != null)

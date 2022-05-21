@@ -8,8 +8,6 @@ public class Polling implements Runnable
 {
     private DiscoverBean discoverBean;
 
-    //TODO this will create new object at every 2 second
-
     private static final Logger _logger = new Logger();
 
     public Polling(DiscoverBean discoverBean) {
@@ -19,19 +17,16 @@ public class Polling implements Runnable
     @Override
     public void run()
     {
-        //TODO where is try catch ?
         try
         {
             if (DiscoveryService.pollingDevice(discoverBean.getId(), discoverBean.getName(),discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
             {
-                //TODO you are doing polling or discovering ? update your log
                 _logger.info("IP : " + discoverBean.getIp() + " successfully polled!");
             }
             else
             {
                 _logger.info("IP : " + discoverBean.getIp() + " not polled!");
             }
-            //TODO dump message for else block
         }
         catch (Exception exception)
         {

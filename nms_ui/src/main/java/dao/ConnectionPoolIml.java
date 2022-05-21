@@ -38,7 +38,6 @@ public class ConnectionPoolIml implements ConnectionPool
         {
             for (int index = 0; index < CONNECTION_POOL_SIZE; index++)
             {
-                //TODO what if createConnection return null
                 if (createConnection(databaseURL, databaseUser, databasePassword) != null)
                 {
                     connectionPool.add(createConnection(databaseURL, databaseUser, databasePassword));
@@ -94,7 +93,6 @@ public class ConnectionPoolIml implements ConnectionPool
     @Override
     public boolean releaseConnection(Connection connection)
     {
-        //TODO - you can put check for the connection here instead of where the method is being called
         boolean add = CommonConstant.FALSE;
 
         try

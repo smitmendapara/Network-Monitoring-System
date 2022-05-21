@@ -26,7 +26,6 @@ public class CommonUtil
         return null;
     }
 
-    //TODO where is this method being used ?
     public static boolean putDiscoverBean(DiscoverBean discoverBean)
     {
         boolean add = CommonConstant.FALSE;

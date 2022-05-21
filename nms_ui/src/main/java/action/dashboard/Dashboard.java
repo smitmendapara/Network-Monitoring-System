@@ -20,7 +20,6 @@ public class Dashboard implements ModelDriven<DashboardBean>
     {
         try
         {
-            //TODO what if you create static method and call it without creating object
             DashboardService.evaluateDeviceDashboardData(dashboardBean);
         }
         catch (Exception exception)

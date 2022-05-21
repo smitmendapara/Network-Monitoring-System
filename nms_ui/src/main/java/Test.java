@@ -12,7 +12,7 @@ public class Test
 //
 //        String free = sshObject.executeCommand("iostat");
 
-        String fr = sshObject.executeCommand("uname");
+        String fr = sshObject.executeCommand("iostat");
 
         System.out.println(fr);
 

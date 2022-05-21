@@ -15,7 +15,6 @@ public class PollingInitializer implements Runnable
     @Override
     public void run()
     {
-        //TODO put whole code in the try catch. What will happen if you get error in this code ?
         try
         {
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -24,7 +23,6 @@ public class PollingInitializer implements Runnable
             {
                 DiscoverBean discoverBean = CommonUtil.takeDevice();
 
-                //TODO what if this take device return null ?
                 if (discoverBean != null)
                 {
                     executorService.execute(new Polling(discoverBean));
