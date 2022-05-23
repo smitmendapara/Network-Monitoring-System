@@ -7,13 +7,12 @@
 --%>
 
     <%
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-
         if (session.getAttribute("username") == null)
         {
             response.sendRedirect("login.jsp");
-        }
 
+            response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        }
     %>
 
     <div id="discoveryPage">
@@ -87,7 +86,7 @@
 
                     <div class="demo">
 
-                        <h4 style="margin-top:15px;background-color:grey;border-radius:5px;padding:3px">Discover IP</h4> <br>
+                        <h4 style="margin-top:15px;background-color:grey;border-radius:5px;padding:3px">Add IP</h4> <br>
 
                     </div>
 

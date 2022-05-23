@@ -10,15 +10,15 @@ import java.util.TimerTask;
 
 public class Scheduler extends TimerTask implements Runnable
 {
+    private DiscoverBean discoverBean;
+
+    private static ConnectionDAO connectionDao = new ConnectionDAO();
+
     private static final Logger _logger = new Logger();
 
     @Override
     public void run()
     {
-        DiscoverBean discoverBean;
-
-        ConnectionDAO connectionDao = new ConnectionDAO();
-
         try
         {
             List<List<String>> monitorList = connectionDao.getMonitorTable();

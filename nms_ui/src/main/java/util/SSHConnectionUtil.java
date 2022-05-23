@@ -63,8 +63,6 @@ public class SSHConnectionUtil
     {
         boolean connected = CommonConstant.FALSE;
 
-        Properties config;
-
         try
         {
             JSch jschObject = new JSch();
@@ -76,11 +74,7 @@ public class SSHConnectionUtil
                 session.setPassword(password);
             }
 
-            config = new Properties();
-
-            config.put("StrictHostKeyChecking", "no");
-
-            session.setConfig(config);
+            session.setConfig("StrictHostKeyChecking", "no");
 
             session.connect(timeout * 1000);
 
@@ -144,7 +138,7 @@ public class SSHConnectionUtil
 
                 bufferReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
 
-                channel.connect();
+                channel.connect(timeout * 1000);
 
                 // wait for command output
                 while (channel.isConnected())

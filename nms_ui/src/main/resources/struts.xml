@@ -98,7 +98,7 @@
 
         <!-- monitor button action -->
 
-        <action name="monitorForm" class="action.monitor.Monitor" method="getMonitorForm">
+        <action name="monitorForm" class="action.monitor.Monitor" method="loadMonitorData">
 
             <result name="success" type="json" />
 
