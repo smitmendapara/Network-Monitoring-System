@@ -2,11 +2,14 @@ package service;
 
 import bean.DiscoverBean;
 import dao.ConnectionDAO;
+import org.apache.struts2.ServletActionContext;
 import util.CommonConstant;
 import util.CommonUtil;
 import util.Logger;
 import util.SSHConnectionUtil;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
@@ -60,6 +63,10 @@ public class DiscoveryService
         {
             List<HashMap<String, Object>> monitorDetailsList = connectionDao.getMonitorDetails(discoverBean.getId());
 
+            HttpServletRequest httpServletRequest = ServletActionContext.getRequest();
+
+            HttpSession session = httpServletRequest.getSession();
+
             for (HashMap<String, Object> monitorDetails : monitorDetailsList)
             {
                 discoverBean.setIp(monitorDetails.get("IP").toString());
@@ -69,6 +76,8 @@ public class DiscoveryService
                 discoverBean.setDiscoveryPassword(monitorDetails.get("Password").toString());
 
                 discoverBean.setDeviceType(monitorDetails.get("Device").toString());
+
+                discoverBean.setSessionId(session.getAttribute("loginUser").toString());
             }
 
             discoverBean.setFlag(CommonUtil.putDiscoverBean(discoverBean));

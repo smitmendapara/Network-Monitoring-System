@@ -1,7 +1,6 @@
 package helper;
 
 import bean.DiscoverBean;
-import util.CommonConstant;
 import util.CommonUtil;
 import util.Logger;
 
@@ -19,7 +18,7 @@ public class ParallelDiscovery implements Runnable
         {
             ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-            while (CommonConstant.TRUE)
+            while (true)
             {
                 DiscoverBean discoverBean = CommonUtil.takeDiscoverBean();
 

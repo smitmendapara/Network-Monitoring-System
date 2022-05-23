@@ -4,6 +4,8 @@ import util.Logger;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @ServerEndpoint("/serverEndPoint")
 public class ServerWebSocket
@@ -11,6 +13,8 @@ public class ServerWebSocket
     private static final Logger _logger = new Logger();
 
     private static Session session;
+
+    private static Map<String, Session> map = new ConcurrentHashMap<>();
 
     @OnOpen
     public void onOpen(Session session)
@@ -26,13 +30,26 @@ public class ServerWebSocket
     }
 
     @OnMessage
-    public void onMessage(String message)
+    public void handleMessage(Session session, String message)
+    {
+        try
+        {
+            map.put(message, session);
+        }
+        catch (Exception exception)
+        {
+            _logger.error("Message not sent successfully from server web socket.", exception);
+        }
+    }
+
+
+    public void onMessage(String message, String userSession)
     {
         try
         {
             if (ServerWebSocket.session.isOpen())
             {
-                ServerWebSocket.session.getBasicRemote().sendText(message);
+                map.get(userSession).getBasicRemote().sendText(message);
             }
             else
             {
@@ -54,7 +71,7 @@ public class ServerWebSocket
         }
         catch (Exception exception)
         {
-            _logger.error("Server socket not closed!", exception);
+            _logger.error("Server socket not closed.", exception);
         }
     }
 
@@ -63,7 +80,7 @@ public class ServerWebSocket
     {
         try
         {
-            _logger.error("Server socket error occurred.", throwable);
+            _logger.error("Server socket error.", throwable);
         }
         catch (Exception exception)
         {

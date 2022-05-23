@@ -52,6 +52,12 @@
 
         <!-- enter data into discovery table -->
 
+        <action name="getLoginUser" class="action.login.Login" method="currentLoginSession">
+
+            <result name="success" type="json" />
+
+        </action>
+
         <action name="discoveryProcess" class="action.discover.Discovery" method="insertDevice">
 
             <result name="success" type="json">WEB-INF/index.jsp</result>

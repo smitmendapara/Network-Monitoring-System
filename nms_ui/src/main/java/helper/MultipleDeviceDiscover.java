@@ -24,11 +24,11 @@ public class MultipleDeviceDiscover implements Runnable
         {
             if (DiscoveryService.executeDeviceDiscovery(discoverBean.getId(), discoverBean.getIp(), discoverBean.getDiscoveryUsername(), discoverBean.getDiscoveryPassword(), discoverBean.getDeviceType()))
             {
-                serverWebSocket.onMessage("IP : " + discoverBean.getIp() + " Discovered!");
+                serverWebSocket.onMessage("IP : " + discoverBean.getIp() + " Discovered!", discoverBean.getSessionId());
             }
             else
             {
-                serverWebSocket.onMessage("IP : " + discoverBean.getIp() + " not Discovered!");
+                serverWebSocket.onMessage("IP : " + discoverBean.getIp() + " not Discovered!", discoverBean.getSessionId());
             }
         }
         catch (Exception exception)

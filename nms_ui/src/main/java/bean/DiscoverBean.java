@@ -21,7 +21,15 @@ public class DiscoverBean
 
     private boolean ipValid;
 
-    private Session session;
+    private String sessionId;
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     private List<DiscoverBean> beanList;
 
@@ -95,13 +103,5 @@ public class DiscoverBean
 
     public void setIpValid(boolean ipValid) {
         this.ipValid = ipValid;
-    }
-
-    public Session getSession() {
-        return session;
-    }
-
-    public void setSession(Session session) {
-        this.session = session;
     }
 }

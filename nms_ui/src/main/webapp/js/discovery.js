@@ -121,6 +121,8 @@ function initializeClientSocket()
     function messageOnOpen(message)
     {
         toastr.info("Frontend web socket started.");
+
+        webSocket.send(sessionStorage.getItem("currentSession"));
     }
     
     function messageOnMessage(message)
@@ -141,9 +143,16 @@ function initializeClientSocket()
     }
 }
 
+function getCurrentLoginSession(request)
+{
+    sessionStorage.setItem("currentSession", request.data.username);
+}
+
 // fetch discovery data from database
 function discoveryTable(request)
 {
+    executeGETRequest({ url: "getLoginUser", callback: getCurrentLoginSession });
+
     if (webSocket === undefined || webSocket.readyState === webSocket.CLOSED)
     {
         initializeClientSocket();
